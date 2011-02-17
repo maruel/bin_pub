@@ -14,7 +14,7 @@ alias cd..='cd ..'
 
 # TODO(maruel): Find a way to not add it if it's already in there!
 export PATH=$HOME/bin:$PATH
-if [ "$PYTHONPATH"!="" ]; then
+if [ ! "$PYTHONPATH"=="" ]; then
     export PYTHONPATH=$PYTHONPATH:$HOME/bin
 else
     export PYTHONPATH=$HOME/bin
@@ -28,7 +28,7 @@ fi
 
 # Enable 2 finger scroll.
 # TODO: only on laptop.
-if [ "$DISPLAY"!="" ]; then
+if [ ! "$DISPLAY"=="" ]; then
     synclient VertTwoFingerScroll=1
     synclient HorizTwoFingerScroll=1
     synclient EmulateTwoFingerMinW=5
@@ -37,8 +37,8 @@ fi
 
 
 # git-prompt.
-if [ -f ~/bin/git-prompt/git-prompt.sh ]; then
-    . ~/bin/git-prompt/git-prompt.sh
+if [ -f ~/bin/bin_pub/git-prompt/git-prompt.sh ]; then
+    . ~/bin/bin_pub/git-prompt/git-prompt.sh
 fi
 
 # It's not necessary because it's installed by default.
