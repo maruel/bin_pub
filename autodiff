@@ -1,0 +1,83 @@
+#!/bin/bash
+# Copyright 2011 Marc-Antoine Ruel. All Rights Reserved. Use of this
+# source code is governed by a BSD-style license that can be found in the
+# LICENSE file.
+#
+# Automatically select the right merge tool based on X session availability.
+
+# Ami Fischman is a god.
+function update-display-env() {
+  # echo "Please 'sudo apt-get install xprintidle' first"
+  if [ $(which xprintidle) ]; then
+    # There is 3 supported scenarios:
+    # - Running on local display
+    # - Running on remote display (with or without a local display active)
+    # - Running in a ssh prompt without a display
+
+    local WORK_DISPLAY_IDLE_TIME=$(DISPLAY=:0 xprintidle 2>/dev/null)
+    if [ "$WORK_DISPLAY_IDLE_TIME" == "" ]; then
+      DISPLAY=
+      echo "No display found $DISPLAY"
+    # Check if DISPLAY has been idle for more than 15 minutes.
+    elif [ $WORK_DISPLAY_IDLE_TIME -gt 900000 ]; then
+      # I just don't understand this sed regexp but it works under NX.
+      DISPLAY=$(ps axuwww|sed -n -e '/maruel/s/.* \(:[0-9][0-9]*\)\( .*\|\)$/\1/p')
+      if [ "$DISPLAY" == "" ]; then
+        # Probably in a ssh session instead.
+        echo "No display found"
+        DISPLAY=
+      else
+        echo "Found NX display $DISPLAY"
+      fi
+    else
+      DISPLAY=:0.0
+      echo "Using default display $DISPLAY"
+    fi
+  fi
+}
+
+function do_vimdiff() {
+  if [ "$3" != "" ]; then
+    echo "Merging with vimdiff"
+    # Start in diff mode, move the viewport down and move up to first line.
+    vimdiff -c "wincmd J" -c "0" $4 $2 $1 $3
+  else
+    echo "Diffing with vimdiff"
+    # Start in diff mode and move up to first line.
+    vimdiff -c "0" $1 $2
+  fi
+}
+
+function do_kdiff3() {
+  if [ "$3" != "" ]; then
+    echo "Merging with kdiff3"
+    JUNK=$(kdiff3 --auto --L1 "$4 (Base)" --L2 "$4 (Local)" --L3 "$4 (Remote)" -o $4 $1 $2 $3 2>&1)
+  else
+    echo "Diffing with kdiff3"
+    JUNK=$(kdiff3 --auto --L1 "$1 (A)" --L2 "$2 (B)" $1 $2 2>&1)
+  fi
+  if [ "$JUNK" != "${JUNK/cannot connect to X server/}" ]; then
+    # This happens when I kill X because my nvidia driver crashed or other
+    # 'normal' linux events like that.
+    echo "Failed to start kdiff3, fall back to vimdiff"
+    do_vimdiff "$@";
+  fi
+}
+
+if [ ! "$(git config --global --get mergetool.autodiff.cmd)" ]; then
+  echo Setting git config --global merge.tool = autodiff
+  git config --global mergetool.autodiff.cmd "autodiff \$BASE \$LOCAL \$REMOTE \$MERGED"
+  git config --global merge.tool autodiff
+  git config --global difftool.autodiff.cmd "autodiff \$LOCAL \$REMOTE"
+  git config --global diff.tool autodiff
+  echo Done.
+  exit
+fi
+
+update-display-env;
+
+if [ -z "$DISPLAY" ]; then
+  do_vimdiff "$@";
+else
+  do_kdiff3 "$@";
+fi

@@ -1,0 +1,19 @@
+#!/usr/bin/python
+# Copyright 2011 Marc-Antoine Ruel. All Rights Reserved. Use of this
+# source code is governed by a BSD-style license that can be found in the
+# LICENSE file.
+
+from maruel import *
+
+
+def walk(path):
+  files = []
+  for dirpath, dirnames, filenames in os.walk(path):
+    files.extend(os.path.join(dirpath, f) for f in filenames)
+    files.extend(os.path.join(dirpath, d) for d in dirnames)
+  return sorted(files)
+
+for a in sys.argv[1:]:
+  print '\n'.join(walk(a))
+if len (sys.argv) == 1:
+  print '\n'.join(f[2:] for f in walk('.'))
