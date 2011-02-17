@@ -8,6 +8,8 @@
 import os
 import shutil
 import subprocess
+import sys
+
 import maruel
 
 
@@ -63,7 +65,17 @@ def update_config(config_dir, incremental):
 
 def main():
     curpath = os.path.dirname(os.path.abspath(__file__))
-    return not update_config(os.path.join(curpath, 'configs'), False)
+    # Look for ~/bin/bin_pub pattern.
+    if curpath == os.path.join(os.environ['HOME'], 'bin', 'bin_pub'):
+        print('Doing public files')
+        retval = update_config(os.path.join(curpath, 'configs'), False)
+
+        print('Doing private files')
+        retval &= update_config(os.path.join(curpath, '..', 'configs'), True)
+        return not retval
+    else:
+        # Just sync public stuff.
+        return not update_config(os.path.join(curpath, 'configs'), False)
 
 
 if __name__ == '__main__':
