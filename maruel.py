@@ -46,10 +46,10 @@ def read(filename):
         return f.read()
 
 
-def walk(path, whitelist, blacklist=(r'^(.*/|)\.[^/]+/$',)):
+def walk(path, whitelist, blacklist=(r'^(.*/|)\.[^/]+/$',), relative=True):
     """Walks a directory and returns matching files and directories.
 
-    Returned paths are relative to 'path'.
+    Returned paths are relative to 'path' if relative=True.
     Directories have a trailing os.sep to ease regexing.
     """
     whitelist = [re.compile(x) for x in whitelist]
@@ -57,7 +57,11 @@ def walk(path, whitelist, blacklist=(r'^(.*/|)\.[^/]+/$',)):
     blacklist = [re.compile(x) for x in blacklist]
     blacklisted = lambda x: any(r.match(x) for r in blacklist)
     out = []
+    lenpath = len(path)
     for dirpath, dirnames, filenames in os.walk(path):
+        assert dirpath.startswith(path)
+        if relative:
+            dirpath = dirpath[lenpath + 1:]
         for index in xrange(len(dirnames) - 1, -1, -1):
             d = os.path.join(dirpath, dirnames[index]) + os.sep
             if os.altsep:
