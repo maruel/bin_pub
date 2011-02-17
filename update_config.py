@@ -25,7 +25,8 @@ def update_config(config_dir, incremental):
         return False
     home_dir = os.environ['HOME']
     existing = []
-    for basename in maruel.walk(config_dir, [r'.*'], [r'.*README$']):
+    blacklist = [r'.*README$', r'.*\.swp$']
+    for basename in maruel.walk(config_dir, [r'.*'], blacklist):
         src = os.path.join(config_dir, basename)
         dst = os.path.join(home_dir, basename)
         if os.path.isdir(src):
@@ -42,9 +43,9 @@ def update_config(config_dir, incremental):
 
     def check(src, dst):
         if incremental:
-            return maruel.read(dst).startswith(maruel.read(src))
-        else:
             return maruel.read(dst).endswith(maruel.read(src))
+        else:
+            return maruel.read(dst).startswith(maruel.read(src))
 
     ok_files = []
     retval = True
