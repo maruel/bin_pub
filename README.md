@@ -31,7 +31,10 @@ git prior version 1.7.4 must call git submodule manually:
     git init bin
     cd bin
     git submodule add git://github.com/maruel/bin_pub.git bin_pub
-    git submodule update
     cd bin_pub
     git submodule init
     git submodule update
+    cd ..
+    mkdir configs
+    echo "This is private" > configs/my_private_script
+    git commit -a -m "Initial commit into my private repo"
