@@ -27,11 +27,11 @@ Setup steps
 
 git prior version 1.7.4 must call git submodule manually:
 
-> cd ~
-> git init bin
-> cd bin
-> git submodule add git://github.com/maruel/bin_pub.git bin_pub
-> git submodule update
-> cd bin_pub
-> git submodule init
-> git submodule update
+    cd ~
+    git init bin
+    cd bin
+    git submodule add git://github.com/maruel/bin_pub.git bin_pub
+    git submodule update
+    cd bin_pub
+    git submodule init
+    git submodule update
