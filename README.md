@@ -20,3 +20,18 @@ You should use this directory structure:
 Then you can just git pull computer:bin from all your workstations to keep your
 workstations all in sync, and using git submodule to fetch public repositories
 like git-prompt.
+
+
+Setup steps
+===========
+
+git prior version 1.7.4 must call git submodule manually:
+
+> cd ~
+> git init bin
+> cd bin
+> git submodule add git://github.com/maruel/bin_pub.git bin_pub
+> git submodule update
+> cd bin_pub
+> git submodule init
+> git submodule update
