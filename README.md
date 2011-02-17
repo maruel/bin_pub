@@ -10,6 +10,7 @@ FAQ
 ===
 
 You should use this directory structure:
+
 -   ~/bin containing all your private scripts, configuration files and whatnot.
     It can be a git repository but it doesn't needs to be. If it is a git
     checkout, you can use git submodule to fetch bin_pub automatically.
