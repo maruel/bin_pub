@@ -5,6 +5,7 @@
 
 """Updates the config files without destroying anything."""
 
+import optparse
 import os
 import shutil
 import subprocess
@@ -13,7 +14,7 @@ import sys
 import maruel
 
 
-def update_config(config_dir, incremental):
+def update_config(config_dir, incremental, fix):
     """Processes files in config_dir and copy them in the $HOME directory.
 
     If incremental is True, assume the content should be _inside_ the target
@@ -53,9 +54,23 @@ def update_config(config_dir, incremental):
     retval = True
     for basename, src, dst in existing:
         if not check(src, dst):
-            # Diff. Note that diff will return 1 when there's a diff.
-            print('Diffing %s' % basename)
-            subprocess.call(['diff', '-u', src, dst])
+            if fix:
+                if incremental:
+                    prev = ''
+                    print('Appending to %s' % basename)
+                    if os.path.isfile(dst):
+                        prev = maruel.read(dst)
+                    maruel.write(dst, prev + maruel.read(src))
+                else:
+                    # Destructive.
+                    print('Overwritting %s' % basename)
+                    if os.path.isfile(dst):
+                        os.rename(dst, dst + '~')
+                    maruel.write(dst, maruel.read(dst))
+            else:
+                # Diff. Note that diff will return 1 when there's a diff.
+                print('Diffing %s' % basename)
+                subprocess.call(['diff', '-u', src, dst])
             retval = False
         else:
             ok_files.append(basename)
@@ -64,18 +79,32 @@ def update_config(config_dir, incremental):
 
 
 def main():
+    parser = optparse.OptionParser()
+    parser.add_option('-f', '--fix', action='store_true',
+            help='"fix" the files')
+    options, args = parser.parse_args()
+
     curpath = os.path.dirname(os.path.abspath(__file__))
     # Look for ~/bin/bin_pub pattern.
     if curpath == os.path.join(os.environ['HOME'], 'bin', 'bin_pub'):
         print('Doing public files')
-        retval = update_config(os.path.join(curpath, 'configs'), False)
+        retval = update_config(
+                os.path.join(curpath, 'configs'),
+                False,
+                options.fix)
 
         print('Doing private files')
-        retval &= update_config(os.path.join(curpath, '..', 'configs'), True)
+        retval &= update_config(
+                os.path.join(curpath, '..', 'configs'),
+                True,
+                options.fix)
         return not retval
     else:
         # Just sync public stuff.
-        return not update_config(os.path.join(curpath, 'configs'), False)
+        return not update_config(
+                os.path.join(curpath, 'configs'),
+                False,
+                options.fix)
 
 
 if __name__ == '__main__':

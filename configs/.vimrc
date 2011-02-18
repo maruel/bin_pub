@@ -30,6 +30,7 @@ if has("autocmd")
   filetype plugin indent on
 endif " has("autocmd")
 
+filetype plugin on
 
 " makes tabs insert "indents" at the beginning of the line
 set smarttab
