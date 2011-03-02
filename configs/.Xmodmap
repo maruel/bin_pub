@@ -14,7 +14,7 @@ keycode 66 = Escape
 
 ! Set Pause to WinKey. On the Goldtouch travel keyboard, the WinKey is
 ! illplaced.
-keycode 193 = Super_L
+keycode 127 = Super_L
 
 ! Set Control_R to WinKey. Clear and reset Control_L so rerunning
 ! "xmodmap .Xmodmap" two times in a row works.
