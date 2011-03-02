@@ -9,8 +9,12 @@ export P4DIFF=autodiff
 export P4MERGE=automerge
 export P4EDITOR=vim
 export EDITOR=vim
-export LESS=-R
+# Do not enable that by default since it forces the user to press 'q' to quit
+# even if there is not a screenful of data.
+# export LESS=-R
 alias cd..='cd ..'
+# Want color and / or @ at end of directory/symlink.
+alias ls='ls -F --color=tty'
 
 # TODO(maruel): Find a way to not add it if it's already in there!
 export PATH=$HOME/bin:$PATH
