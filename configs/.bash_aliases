@@ -15,6 +15,9 @@ export EDITOR=vim
 alias cd..='cd ..'
 # Want color and / or @ at end of directory/symlink.
 alias ls='ls -F --color=tty'
+# Not on mac and cygwin by default.
+alias ll='ls -la'
+
 
 # TODO(maruel): Find a way to not add it if it's already in there!
 export PATH=$HOME/bin:$PATH
