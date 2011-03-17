@@ -16,7 +16,7 @@ export EDITOR=vim
 # export LESS=-R
 alias cd..='cd ..'
 # Want color and / or @ at end of directory/symlink.
-if [ "$PLATFORM"=="Darwin" ]; then
+if [ "$PLATFORM" = "Darwin" ]; then
     alias ls='ls -F'
     export CLICOLOR=1
 else
@@ -28,7 +28,7 @@ alias ll='ls -la'
 
 # TODO(maruel): Find a way to not add it if it's already in there!
 export PATH=$HOME/bin:$PATH
-if [ ! "$PYTHONPATH"=="" ]; then
+if [ ! "$PYTHONPATH" = "" ]; then
     export PYTHONPATH=$PYTHONPATH:$HOME/bin
 else
     export PYTHONPATH=$HOME/bin
@@ -44,7 +44,7 @@ fi
 # Enable 2 finger scroll.
 if [ $(grep "ROLE=laptop" /etc/lsb-release) ]; then
    # Only for laptop.
-    if [ ! "$DISPLAY"=="" ]; then
+    if [ ! "$DISPLAY" = "" ]; then
         synclient VertTwoFingerScroll=1
         synclient HorizTwoFingerScroll=1
         synclient EmulateTwoFingerMinW=5
@@ -58,7 +58,7 @@ if [ -f ~/bin/bin_pub/git-prompt/git-prompt.sh ]; then
     . ~/bin/bin_pub/git-prompt/git-prompt.sh
 fi
 
-if [ "$PLATFORM"=="Darwin" ]; then
+if [ "$PLATFORM" = "Darwin" ]; then
     # It's not at the same place on MacOSX.
     if [ -f /usr/local/git/contrib/completion/git-completion.bash ]; then
         source /usr/local/git/contrib/completion/git-completion.bash
@@ -89,13 +89,13 @@ function update-display-env() {
     # - Running in a ssh prompt without a display
 
     local WORK_DISPLAY_IDLE_TIME=$(DISPLAY=:0 xprintidle 2>/dev/null)
-    if [ "$WORK_DISPLAY_IDLE_TIME" == "" ]; then
+    if [ "$WORK_DISPLAY_IDLE_TIME" = "" ]; then
         DISPLAY=
     # Check if DISPLAY has been idle for more than 15 minutes.
     elif [ $WORK_DISPLAY_IDLE_TIME -gt 900000 ]; then
         # I just don't understand this sed regexp but it works under NX.
         DISPLAY=$(ps axuwww|sed -n -e '/maruel/s/.* \(:[0-9][0-9]*\)\( .*\|\)$/\1/p')
-        if [ "$DISPLAY" == "" ]; then
+        if [ "$DISPLAY" = "" ]; then
             DISPLAY=
         fi
     else
