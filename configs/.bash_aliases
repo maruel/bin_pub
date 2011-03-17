@@ -40,13 +40,16 @@ if [ -d $HOME/bin/bin_pub ]; then
     export PYTHONPATH=$HOME/bin/bin_pub:$PYTHONPATH
 fi
 
+
 # Enable 2 finger scroll.
-# TODO: only on laptop.
-if [ ! "$DISPLAY"=="" ]; then
-    synclient VertTwoFingerScroll=1
-    synclient HorizTwoFingerScroll=1
-    synclient EmulateTwoFingerMinW=5
-    synclient EmulateTwoFingerMinZ=48
+if [ $(grep "ROLE=laptop" /etc/lsb-release) ]; then
+   # Only for laptop.
+    if [ ! "$DISPLAY"=="" ]; then
+        synclient VertTwoFingerScroll=1
+        synclient HorizTwoFingerScroll=1
+        synclient EmulateTwoFingerMinW=5
+        synclient EmulateTwoFingerMinZ=48
+    fi
 fi
 
 
