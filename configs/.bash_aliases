@@ -2,6 +2,8 @@
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
 
+PLATFORM=$(uname)
+
 export P4CONFIG=.p4config
 #export P4DIFF=vimdiff
 #export P4MERGE=vimmerge
@@ -14,7 +16,12 @@ export EDITOR=vim
 # export LESS=-R
 alias cd..='cd ..'
 # Want color and / or @ at end of directory/symlink.
-alias ls='ls -F --color=tty'
+if [ "$PLATFORM"=="Darwin" ]; then
+    alias ls='ls -F'
+    export CLICOLOR=1
+else
+    alias ls='ls -F --color=tty'
+fi
 # Not on mac and cygwin by default.
 alias ll='ls -la'
 
@@ -48,16 +55,18 @@ if [ -f ~/bin/bin_pub/git-prompt/git-prompt.sh ]; then
     . ~/bin/bin_pub/git-prompt/git-prompt.sh
 fi
 
-# It's not necessary because it's installed by default.
-#if [ -f /etc/bash_completion.d/git ]; then
-#    # Location for ubuntu.
-#    source /etc/bash_completion.d/git
+if [ "$PLATFORM"=="Darwin" ]; then
+    # It's not at the same place on MacOSX.
+    if [ -f /usr/local/git/contrib/completion/git-completion.bash ]; then
+        source /usr/local/git/contrib/completion/git-completion.bash
+    fi
 #else
-#    # It's not at the same place on MacOSX.
-#    if [ -f /usr/local/git/contrib/completion/git-completion.bash ]; then
-#        source /usr/local/git/contrib/completion/git-completion.bash
+#    # It's not necessary because it's installed by default.
+#    if [ -f /etc/bash_completion.d/git ]; then
+#        # Location for ubuntu.
+#        source /etc/bash_completion.d/git
 #    fi
-#fi
+fi
 
 
 # Enhanced ssh-agent.
