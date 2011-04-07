@@ -74,10 +74,20 @@ if [ ! "$(git config --global --get mergetool.autodiff.cmd)" ]; then
   exit
 fi
 
-update-display-env;
+PLATFORM=$(uname)
 
-if [ -z "$DISPLAY" ]; then
+if [ "$PLATFORM" = "Darwin" ]; then
+  # I tried to create a kdiff3 wrapper around kdiff3.app but my MacOSX knowledge
+  # is too limited to get it working correctly; kdiff3 expects fully qualified
+  # names and 'open -n -a "<bundle>" --args "$@"' doesn't wait for the program
+  # to terminate.
   do_vimdiff "$@";
 else
-  do_kdiff3 "$@";
+  update-display-env;
+
+  if [ -z "$DISPLAY" ]; then
+    do_vimdiff "$@";
+  else
+    do_kdiff3 "$@";
+  fi
 fi
