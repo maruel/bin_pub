@@ -8,7 +8,7 @@
 # Ami Fischman is a god.
 function update-display-env() {
   # echo "Please 'sudo apt-get install xprintidle' first"
-  if [ $(which xprintidle) ]; then
+  if [ $(which xprintidle 2>/dev/null) ]; then
     # There is 3 supported scenarios:
     # - Running on local display
     # - Running on remote display (with or without a local display active)
