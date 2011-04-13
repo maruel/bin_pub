@@ -16,7 +16,7 @@
         ignoreall = "!cd \"$(git rev-parse --show-cdup)\" && git clean -n -d | cut -c 14- | sed -e \"s/\\/$//\" >> .git/info/exclude"
 	which = !cat $(git rev-parse --git-dir)/description
 	confused = log --graph --decorate --pretty=format:\"%Cgreen%d %Cred%ar %Creset%s\" --branches
-	upstream = !git rev-parse @{upstream} 2>/dev/null | git rev-parse origin/trunk 2>/dev/null | git rev-parse trunk 2>/dev/null
+	upstream = "!f() { git rev-parse --verify -q $1 >/dev/null 2>&1 && git rev-parse --symbolic-full-name $1 2>/dev/null; }; f @{u} || f origin/trunk || f trunk"
 	ancestor = !git merge-base HEAD $(git upstream)
 	reroll = !git rebase -i $(git ancestor)
 	compact-log = !git log --pretty=format:\"%B\" $(git ancestor)..HEAD
