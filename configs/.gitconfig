@@ -20,7 +20,7 @@
 	ancestor = !git merge-base HEAD $(git upstream)
 	reroll = !git rebase -i $(git ancestor)
 	compact-log = !git log --pretty=format:\"%B\" $(git ancestor)..HEAD
-	squash = "!export __OLD_LOG=$(git compact-log); git reset --soft $(git ancestor) && git commit -m \"$__OLD_LOG\"; export -n __OLG_LOG"
+	squash = "!OLDLOG=$(git compact-log); git reset --soft $(git ancestor) && git commit -m \"$OLDLOG\""
 ;        ignoreall = "ignored >> .git/info/exclude"
 [push]
 	default = matching
