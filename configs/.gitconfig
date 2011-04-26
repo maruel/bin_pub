@@ -21,6 +21,7 @@
 	reroll = !git rebase -i $(git ancestor)
 	compact-log = !git log --pretty=format:\"%B\" $(git ancestor)..HEAD
 	squash = "!OLDLOG=$(git compact-log); git reset --soft $(git ancestor) && git commit -m \"$OLDLOG\""
+	sb = svn blame --git-format
 ;        ignoreall = "ignored >> .git/info/exclude"
 [push]
 	default = matching
