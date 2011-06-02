@@ -37,3 +37,6 @@
 	cmd = autodiff $LOCAL $REMOTE
 [diff]
 	tool = autodiff
+[branch]
+	autosetupmerge = always
+	autosetuprebase = local
