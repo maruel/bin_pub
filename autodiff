@@ -83,11 +83,11 @@ if [ "$PLATFORM" = "Darwin" ]; then
   # to terminate.
   do_vimdiff "$@";
 else
-  update-display-env;
-
-  if [ -z "$DISPLAY" ]; then
+#  update-display-env;
+#
+#  if [ -z "$DISPLAY" ]; then
     do_vimdiff "$@";
-  else
-    do_kdiff3 "$@";
-  fi
+#  else
+#    do_kdiff3 "$@";
+#  fi
 fi
