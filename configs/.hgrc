@@ -1,6 +1,10 @@
 [extensions]
 color =
+mq =
 pager =
+
+[diff]
+git = 1
 
 [pager]
 pager = less -FRSXQ
