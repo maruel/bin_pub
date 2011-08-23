@@ -1,5 +1,11 @@
 [extensions]
 color =
+pager =
+
+[pager]
+pager = less -FRSXQ
+quiet = True
+attend = diff,status,log,qdiff,blame,annotate,pdiff,glog
 
 [merge-tools]
 vimdiff.executable = vim
