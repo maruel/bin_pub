@@ -1,0 +1,11 @@
+[extensions]
+color =
+
+[merge-tools]
+vimdiff.executable = vim
+#vimdiff.args = -d $base $local $output $other +close +close
+vimdiff.args = -d $base $local $output $other -c "wincmd J"
+
+[ui]
+verbose = True
+merge = vimdiff
