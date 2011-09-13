@@ -42,8 +42,9 @@ def fix_inactive_deny(path):
 
   out = []
   for filename in os.listdir(path):
+    if filename.endswith('.orig'):
+      continue
     filepath = os.path.join(path, filename)
-    print 'Doing %s' % filepath
     with open(filepath) as f:
       lines = f.read().splitlines(True)
 
