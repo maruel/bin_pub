@@ -10,11 +10,14 @@ NX sessions are considered 'inactive'.
 
 Example usage:
 cd /usr/share/polkit-1/actions
-~/fix_inactive_policy.py | patch --dry-run
+fix_inactive_policy.py | patch --dry-run
 
 If it succeeds, then you can run:
-~/fix_inactive_policy.py | sudo patch --backup --no-backup-if-mismatch
+fix_inactive_policy.py | sudo patch --backup --no-backup-if-mismatch
 sudo pkill polkitd
+
+You can restore with:
+for i in *.orig; do sudo mv "$i" "${i/.orig}"; done
 """
 
 from __future__ import with_statement
@@ -37,21 +40,30 @@ def fix_inactive_deny(path):
   In theory it'd be better to use xml.etree but there is no way to keep the
   original formatting.
   """
-  inactive = re.compile(r'<allow_inactive>no</allow_inactive>')
-  active = re.compile(r'<allow_active>(.+?)</allow_active>')
-
   out = []
-  for filename in os.listdir(path):
-    if filename.endswith('.orig'):
-      continue
+  filenames = os.listdir(path)
+  if any(f.endswith('.orig') for f in filenames):
+    print >> sys.stderr, "Found backup files, aborting!"
+    return out
+
+  re_active = re.compile(r'<allow_active>(.+?)</allow_active>')
+  for filename in filenames:
     filepath = os.path.join(path, filename)
     with open(filepath) as f:
       lines = f.read().splitlines(True)
 
     original = lines[:]
     for index, line in enumerate(lines):
-      if inactive.search(line):
-        m = active.search(lines[index + 1])
+      if re.search(r'<allow_any>no</allow_any>', line):
+        m = re_active.search(lines[index + 1])
+        if not m:
+          m = re_active.search(lines[index + 2])
+        lines[index] = line.replace(
+            '<allow_any>no</allow_any>',
+            '<allow_any>%s</allow_any>' %
+               m.group(1).encode('ascii', 'xmlcharrefreplace'))
+      elif re.search(r'<allow_inactive>no</allow_inactive>', line):
+        m = re_active.search(lines[index + 1])
         lines[index] = line.replace(
             '<allow_inactive>no</allow_inactive>',
             '<allow_inactive>%s</allow_inactive>' %
