@@ -17,6 +17,7 @@ If it succeeds, then you can run:
 sudo pkill polkitd
 """
 
+from __future__ import with_statement
 import difflib
 import os
 import re
