@@ -1,17 +1,19 @@
 [extensions]
 color =
-graphlog =
-rebase =
 # Superseeded by crecord
 #record =
 # https://bitbucket.org/edgimar/crecord
 crecord = ~/src/crecord/crecord
+graphlog =
 # https://bitbucket.org/durin42/hg-remotebranches
 hg-remotebranches = ~/src/hg-remotebranches/hg_remotebranches.py
 inotify =
 mercurial_keyring =
 mq =
 pager =
+purge =
+rebase =
+transplant =
 
 [diff]
 git = 1
