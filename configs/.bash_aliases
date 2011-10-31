@@ -24,6 +24,11 @@ else
 fi
 # Not on mac and cygwin by default.
 alias ll='ls -la'
+export HISTCONTROL="ignoredups"
+# cygwin specific
+if [ "$OS" = "Windows_NT" ]; then
+    PS1="\[\e]0;\w\a\]\[\e[33m\]\w\[\e[0m\] \$ "
+fi
 
 
 # TODO(maruel): Find a way to not add it if it's already in there!
@@ -42,8 +47,8 @@ fi
 
 
 # Enable 2 finger scroll.
-if [ $(grep "ROLE=laptop" /etc/lsb-release) ]; then
-   # Only for laptop.
+if [ $(grep "ROLE=laptop" /etc/lsb-release 2>/dev/null) ]; then
+    # Only for laptop.
     if [ ! "$DISPLAY" = "" ]; then
         synclient VertTwoFingerScroll=1
         synclient HorizTwoFingerScroll=1
@@ -53,27 +58,30 @@ if [ $(grep "ROLE=laptop" /etc/lsb-release) ]; then
 fi
 
 
-# git-prompt.
-if [ -f ~/bin/bin_pub/git-prompt/git-prompt.sh ]; then
-    . ~/bin/bin_pub/git-prompt/git-prompt.sh
+# git-prompt; it is too slow on cygwin.
+if [ ! "$OS" = "Windows_NT" ]; then
+    if [ -f ~/bin/bin_pub/git-prompt/git-prompt.sh ]; then
+        . ~/bin/bin_pub/git-prompt/git-prompt.sh
+    fi
 fi
+
 
 if [ "$PLATFORM" = "Darwin" ]; then
     # It's not at the same place on MacOSX.
     if [ -f /usr/local/git/contrib/completion/git-completion.bash ]; then
         source /usr/local/git/contrib/completion/git-completion.bash
     fi
-#else
-#    # It's not necessary because it's installed by default.
-#    if [ -f /etc/bash_completion.d/git ]; then
-#        # Location for ubuntu.
-#        source /etc/bash_completion.d/git
-#    fi
+elif [ "$OS" = "Windows_NT" ]; then
+    if [ -f /etc/bash_completion.d/git ]; then
+        # Location for ubuntu and cygwin, but only necessary for cygwin.
+        source /etc/bash_completion.d/git
+    fi
 fi
 
 
 # Enhanced ssh-agent.
 if which keychain &>/dev/null; then
+    # This call costs one second.
     keychain --quiet -Q --inherit any identity
     [[ -f $HOME/.keychain/$HOSTNAME-sh ]] && source $HOME/.keychain/$HOSTNAME-sh
     rm -f $HOME/.keychain/$HOSTNAME-csh
