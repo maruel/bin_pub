@@ -4,25 +4,44 @@
 	autocrlf = false
 	excludesfile = "~/.gitexcludes"
 [alias]
+; Common shortcuts.
 	st = status
 	ci = commit
 	br = branch
         graphviz = "!f() { echo 'digraph git {' ; git log --pretty='format:  %h -> { %p }' \"$@\" | sed 's/[0-9a-f][0-9a-f]*/\"&\"/g' ; echo '}'; }; f"
 	bd = branch -D
 	sr = svn rebase
+        co = checkout
+; Add "git alias"
         alias = "!sh -c '[ $# = 2 ] && git config --global alias.\"$1\" \"$2\" && exit 0 || echo \"usage: git alias <new alias> <original command>\" >&2 && exit 1' -"
-	co = checkout
-	ignored = "!cd \"$(git rev-parse --show-cdup)\" && git clean -n -d | cut -c 14- | sed -e \"s/\\/$//\""
-        ignoreall = "!cd \"$(git rev-parse --show-cdup)\" && git clean -n -d | cut -c 14- | sed -e \"s/\\/$//\" >> .git/info/exclude"
+; Prints untracked files
+	untracked = "!cd \"$(git rev-parse --show-cdup)\" && git clean -n -d | cut -c 14- | sed -e \"s/\\/$//\" | while read i; do echo /$i; done"
+; Add all untracked files to .git/info/exclude
+        ignoreall = "!cd \"$(git rev-parse --show-cdup)\" && git clean -n -d | cut -c 14- | sed -e \"s/\\/$//\" >> $(git rev-parse --git-dir)/info/exclude"
+; Prints the repo's description if it exists.
 	which = !cat $(git rev-parse --git-dir)/description
+; Prints a graph about the current state of the branches
 	confused = log --graph --decorate --pretty=format:\"%Cgreen%d %Cred%ar %Creset%s\" --branches
-	upstream = "!f() { git rev-parse --verify -q $1 >/dev/null 2>&1 && git rev-parse --symbolic-full-name $1 2>/dev/null; }; f @{u} || f origin/trunk || f trunk"
-	ancestor = !git merge-base HEAD $(git upstream)
+; Returns the upstream branch, using some lame git-svn heuristics if it's not set
+; correctly. TODO: Default to <first remote found>/master ?
+        upstream = "!f() { git rev-parse --verify -q $1 >/dev/null 2>&1 && git rev-parse --symbolic-full-name $1 2>/dev/null; }; f @{u} || f origin/trunk || f trunk"
+; Returns the 'ancestor' hash at which the current branch is based on
+        ancestor = !git merge-base HEAD $(git upstream)
+; Rebase against the ancestor
 	reroll = !git rebase -i $(git ancestor)
-	compact-log = !git log --pretty=format:\"%B\" $(git ancestor)..HEAD
-	squash = "!OLDLOG=$(git compact-log); git reset --soft $(git ancestor) && git commit -m \"$OLDLOG\""
-	sb = svn blame --git-format
-;        ignoreall = "ignored >> .git/info/exclude"
+; Smaller log against the ancestor
+        compact-log = !git log --pretty=format:\"%B\" $(git ancestor)..HEAD
+; Squash all the commits against the ancestor into a single commit
+        squash = "!OLDLOG=$(git compact-log); git reset --soft $(git ancestor) && git commit -m \"$OLDLOG\""
+; Blames against svn upstream. It's annoying that --date=short doesn't work
+; here.
+        sb = svn blame --git-format
+; Blames against the 'upstream' branch
+        blameup = "!foo() { git diff --name-only $(git ancestor) | while read i; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr; }; foo"
+; Blames against a branch given as an argument
+        blamebranch = "!foo() { git diff --name-only \"$@\" | while read i; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr; }; foo"
+; Blames a for a few files. The length of arguments is relatively limited
+        blamefiles = "!foo() { for i in \"$@\"; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr; }; foo"
 [push]
 	default = matching
 [mergetool "autodiff"]
