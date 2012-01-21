@@ -2,6 +2,12 @@
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 
+" For golang plugins.
+set rtp+=~/src/golang/src/misc/vim
+
+" Enable file type detection.
+filetype plugin indent on
+
 if &diff
   syntax off
   " if you would like to make tabs and trailing spaces visible without syntax
@@ -21,16 +27,6 @@ else
   end
 end
 
-" Only do this part when compiled with support for autocommands.
-if has("autocmd")
-  " Enable file type detection.
-  " Use the default filetype settings, so that mail gets 'tw' set to 72,
-  " 'cindent' is on in C files, etc.
-  " Also load indent files, to automatically do language-dependent indenting.
-  filetype plugin indent on
-endif " has("autocmd")
-
-filetype plugin on
 
 " makes tabs insert "indents" at the beginning of the line
 set smarttab
@@ -210,18 +206,70 @@ if has("cscope")
 endif
 
 
-"
-" NERDTree configuration
-"
-
-" Increase window size to 35 columns
-let NERDTreeWinSize=35
-
-" map <F7> to toggle NERDTree window
-nmap <silent> <F7> :NERDTreeToggle<CR>
-
-let Tlist_GainFocus_On_ToggleOpen = 1
-
 
 " MARUEL
 set ttymouse=xterm2
+
+" map <F7> to toggle Fmt
+nmap <silent> <F7> :Fmt<CR>
+
+" https://groups.google.com/a/google.com/group/vi-users/browse_thread/thread/294a4f1dc029a876
+" Python plugin that shows current context
+python << EOF
+import vim
+
+def _CountIdent(line):
+  i = 0
+  while i < len(line) and line[i].isspace():
+    # TODO(leviathan): maybe treat tabs and spaces differently?
+    i += 1
+  return i
+
+#TODO(leviathan): Properly get value from vim.
+_current_cmdheight = 1
+_needed_cmdheight = 1
+_context = []
+
+def _ShowContext():
+  global _current_cmdheight, _needed_cmdheight, _context
+  cur_line = vim.current.window.cursor[0] - 1
+  # skip empty lines
+  while cur_line > 0 and vim.current.buffer[cur_line].strip() == '':
+    cur_line -= 1
+  ident = _CountIdent(vim.current.buffer[cur_line])
+  _context = []
+  for line_num in xrange(cur_line - 1, -1, -1):
+    line = vim.current.buffer[line_num]
+    if len(line.strip()) == 0:
+      continue
+    new_ident = _CountIdent(line)
+    if new_ident < ident:
+      _context.append(line.rstrip().replace('\\','\\\\').replace('"', '\\"'))
+      ident = new_ident
+      if ident == 0:
+        break
+  _needed_cmdheight = len(_context) + 1
+  if _needed_cmdheight > _current_cmdheight:
+    _current_cmdheight = _needed_cmdheight
+  _ResizeCmdAndPrint(_current_cmdheight)
+
+def _ResizeCmdAndPrint(height):
+  global _current_cmdheight
+  _current_cmdheight = height
+  vim.command('set cmdheight=%d' % height)
+  # redraw the context after resize.
+  vim.command('echo "%s"' % '\\n'.join(reversed(_context)))
+
+def RegisterShowContext():
+  vim.command('autocmd show_context CursorMoved,CursorMovedI * :python _ShowContext()')
+  vim.command('autocmd show_context CursorHold,CursorHoldI * ' +
+    ':python _ResizeCmdAndPrint(_needed_cmdheight)')
+
+def UnregisterShowContext():
+  vim.command('set cmdheight=1')
+  vim.command('autocmd! show_context')
+EOF
+
+augroup show_context
+map & :python RegisterShowContext()<CR>
+map && :python UnregisterShowContext()<CR>
