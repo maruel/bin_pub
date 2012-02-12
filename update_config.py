@@ -27,7 +27,7 @@ def update_config(files, diff_cmd):
             os.makedirs(dst_dir)
         if not os.path.isfile(dst):
             print('Copying %s' % basename)
-            maruel.write(content, dst)
+            maruel.write(dst, content)
             ok_files.append(basename)
         else:
             if maruel.read(dst) != content:
