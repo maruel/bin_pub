@@ -3,7 +3,7 @@
 set nocompatible
 
 " For golang plugins.
-set rtp+=~/src/golang/src/misc/vim
+set rtp+=~/src/golang/misc/vim
 
 " Enable file type detection.
 filetype plugin indent on
@@ -44,6 +44,10 @@ set modeline
 set smartcase
 " Too bad this isn't updated when textwidth is changed.
 let w:m1=matchadd('ErrorMsg', '\%>'.&textwidth.'v.\+', -1)
+
+" Use automatic folding but unfolded by default.
+set foldmethod=indent
+set foldlevel=99
 
 
 "
@@ -177,6 +181,14 @@ nnoremap <Esc>p  p'[v']=
 " visual shifting (does not exit Visual mode)
 vnoremap < <gv
 vnoremap > >gv
+
+" Toggle fold with space in normal mode or F9 all the time. Ctrl-space opens all
+" inner folds
+nnoremap <space> za
+noremap <F9> za
+noremap <F8> zO
+" Doesn't work: imap <Nul> zO
+"
 
 " Abbreviations
 ab #i #include
