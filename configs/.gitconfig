@@ -61,3 +61,5 @@
 [branch]
 	autosetupmerge = always
 	autosetuprebase = local
+[mergetool]
+	prompt = false
