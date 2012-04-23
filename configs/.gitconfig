@@ -49,7 +49,7 @@
 [mergetool "autodiff"]
 	cmd = autodiff $BASE $LOCAL $REMOTE $MERGED
 [merge]
-	tool = autodiff
+	tool = vimdiffnice
 [gui]
 	pruneduringfetch = true
 [receive]
@@ -63,3 +63,5 @@
 	autosetuprebase = local
 [mergetool]
 	prompt = false
+[mergetool "vimdiffnice"]
+	cmd = vimdiff -c \"wincmd J\" -c \"0\" $MERGED $LOCAL $BASE $REMOTE
