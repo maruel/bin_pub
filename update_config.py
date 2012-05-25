@@ -14,10 +14,12 @@ import tempfile
 
 import maruel
 
+BIN_PUB_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 def update_config(files, diff_cmd):
     """Processes files in files and copy them in the $HOME directory."""
-    home_dir = os.environ['HOME']
+    home_dir = os.environ.get('HOME') or os.path.dirname(os.path.dirname(BIN_PUB_DIR))
     to_diff = []
     ok_files = []
     for basename, content in files.iteritems():
@@ -57,15 +59,16 @@ def load_files(config_dir, files):
 def main():
     parser = optparse.OptionParser()
     options, args = parser.parse_args()
+    if args:
+      parser.error('Unsupported args %s' % args)
 
-    curpath = os.path.dirname(os.path.abspath(__file__))
-    # Look for ~/bin/bin_pub pattern.
     files = {}
-    if curpath == os.path.join(os.environ['HOME'], 'bin', 'bin_pub'):
-        load_files(os.path.join(curpath, 'configs'), files)
-        load_files(os.path.join(curpath, '..', 'configs'), files)
-    else:
-        load_files(os.path.join(curpath, 'configs'), files)
+    load_files(os.path.join(BIN_PUB_DIR, 'configs'), files)
+
+    # Look for ~/bin/bin_pub pattern.
+    if os.path.basename(os.path.dirname(BIN_PUB_DIR)) == 'bin':
+      load_files(os.path.join(BIN_PUB_DIR, '..', 'configs'), files)
+
     #update_config(files, ['diff', '-u'])
     update_config(files, ['vimdiff'])
 
