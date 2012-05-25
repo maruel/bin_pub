@@ -1,0 +1,3 @@
+Setting PATH:
+<SRC> be the path to scripts, then:
+PATH=<SRC>\bin\bin_pub\win;<SRC>\bin\bin_pub\git_utils;%PATH%;<SRC>\b\depot_tools
