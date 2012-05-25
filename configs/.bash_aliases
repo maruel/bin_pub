@@ -41,7 +41,7 @@ fi
 
 # The private copy will fetch the public one as bin/bin_pub
 if [ -d $HOME/bin/bin_pub ]; then
-    export PATH=$HOME/bin/bin_pub:$PATH
+    export PATH=$HOME/bin/bin_pub/git_utils:$HOME/bin/bin_pub:$PATH
     export PYTHONPATH=$HOME/bin/bin_pub:$PYTHONPATH
 fi
 
