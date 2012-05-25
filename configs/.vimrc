@@ -48,6 +48,9 @@ let w:m1=matchadd('ErrorMsg', '\%>'.&textwidth.'v.\+', -1)
 " Use automatic folding but unfolded by default.
 set foldmethod=indent
 set foldlevel=99
+" Automatic fold save and restore
+au BufWinLeave * mkview
+au BufWinEnter * silent loadview
 
 
 "

@@ -123,3 +123,5 @@ caption always "%{= kw}%-w%{= bw}%n %t%{-}%+w %-= %c"
 bindkey -k F1 eval prev fit
 bindkey -k F2 eval next fit
 
+bind 'p' eval prev fit
+bind 'n' eval next fit
