@@ -15,6 +15,9 @@ purge =
 rebase =
 transplant =
 
+[alias]
+fgrep = !hg locate -0 '$2' $3 $4 $5 $6 $7 $8 $9 | xargs -0 fgrep -H '$1'
+
 [diff]
 git = 1
 
@@ -25,8 +28,11 @@ attend = diff,status,log,qdiff,blame,annotate,pdiff,glog
 
 [merge-tools]
 vimdiff.executable = vim
+#autodiff.executable = autodiff
+#autodiff.args = $base $local $other $output
 #vimdiff.args = -d $base $local $output $other +close +close
-vimdiff.args = -d $base $local $output $other -c "wincmd J"
+#vimdiff.args = -d $base $local $output $other -c "wincmd J"
 
 [ui]
+#merge = autodiff
 merge = vimdiff
