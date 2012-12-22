@@ -3,7 +3,10 @@
 # Copyright 2011 Marc-Antoine Ruel. All Rights Reserved. Use of this
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
-"""rsync wrapper."""
+"""rsync wrapper with saner defaults.
+
+You specific the local and remote directories and it will copy them properly.
+"""
 
 import optparse
 import subprocess
@@ -72,11 +75,15 @@ def rsync(
     cmd += ['--bwlimit=%s' % bandwidth]
 
   cmd += [src, dst]
+  if not options.quiet:
+    print(' '.join(cmd))
   return subprocess.call(cmd)
 
 
 def main():
-  parser = optparse.OptionParser(usage='%prog [src] [dst]')
+  parser = optparse.OptionParser(
+      usage='%prog [src] [dst]',
+      description=sys.modules[__name__].__doc__)
   parser.add_option('-q', '--quiet', action='store_true')
   parser.add_option(
       '-d', '--delete', action='store_true',
