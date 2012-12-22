@@ -35,15 +35,16 @@ def rsync(
   cmd = [
     'rsync',
     '--verbose',
-    '--stats',
     '--rsh=/usr/bin/ssh',
     '--recursive',
     # Sync time
     '--times',
-    # Don't keep empty dirs
-    '--prune-empty-dirs',
     # Don't copy perms
     '--no-perms',
+    # Stats.
+    '--stats',
+    # Nice stats.
+    '--human-readable',
   ]
   if delete:
     cmd.extend(
@@ -54,6 +55,10 @@ def rsync(
         '--backup',
         # Existing excluded files will be deleted
         '--delete-excluded',
+        # Don't keep empty dirs. When it's not provided, this permits
+        # incremental file list instead of having to parse it upfront in the
+        # src.
+        '--prune-empty-dirs',
       ])
 
   for exclusion in excludes:
@@ -75,7 +80,7 @@ def rsync(
     cmd += ['--bwlimit=%s' % bandwidth]
 
   cmd += [src, dst]
-  if not options.quiet:
+  if not quiet:
     print(' '.join(cmd))
   return subprocess.call(cmd)
 
