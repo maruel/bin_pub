@@ -9,8 +9,37 @@ You specific the local and remote directories and it will copy them properly.
 """
 
 import optparse
+import string
 import subprocess
 import sys
+
+
+def bash_escape(arg):
+  """Escapes each character individually."""
+  out = []
+  allowed = string.digits + string.ascii_letters
+  for i in arg:
+    if i in allowed:
+      out.append(i)
+    else:
+      # Escape anything else. Note this includes all UTF-8 characters and '/'
+      # but "this works".
+      out.append('\\' + i)
+  return ''.join(out)
+
+
+def quote_subpath(path):
+  """Returns a shell quoted path with the host part double quoted.
+
+  This works around a problem with rsync.
+  """
+  if ':' in path:
+    host, path = path.split(':', 1)
+    # We can't use pipe.quote() here because rsync is splitting the host from
+    # the path and then improperly passing the value unquoted to the remote
+    # shell.
+    path = host + ':' + bash_escape(path)
+  return path
 
 
 def rsync(
@@ -32,6 +61,9 @@ def rsync(
   #  additional directory level at the destination."
   src = src.rstrip('/') + '/'
   dst = dst.rstrip('/')
+  # It's tricky, the part _after_ the ssh host must be double quoted.
+  src = quote_subpath(src)
+  dst = quote_subpath(dst)
   cmd = [
     'rsync',
     '--verbose',
