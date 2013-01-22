@@ -5,6 +5,7 @@
 
 """Updates the config files without destroying anything."""
 
+import difflib
 import optparse
 import os
 import shutil
@@ -15,6 +16,41 @@ import tempfile
 import maruel
 
 BIN_PUB_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+def diff(diff_cmd, dst, basename, content):
+    """Diffs the destination file with the content it should be."""
+    old_size = 0
+    if os.path.isfile(dst):
+        old_size = os.stat(dst).st_size
+    print(
+        'Diffing %-16s  new: %5d bytes  current: %5d bytes' % (
+            basename, len(content), old_size))
+    handle, name = tempfile.mkstemp()
+    try:
+        try:
+            os.write(handle, content)
+        finally:
+            os.close(handle)
+        result = subprocess.call(
+            diff_cmd + [name, dst], shell=sys.platform=='win32')
+        if result:
+            return result
+        # Look if the source content changed.
+        actual_content = maruel.read(name)
+        if actual_content != content:
+            # The user modified the source. For now just quit early.
+            print('You modified the source')
+            for i in difflib.unified_diff(
+                    content.splitlines(True),
+                    actual_content.splitlines(True),
+                    fromfile=basename,
+                    tofile=basename):
+                sys.stdout.write(i)
+            return 1
+    finally:
+        os.remove(name)
+    return 0
 
 
 def update_config(files, diff_cmd):
@@ -39,30 +75,20 @@ def update_config(files, diff_cmd):
                 ok_files.append(basename)
 
     for basename in to_diff:
-        # Diff. Note that diff will return 1 when there's a diff.
-        dst = os.path.join(home_dir, basename)
-        content = files[basename]
-        old_size = 0
-        if os.path.isfile(dst):
-            old_size = os.stat(dst).st_size
-        print(
-            'Diffing %-16s  new: %5d bytes  current: %5d bytes' % (
-                basename, len(content), old_size))
-        handle, name = tempfile.mkstemp()
-        try:
-            try:
-                os.write(handle, content)
-            finally:
-                os.close(handle)
-            subprocess.call(diff_cmd + [name, dst], shell=sys.platform=='win32')
-        finally:
-            os.remove(name)
+        result = diff(
+            diff_cmd, os.path.join(home_dir, basename), basename, files[basename])
+        if result:
+            return result
     print('The following files are ok:')
     for f in ok_files:
       print('  ' + f)
 
 
 def load_files(config_dir, files):
+    """Loads all the files content into dictionnary |files|.
+
+    Appends the content if an entry is already present.
+    """
     blacklist = [r'.*README$', r'.*\.swp$']
     for basename in maruel.walk(config_dir, [r'.*'], blacklist):
         src = os.path.join(config_dir, basename)
@@ -88,7 +114,7 @@ def main():
     cmd = ['vim', '-d']
     if options.u:
         cmd = ['diff', '-u']
-    update_config(files, cmd)
+    return update_config(files, cmd)
 
 
 if __name__ == '__main__':

@@ -84,6 +84,7 @@ if which keychain &>/dev/null; then
     # This call costs one second.
     keychain --quiet -Q --inherit any identity
     [[ -f $HOME/.keychain/$HOSTNAME-sh ]] && source $HOME/.keychain/$HOSTNAME-sh
+    [[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]] && source $HOME/.keychain/$HOSTNAME-sh-gpg
     rm -f $HOME/.keychain/$HOSTNAME-csh
     rm -f $HOME/.keychain/$HOSTNAME-fish
 fi

@@ -5,5 +5,6 @@ setlocal textwidth=0
 setlocal noexpandtab
 set listchars=
 set nolist
+autocmd BufWritePre *.go :silent Fmt
 
 "let w:m2=matchdelete(w:m1)

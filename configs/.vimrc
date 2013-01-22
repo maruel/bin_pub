@@ -7,6 +7,7 @@ set rtp+=~/src/golang/misc/vim
 
 " Enable file type detection.
 filetype plugin indent on
+filetype plugin on
 
 if &diff
   syntax off

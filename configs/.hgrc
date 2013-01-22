@@ -3,12 +3,12 @@ color =
 # Superseeded by crecord
 #record =
 # https://bitbucket.org/edgimar/crecord
-crecord = ~/src/crecord/crecord
+#crecord = ~/src/crecord/crecord
 graphlog =
 # https://bitbucket.org/durin42/hg-remotebranches
-hg-remotebranches = ~/src/hg-remotebranches/hg_remotebranches.py
+#hg-remotebranches = ~/src/hg-remotebranches/hg_remotebranches.py
 inotify =
-mercurial_keyring =
+#mercurial_keyring =
 mq =
 pager =
 purge =
@@ -27,7 +27,7 @@ quiet = True
 attend = diff,status,log,qdiff,blame,annotate,pdiff,glog
 
 [merge-tools]
-vimdiff.executable = vim
+#vimdiff.executable = vim
 #autodiff.executable = autodiff
 #autodiff.args = $base $local $other $output
 #vimdiff.args = -d $base $local $output $other +close +close
@@ -35,4 +35,4 @@ vimdiff.executable = vim
 
 [ui]
 #merge = autodiff
-merge = vimdiff
+#merge = vimdiff
