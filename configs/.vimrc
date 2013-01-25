@@ -50,8 +50,9 @@ let w:m1=matchadd('ErrorMsg', '\%>'.&textwidth.'v.\+', -1)
 set foldmethod=indent
 set foldlevel=99
 " Automatic fold save and restore
-au BufWinLeave * mkview
-au BufWinEnter * silent loadview
+" In general, it's not worth the trade-off sadly.
+"au BufWinLeave * mkview
+"au BufWinEnter * silent loadview
 
 
 "
@@ -90,7 +91,7 @@ set hlsearch
 " Enable CTRL-A/CTRL-X to work on octal and hex numbers, as well as characters
 set nrformats=octal,hex,alpha
 
-" Use F10 to toggle 'paste' mode
+" Use F4 to toggle 'paste' mode
 set pastetoggle=<F4>
 
 " Show line, column number, and relative position within a file in the status line
@@ -192,7 +193,7 @@ nnoremap <space> za
 noremap <F9> za
 noremap <F8> zO
 " Doesn't work: imap <Nul> zO
-"
+
 
 " Abbreviations
 ab #i #include
