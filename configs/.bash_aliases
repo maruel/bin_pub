@@ -45,6 +45,9 @@ if [ -d $HOME/bin/bin_pub ]; then
     export PYTHONPATH=$HOME/bin/bin_pub:$PYTHONPATH
 fi
 
+if [ -e /usr/share/autojump/autojump.sh ]; then
+  source /usr/share/autojump/autojump.sh
+fi
 
 # Enable 2 finger scroll.
 if [ $(grep "ROLE=laptop" /etc/lsb-release 2>/dev/null) ]; then
