@@ -1,2 +1,5 @@
 OSX won't load .bash_aliases by default, unlike cygwin or Ubuntu's default
-.bashrc because no .bashrc is provided by default.
+.bashrc because no .bashrc/.profile is provided by default.
+
+- .profile is needed when opening a new terminal.
+- .bashrc is needed when creating a terminal in screen (non-login session).
