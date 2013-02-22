@@ -1,0 +1,2 @@
+OSX won't load .bash_aliases by default, unlike cygwin or Ubuntu's default
+.bashrc because no .bashrc is provided by default.
