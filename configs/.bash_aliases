@@ -73,6 +73,9 @@ if [ "$PLATFORM" = "Darwin" ]; then
     # It's not at the same place on MacOSX.
     if [ -f /usr/local/git/contrib/completion/git-completion.bash ]; then
         source /usr/local/git/contrib/completion/git-completion.bash
+    elif [ -f /usr/local/git/current/share/git-core/git-completion.bash ]; then
+        # It moved with 1.8?
+        source /usr/local/git/current/share/git-core/git-completion.bash
     fi
 elif [ "$OS" = "Windows_NT" ]; then
     if [ -f /etc/bash_completion.d/git ]; then
