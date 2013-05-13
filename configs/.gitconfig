@@ -3,6 +3,7 @@
 [core]
 	autocrlf = false
 	excludesfile = "~/.gitexcludes"
+	deltaBaseCacheLimit = 1G
 [alias]
 ; Common shortcuts.
 	st = status --ignore-submodule=all
