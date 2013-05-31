@@ -80,6 +80,9 @@ if [ "$PLATFORM" = "Darwin" ]; then
     elif [ -f /usr/local/git/current/share/git-core/git-completion.bash ]; then
         # It moved with 1.8?
         source /usr/local/git/current/share/git-core/git-completion.bash
+    elif [ -f /usr/share/git-core/git-completion.bash ]; then
+        # OSX with XCode's version
+        source /usr/share/git-core/git-completion.bash
     fi
 elif [ "$OS" = "Windows_NT" ]; then
     if [ -f /etc/bash_completion.d/git ]; then
