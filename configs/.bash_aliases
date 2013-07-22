@@ -4,6 +4,10 @@
 
 PLATFORM=$(uname)
 
+# Write .bash_history on each new line.
+PROMPT_COMMAND="history -a;"
+
+# <3 perforce.
 export P4CONFIG=.p4config
 #export P4DIFF=vimdiff
 #export P4MERGE=vimmerge
