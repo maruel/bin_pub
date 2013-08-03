@@ -19,6 +19,7 @@ export EDITOR=vim
 # even if there is not a screenful of data.
 # export LESS=-R
 alias cd..='cd ..'
+alias s='screen -x '
 # Want color and / or @ at end of directory/symlink.
 if [ "$PLATFORM" = "Darwin" ]; then
     alias ls='ls -F'
