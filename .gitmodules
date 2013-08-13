@@ -4,3 +4,6 @@
 [submodule "git_utils"]
 	path = git_utils
 	url = git://github.com/maruel/git_utils.git
+[submodule "keychain"]
+	path = keychain
+	url = git@github.com:maruel/keychain.py.git

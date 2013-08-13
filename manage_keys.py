@@ -3,10 +3,10 @@
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
 
-"""Prints all the passwords in gnome keyring. Can optionally remove items.
+"""Prints all the passwords in gnome keyring or OSX keychain.
 
-It is useful to catch unsalted unhashed keys. The keys are salted on the
-hostname so the keys won't match if the FQDN changes.
+Can optionally remove items. It is useful to catch unsalted unhashed keys. The
+keys are salted on the hostname so the keys won't match if the FQDN changes.
 """
 
 import datetime
@@ -19,6 +19,9 @@ import socket
 import sys
 import time
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, BASE_DIR)
+
 try:
     import gnomekeyring
 except ImportError:
@@ -27,11 +30,16 @@ try:
     import keyring
 except ImportError:
     keyring = None
+try:
+    sys.path.insert(0, os.path.join(BASE_DIR, 'keychain'))
+    import keychain
+except ImportError:
+    keychain = None
 
 import natsort
 
 
-def unlock_keyring():
+def gnomekeyring_unlock():
     """Tries to unlock the gnome keyring. Returns True on success."""
     try:
         gnomekeyring.unlock_sync(
@@ -64,11 +72,9 @@ class GnomeKeyringItem(object):
         return self._str
 
 
-def get_all_gnomekeyring_entries():
+def gnomekeyring_get_all_entries():
     """Returns a dict of all keyring containers with a list of all their
     entries.
-
-    Entries are sorted by timestamp.
     """
     out = {}
     tried_to_unlock = False
@@ -82,7 +88,7 @@ def get_all_gnomekeyring_entries():
                 logging.info('%s', e)
                 if not tried_to_unlock:
                     tried_to_unlock = True
-                    if unlock_keyring():
+                    if gnomekeyring_unlock():
                         # Try again.
                         try:
                             item = gnomekeyring.item_get_info_sync(c, i)
@@ -96,18 +102,7 @@ def get_all_gnomekeyring_entries():
     return out
 
 
-def print_all(all_entries):
-    """Prints all the keyring entries."""
-    for container in sorted(all_entries):
-        items = all_entries[container]
-        if not items:
-            print('[%s]:\n  --empty--' % container)
-            continue
-        print('[%s]:' % container)
-        print('\n'.join('  %s' % i for i in items))
-
-
-def retrieve_password(bucket, key):
+def gnomekeyring_retrieve_password(bucket, key):
     """Returns the password for the corresponding key.
 
     Tries to use keyring if available, and unlock it if possible. Falls back to
@@ -130,7 +125,7 @@ def retrieve_password(bucket, key):
             return 0
     except Exception as e:
         print >> sys.stderr, 'Failed to get password from keyring: %s' % e
-        if unlock_keyring():
+        if gnomekeyring_unlock():
             # Unlocking worked, try getting the password again.
             try:
                 value = keyring.get_password(bucket, actual_key)
@@ -152,7 +147,7 @@ def retrieve_password(bucket, key):
         return 1
 
 
-def delete_secrets(items):
+def gnomekeyring_delete_secrets(items):
     tried_to_unlock = False
     ret = 0
     for container, itemid in items:
@@ -163,7 +158,7 @@ def delete_secrets(items):
             logging.info('%s', e)
             if not tried_to_unlock:
                 tried_to_unlock = True
-                if unlock_keyring():
+                if gnomekeyring_unlock():
                     # Try again.
                     try:
                         gnomekeyring.item_delete_sync(container, itemid)
@@ -173,6 +168,32 @@ def delete_secrets(items):
             print >> sys.stderr, 'Failed to delete %s #%d' % (container, itemid)
             ret = 1
     return ret
+
+
+def keychain_get_entries(keymaster, k):
+    return natsort.natsorted(
+        '; '.join('%s=%s' % (i, j) for i, j in a.iteritems())
+        for a in keymaster.list_keychain_accounts(k))
+
+
+def keychain_get_all_entries(keymaster):
+    """Returns a dict of all keyring containers with a list of all their
+    entries.
+    """
+    return dict(
+        (k, keychain_get_entries(keymaster, k))
+        for k in keymaster.list_keychains())
+
+
+def print_all(all_entries):
+    """Prints all the keyring entries."""
+    for container in sorted(all_entries):
+        items = all_entries[container]
+        if not items:
+            print('[%s]:\n  --empty--' % container)
+            continue
+        print('[%s]:' % container)
+        print('\n'.join('  %s' % i for i in items))
 
 
 def main():
@@ -193,6 +214,9 @@ def main():
     parser.add_option(
             '-g', '--get', metavar='KEY',
             help='Retrieves (or set if unset) a password for the specified key')
+    parser.add_option(
+            '-c', '--container', metavar='NAME',
+            help='Only acts on one container|keychain')
     options, args = parser.parse_args()
     logging.basicConfig(
             level=levels[min(options.verbose, len(levels) - 1)],
@@ -204,25 +228,44 @@ def main():
     if options.rm and options.get:
         parser.error('Use one of --rm or --get, not both')
 
-    if not os.environ.get('DISPLAY') or not gnomekeyring:
-        parser.error(
-                'Make sure to be inside an X session. Starting your '
-                'screen/tmux session under X and then using \'screen -x\' back '
-                'to it through ssh will work just fine.')
 
-    # Sets up app name.
-    import pygtk
-    pygtk.require('2.0')
-    import gtk  # pylint: disable=W0612
+    if gnomekeyring:
+        if not os.environ.get('DISPLAY'):
+            parser.error(
+                    'Make sure to be inside an X session. Starting your '
+                    'screen/tmux session under X and then using \'screen -x\' '
+                    'back to it through ssh will work just fine.')
+        # Sets up app name.
+        import pygtk
+        pygtk.require('2.0')
+        import gtk  # pylint: disable=W0612
 
-    if options.rm:
-        return delete_secrets(options.rm)
+        if options.rm:
+            return gnomekeyring_delete_secrets(options.rm)
 
-    if options.get:
-        bucket = 'manage_gnomekeyring_%s' % socket.getfqdn()
-        return retrieve_password(bucket, options.get)
+        if options.get:
+            bucket = 'manage_gnomekeyring_%s' % socket.getfqdn()
+            return gnomekeyring_retrieve_password(bucket, options.get)
 
-    all_entries = get_all_gnomekeyring_entries()
+        all_entries = gnomekeyring_get_all_entries()
+
+    elif keychain:
+        if options.get:
+            parser.error('--get is still not implemented.')
+        if options.rm:
+            parser.error('--rm is still not implemented.')
+
+        keymaster = keychain.Keychain()
+        if options.container:
+            all_entries = {
+                options.container: keychain_get_entries(
+                  keymaster, options.container),
+            }
+        else:
+            all_entries = keychain_get_all_entries(keymaster)
+    else:
+        parser.error('Failed to load anything meaningful')
+
     print_all(all_entries)
     return 0
 
