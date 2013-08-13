@@ -5,14 +5,17 @@
 
 """Prints all the passwords in gnome keyring. Can optionally remove items.
 
-It is useful to catch unsalted unhashed keys.
+It is useful to catch unsalted unhashed keys. The keys are salted on the
+hostname so the keys won't match if the FQDN changes.
 """
 
 import datetime
 import getpass
+import hashlib
 import logging
 import optparse
 import os
+import socket
 import sys
 import time
 
@@ -20,6 +23,10 @@ try:
     import gnomekeyring
 except ImportError:
     gnomekeyring = None
+try:
+    import keyring
+except ImportError:
+    keyring = None
 
 import natsort
 
@@ -90,6 +97,7 @@ def get_all_gnomekeyring_entries():
 
 
 def print_all(all_entries):
+    """Prints all the keyring entries."""
     for container in sorted(all_entries):
         items = all_entries[container]
         if not items:
@@ -97,6 +105,74 @@ def print_all(all_entries):
             continue
         print('[%s]:' % container)
         print('\n'.join('  %s' % i for i in items))
+
+
+def retrieve_password(bucket, key):
+    """Returns the password for the corresponding key.
+
+    Tries to use keyring if available, and unlock it if possible. Falls back to
+    ask the user for the password but tries to store the password back in
+    keyring if available.
+
+    The key is salted and hashed so the direct mapping between an email address
+    and its password is not stored directly in the keyring.
+    """
+    # Create a salt out of the bucket name.
+    salt = hashlib.sha512('1234' + bucket + '1234').digest()
+    # Create a salted hash from the key.
+    actual_key = hashlib.sha512(salt + key).hexdigest()
+
+    try:
+        logging.info('Getting password for key %s (%s)', key, actual_key)
+        value = keyring.get_password(bucket, actual_key)
+        if value is not None:
+            print value
+            return 0
+    except Exception as e:
+        print >> sys.stderr, 'Failed to get password from keyring: %s' % e
+        if unlock_keyring():
+            # Unlocking worked, try getting the password again.
+            try:
+                value = keyring.get_password(bucket, actual_key)
+                if value is not None:
+                    print value
+                    return 0
+            except Exception as e:
+                print >> sys.stderr, 'Failed to get password from keyring: %s' % e
+
+    # At this point, it failed to get the password from keyring. Ask the user.
+    value = getpass.getpass('Please enter the password: ')
+
+    try:
+        logging.info('Saving password for key %s (%s)', key, actual_key)
+        keyring.set_password(bucket, actual_key, value)
+        return 0
+    except Exception as e:
+        print >> sys.stderr, 'Failed to save in keyring: %s' % e
+        return 1
+
+
+def delete_secrets(items):
+    tried_to_unlock = False
+    ret = 0
+    for container, itemid in items:
+        itemid = int(itemid)
+        try:
+            gnomekeyring.item_delete_sync(container, itemid)
+        except gnomekeyring.IOError as e:
+            logging.info('%s', e)
+            if not tried_to_unlock:
+                tried_to_unlock = True
+                if unlock_keyring():
+                    # Try again.
+                    try:
+                        gnomekeyring.item_delete_sync(container, itemid)
+                        continue
+                    except gnomekeyring.IOError as e:
+                        logging.info('%s', e)
+            print >> sys.stderr, 'Failed to delete %s #%d' % (container, itemid)
+            ret = 1
+    return ret
 
 
 def main():
@@ -114,6 +190,9 @@ def main():
             metavar='\'container itemid\'',
             help='Remove an entry, for example: --rm login 3. Can be specified '
                  'multiple times')
+    parser.add_option(
+            '-g', '--get', metavar='KEY',
+            help='Retrieves (or set if unset) a password for the specified key')
     options, args = parser.parse_args()
     logging.basicConfig(
             level=levels[min(options.verbose, len(levels) - 1)],
@@ -122,12 +201,14 @@ def main():
     if args:
         parser.error('Unsupported arg: %s' % args)
 
+    if options.rm and options.get:
+        parser.error('Use one of --rm or --get, not both')
+
     if not os.environ.get('DISPLAY') or not gnomekeyring:
         parser.error(
                 'Make sure to be inside an X session. Starting your '
                 'screen/tmux session under X and then using \'screen -x\' back '
                 'to it through ssh will work just fine.')
-        return False
 
     # Sets up app name.
     import pygtk
@@ -135,25 +216,11 @@ def main():
     import gtk  # pylint: disable=W0612
 
     if options.rm:
-        tried_to_unlock = False
-        ret = 0
-        for rm in options.rm:
-            try:
-                gnomekeyring.item_delete_sync(rm[0], int(rm[1]))
-            except gnomekeyring.IOError as e:
-                logging.info('%s', e)
-                if not tried_to_unlock:
-                    tried_to_unlock = True
-                    if unlock_keyring():
-                        # Try again.
-                        try:
-                            gnomekeyring.item_delete_sync(rm[0], int(rm[1]))
-                            continue
-                        except gnomekeyring.IOError as e:
-                            logging.info('%s', e)
-                print >> sys.stderr, 'Failed to delete %s #%s' % (rm[0], rm[1])
-                ret = 1
-        return ret
+        return delete_secrets(options.rm)
+
+    if options.get:
+        bucket = 'manage_gnomekeyring_%s' % socket.getfqdn()
+        return retrieve_password(bucket, options.get)
 
     all_entries = get_all_gnomekeyring_entries()
     print_all(all_entries)
