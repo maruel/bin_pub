@@ -82,6 +82,10 @@ ecryptfs'ed home directory, he has in fact 3 personal directories:
 
 You trust me, right? Go ahead:
 
+1. Restart your workstation.
+2. At the login screen, press Ctrl-Alt-F1 to login in text mode.
+3. Login with your account.
+
 ```bash
 sudo apt-get install ecryptfs-utils
 
@@ -92,17 +96,19 @@ chmod 400 /home/.ecryptfs/$USER/.ssh/authorized_keys
 chmod 500 /home/.ecryptfs/$USER/.ssh
 ln -s /home/.ecryptfs/$USER/.ssh/authorized_keys $HOME/.ssh/authorized_keys
 
-# Now, please close all the open programs in X and start a shell terminal. Then
-# move on:
+# Unmount the encrypted home directory to see the real unencrypted home
+# directory.
 ecryptfs-umount-private
-# Jump to the real /home/$USER.
+# Jump to the real /home/$USER. It's mostly empty except with 2 symlinks. Add
+# the necessary .ssh/ file.
 cd $HOME
 chmod 700 .
 mkdir .ssh
 ln -s /home/.ecryptfs/$USER/.ssh/authorized_keys $HOME/.ssh/authorized_keys
 chmod 500 .ssh
 
-# Then create the auto-mount script.
+# Create the auto-mount script so you can easily mount your encrypted home
+# directory via ssh.
 cat << EOF > .profile
 /usr/bin/ecryptfs-mount-private
 cd
@@ -112,7 +118,8 @@ chmod 400 .profile
 
 # Important: secure the real /home/$USER back.
 chmod 500 .
-# Reboot and try to ssh with public key authentication.
+# Reboot and try to ssh with public key authentication without logging in first
+# via X.
 ```
 
 ### Notes
