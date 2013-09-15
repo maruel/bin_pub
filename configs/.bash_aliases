@@ -37,7 +37,7 @@ fi
 
 
 # TODO(maruel): Find a way to not add it if it's already in there!
-export PATH=$HOME/bin:$PATH
+export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 if [ ! "$PYTHONPATH" = "" ]; then
     export PYTHONPATH=$PYTHONPATH:$HOME/bin
 else
