@@ -27,12 +27,7 @@ quiet = True
 attend = diff,status,log,qdiff,blame,annotate,pdiff,glog
 
 [merge-tools]
-#vimdiff.executable = vim
-#autodiff.executable = autodiff
-#autodiff.args = $base $local $other $output
-#vimdiff.args = -d $base $local $output $other +close +close
-#vimdiff.args = -d $base $local $output $other -c "wincmd J"
+vimdiff.args = -d $output $local $base $other -c "wincmd J"
 
 [ui]
-#merge = autodiff
-#merge = vimdiff
+merge = vimdiff
