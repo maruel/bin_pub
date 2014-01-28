@@ -1,6 +1,6 @@
 [submodule "git-prompt"]
 	path = git-prompt
-	url = https://github.com/maruel/git-prompt.git
+	url = https://github.com/lvv/git-prompt.git
 [submodule "git_utils"]
 	path = git_utils
 	url = git://github.com/maruel/git_utils.git
