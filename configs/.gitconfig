@@ -51,8 +51,8 @@
 [mergetool "autodiff"]
 	cmd = autodiff $BASE $LOCAL $REMOTE $MERGED
 [merge]
-	tool = autodiff
-#	tool = vimdiffnice
+#	tool = autodiff
+	tool = vimdiffnice
 [gui]
 	pruneduringfetch = true
 [receive]
@@ -60,7 +60,7 @@
 [difftool "autodiff"]
 	cmd = autodiff $LOCAL $REMOTE
 [diff]
-	tool = autodiff
+	tool = vimdiff
 [branch]
 	autosetupmerge = always
 	autosetuprebase = local
