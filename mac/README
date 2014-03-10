@@ -24,3 +24,5 @@ command line tools. Once both are installed, run:
   # WARNING: At that point, deleting homebrew will likely lock you out of your
   # account.
   chsh -s $HOME/bin/homebrew/bin/bash
+
+  brew install tmux
