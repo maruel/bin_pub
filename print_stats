@@ -1,45 +1,87 @@
-#!/bin/sh
+#!/usr/bin/env python
 # Copyright 2014 Marc-Antoine Ruel. All Rights Reserved. Use of this
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
 
-# Prints statistics about the system's load sampled over a second.
-#
-# This script is meant to be run once per second by tmux on the status line. As
-# such, it must be efficient yet has informative output. Target goal is
-# ~10ms of actual CPU time. It will sample output for a second. tmux handles
-# slow processes on the status line just fine.
-#
-# Note: https://github.com/thewtex/tmux-mem-cpu-load is an alternative but it
-# didn't print out iostats out of the box. As a matter of fact, it's simpler to
-# run a script on all my systems than build it once for each. I'm _that_ lazy.
+"""Prints statistics about the system's load sampled over a second.
 
-set -e
+This script is meant to be run periodically by tmux on the status line. It
+samples output for a second. tmux handles slow processes on the status line just
+fine.
 
-# iostat outputs differs between OSX and Ubuntu.
-PLATFORM=$(uname)
+Note: https://github.com/thewtex/tmux-mem-cpu-load is an alternative but it
+didn't print out iostats out of the box. As a matter of fact, it's simpler to
+run a script on all my systems than build it once for each. I'm _that_ lazy.
+"""
 
-if [ "$PLATFORM" = "Darwin" ]; then
-  # # Simpler would be:
-  # sysctl vm.loadavg | cut -d ' ' -f 3
+import os
+import subprocess
+import sys
 
+
+def osx():
   # Ignore anything other than the first drive. Fix this if this is a problem
   # for you.
   # TODO(maruel): It'd be nice to have the equivalent of ifstat. At that point,
   # it's probably worth rewritting in C++.
-  STATS=$(iostat -w 1 -n 1 -c 2 | tail -n 1 | tr -s ' ')
-  IO_PER_S=$(echo "$STATS" | cut -d ' ' -f 3)
-  MB_PER_S=$(echo "$STATS" | cut -d ' ' -f 4)
-  INSTANT_IDLE=$(echo "$STATS" | cut -d ' ' -f 7)
-  LOAD=$((100-$INSTANT_IDLE))
-  LOAD_AVG=$(echo "$STATS" | cut -d ' ' -f 8)
-  printf "%2s%% %5savg %5sMB/s %3sIO/s" $LOAD $LOAD_AVG $MB_PER_S $IO_PER_S
-else
-  # Simpler would be:
-  # cat /proc/loadavg | cut -d ' ' -f 1,4
+  stats = subprocess.check_output(['iostat', '-w', '1', '-n', '1', '-c', '2'])
+  # KB/t tps MB/s us sy id 1m 5m 15m
+  items = stats.splitlines()[-1].split()
 
-  # iostat requires "sudo apt-get install systat". Sadly, iostat's output is
-  # really annoying to process.
-  STATS=$(iostat 1 -c 2 -d)
-  echo "TODO"
-fi
+  IO_PER_S = items[2]
+  MB_PER_S = items[3]
+  INSTANT_IDLE = int(items[6])
+  LOAD = 100 - INSTANT_IDLE
+  LOAD_AVG = items[7]
+  print('%2s%% %5savg %5sMB/s %3sIO/s' % (LOAD, LOAD_AVG, MB_PER_S, IO_PER_S))
+
+
+def linux():
+  # iostat requires "sudo apt-get install systat".
+  # ifstat requires "sudo apt-get install ifstat".
+  proc_iostat = subprocess.Popen(
+      ['iostat', '1', '-c', '2', '-d'], stdout=subprocess.PIPE,
+      env={'LANG': 'en_US.UTF-8'})
+  proc_ifstat = subprocess.Popen(
+    ['ifstat', '-S', '1', '1'], stdout=subprocess.PIPE)
+
+  iostat = proc_iostat.communicate()[0].splitlines()
+  tps = 0.
+  kb_s = 0.
+  seen_device = False
+  # Cheezy.
+  for i in xrange(len(iostat)-1, -1, -1):
+    line = iostat[i]
+    if not line:
+      continue
+    if seen_device:
+      cpu_usage = 100. - float(line.split()[-1])
+      break
+    if line.startswith('Device'):
+      seen_device = True
+      continue
+    items = map(float, line.split()[1:])
+    tps += items[0]
+    kb_s += items[1]
+    kb_s += items[2]
+
+  # Sum all the networks, both inbound and outbound. It's really just to get a
+  # rough idea of network usage.
+  net_io_kb_s = sum(
+      map(float, proc_ifstat.communicate()[0].splitlines()[-1].split()))
+  print(
+      '%4.1f%% %5.1fMB/s %4sIO/s %5sKB/s' %
+      (cpu_usage, kb_s / 1024., int(tps), int(net_io_kb_s)))
+  return
+
+
+def main():
+  if sys.platform == 'darwin2':
+    osx()
+  else:
+    linux()
+  return 0
+
+
+if __name__ == '__main__':
+  sys.exit(main())
