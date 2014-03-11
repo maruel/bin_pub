@@ -1,0 +1,14 @@
+#!/bin/sh
+# Copyright 2014 Marc-Antoine Ruel. All Rights Reserved. Use of this
+# source code is governed by a BSD-style license that can be found in the
+# LICENSE file.
+
+set -e
+
+PLATFORM=$(uname)
+
+if [ "$PLATFORM" = "Darwin" ]; then
+  sysctl vm.loadavg | cut -d ' ' -f 1
+else
+  cat /proc/loadavg | cut -d ' ' -f 1,4
+fi
