@@ -7,8 +7,12 @@ See [LICENSE](https://github.com/maruel/bin_pub/blob/master/LICENSE) for
 licensing information.
 
 
-Tmux Screenshots
+Tmux
 -----------
+
+My .tmux.conf includes a call to print_load, which prints the 1s CPU load every
+5 seconds, including MB/s and IO/s for disks, and on linux additionally network
+KB/s.
 
 How it looks on Ubuntu:
 
