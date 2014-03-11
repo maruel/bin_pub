@@ -25,13 +25,15 @@ if [ "$PLATFORM" = "Darwin" ]; then
 
   # Ignore anything other than the first drive. Fix this if this is a problem
   # for you.
+  # TODO(maruel): It'd be nice to have the equivalent of ifstat. At that point,
+  # it's probably worth rewritting in C++.
   STATS=$(iostat -w 1 -n 1 -c 2 | tail -n 1 | tr -s ' ')
   IO_PER_S=$(echo "$STATS" | cut -d ' ' -f 3)
   MB_PER_S=$(echo "$STATS" | cut -d ' ' -f 4)
   INSTANT_IDLE=$(echo "$STATS" | cut -d ' ' -f 7)
   LOAD=$((100-$INSTANT_IDLE))
   LOAD_AVG=$(echo "$STATS" | cut -d ' ' -f 8)
-  echo "${LOAD}% ${LOAD_AVG}avg ${MB_PER_S}MB/s ${IO_PER_S}IO/s"
+  printf "%2s%% %5savg %5sMB/s %3sIO/s" $LOAD $LOAD_AVG $MB_PER_S $IO_PER_S
 else
   # Simpler would be:
   # cat /proc/loadavg | cut -d ' ' -f 1,4
