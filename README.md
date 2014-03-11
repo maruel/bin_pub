@@ -7,6 +7,16 @@ See [LICENSE](https://github.com/maruel/bin_pub/blob/master/LICENSE) for
 licensing information.
 
 
+Tmux Screenshots
+-----------
+
+How it looks on Ubuntu:
+![Ubuntu](/screenshots/ubuntu.png)
+
+How it looks on OSX:
+![Ubuntu](/screenshots/osx.png)
+
+
 FAQ
 ---
 
