@@ -3,12 +3,41 @@
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
 
+# Prints statistics about the system's load sampled over a second.
+#
+# This script is meant to be run once per second by tmux on the status line. As
+# such, it must be efficient yet has informative output. Target goal is
+# ~10ms of actual CPU time. It will sample output for a second. tmux handles
+# slow processes on the status line just fine.
+#
+# Note: https://github.com/thewtex/tmux-mem-cpu-load is an alternative but it
+# didn't print out iostats out of the box. As a matter of fact, it's simpler to
+# run a script on all my systems than build it once for each. I'm _that_ lazy.
+
 set -e
 
+# iostat outputs differs between OSX and Ubuntu.
 PLATFORM=$(uname)
 
 if [ "$PLATFORM" = "Darwin" ]; then
-  sysctl vm.loadavg | cut -d ' ' -f 1
+  # # Simpler would be:
+  # sysctl vm.loadavg | cut -d ' ' -f 3
+
+  # Ignore anything other than the first drive. Fix this if this is a problem
+  # for you.
+  STATS=$(iostat -w 1 -n 1 -c 2 | tail -n 1 | tr -s ' ')
+  IO_PER_S=$(echo "$STATS" | cut -d ' ' -f 3)
+  MB_PER_S=$(echo "$STATS" | cut -d ' ' -f 4)
+  INSTANT_IDLE=$(echo "$STATS" | cut -d ' ' -f 7)
+  LOAD=$((100-$INSTANT_IDLE))
+  LOAD_AVG=$(echo "$STATS" | cut -d ' ' -f 8)
+  echo "${LOAD}% ${LOAD_AVG}avg ${MB_PER_S}MB/s ${IO_PER_S}IO/s"
 else
-  cat /proc/loadavg | cut -d ' ' -f 1,4
+  # Simpler would be:
+  # cat /proc/loadavg | cut -d ' ' -f 1,4
+
+  # iostat requires "sudo apt-get install systat". Sadly, iostat's output is
+  # really annoying to process.
+  STATS=$(iostat 1 -c 2 -d)
+  echo "TODO"
 fi
