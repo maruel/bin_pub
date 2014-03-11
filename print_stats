@@ -26,14 +26,11 @@ def osx():
   # it's probably worth rewritting in C++.
   stats = subprocess.check_output(['iostat', '-w', '1', '-n', '1', '-c', '2'])
   # KB/t tps MB/s us sy id 1m 5m 15m
-  items = stats.splitlines()[-1].split()
-
-  IO_PER_S = items[2]
-  MB_PER_S = items[3]
-  INSTANT_IDLE = int(items[6])
-  LOAD = 100 - INSTANT_IDLE
-  LOAD_AVG = items[7]
-  print('%2s%% %5savg %5sMB/s %3sIO/s' % (LOAD, LOAD_AVG, MB_PER_S, IO_PER_S))
+  items = map(float, stats.splitlines()[-1].split())
+  io_per_s = items[1]
+  mb_per_s = items[2]
+  cpu_usage = 100. - items[5]
+  print('%5.1f%% %5.1fMB/s %4sIO/s' % (cpu_usage, mb_per_s, int(io_per_s)))
 
 
 def linux():
@@ -76,7 +73,7 @@ def linux():
 
 
 def main():
-  if sys.platform == 'darwin2':
+  if sys.platform == 'darwin':
     osx()
   else:
     linux()
