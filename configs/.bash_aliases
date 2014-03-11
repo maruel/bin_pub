@@ -24,14 +24,6 @@ alias s='if tmux has; then tmux attach -d; else tmux; fi'
 # Not on mac and cygwin by default.
 alias ll='ls -la'
 
-# http://superuser.com/questions/39751/add-directory-to-path-if-its-not-already-there
-add_to_PATH() {
-  if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
-    #PATH="${PATH:+"$PATH:"}$1"
-    PATH="$1:$PATH"
-  fi
-}
-
 # Want color and / or @ at end of directory/symlink.
 if [ "$PLATFORM" = "Darwin" ]; then
   alias ls='ls -F'
@@ -44,6 +36,14 @@ fi
 if [ "$OS" = "Windows_NT" ]; then
   PS1="\[\e]0;\w\a\]\[\e[33m\]\w\[\e[0m\] \$ "
 fi
+
+# http://superuser.com/questions/39751/add-directory-to-path-if-its-not-already-there
+add_to_PATH() {
+  if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+    #PATH="${PATH:+"$PATH:"}$1"
+    PATH="$1:$PATH"
+  fi
+}
 
 # The private copy will fetch the public one as bin/bin_pub
 add_to_PATH "$HOME/bin"
