@@ -11,10 +11,12 @@ Tmux Screenshots
 -----------
 
 How it looks on Ubuntu:
+
 ![Ubuntu](/screenshots/ubuntu.png)
 
 How it looks on OSX:
-![Ubuntu](/screenshots/osx.png)
+
+![OSX](/screenshots/osx.png)
 
 
 FAQ
