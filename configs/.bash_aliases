@@ -19,10 +19,17 @@ export EDITOR=vim
 export HISTCONTROL="ignoredups"
 export PYTHONDONTWRITEBYTECODE=x
 
+
+# Aliases
+
+# My Windows roots show through
 alias cd..='cd ..'
+# This is the command I use the most: "ssh <workstation>" then "s"
 alias s='if tmux has; then tmux attach -d; else tmux; fi'
-# Not on mac and cygwin by default.
+# 'll' is not on mac and cygwin by default.
 alias ll='ls -la'
+alias lsd='ll | grep "^d"'
+alias lsf='ll | grep -v "^d"'
 
 # Want color and / or @ at end of directory/symlink.
 if [ "$PLATFORM" = "Darwin" ]; then
@@ -32,10 +39,14 @@ else
   alias ls='ls -F --color=tty'
 fi
 
-# cygwin specific
+# cygwin specific because git-prompt can't be used there, it's too slow on the
+# chromium tree.
 if [ "$OS" = "Windows_NT" ]; then
   PS1="\[\e]0;\w\a\]\[\e[33m\]\w\[\e[0m\] \$ "
 fi
+
+
+# PATH
 
 # http://superuser.com/questions/39751/add-directory-to-path-if-its-not-already-there
 add_to_PATH() {
@@ -59,6 +70,7 @@ export GOROOT="$HOME/src/golang"
 export GOPATH="$HOME/src/gocode"
 add_to_PATH "$GOPATH/bin"
 add_to_PATH "$GOROOT/bin"
+
 
 # My python stuff.
 export PYTHONPATH=$PYTHONPATH:$HOME/bin:$HOME/bin/bin_pub
