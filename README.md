@@ -23,6 +23,15 @@ How it looks on OSX:
 ![OSX](/screenshots/osx.png)
 
 
+OSX
+-----
+
+   1. Install brew: ./setup_scripts/install_homebrew.sh
+   2. brew install bash
+   3. sudo vi /etc/shells
+   4. User preferences, right click, Advanced options, paste
+      /Users/<YOUR USERNAME>/bin/homebrew/bin/bash
+
 FAQ
 ---
 
