@@ -9,6 +9,7 @@
 	st = status --ignore-submodule=all -sb
 	ci = commit
 	br = branch
+	sed = "!git ls-files -- . | xargs -L 1 sed -i"
         graphviz = "!f() { echo 'digraph git {' ; git log --pretty='format:  %h -> { %p }' \"$@\" | sed 's/[0-9a-f][0-9a-f]*/\"&\"/g' ; echo '}'; }; f"
 	bd = branch -D
 	sr = svn rebase
