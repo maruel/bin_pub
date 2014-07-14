@@ -34,13 +34,20 @@ def osx():
 
 
 def linux():
-  # iostat requires "sudo apt-get install systat".
-  # ifstat requires "sudo apt-get install ifstat".
-  proc_iostat = subprocess.Popen(
-      ['iostat', '1', '-c', '2', '-d'], stdout=subprocess.PIPE,
-      env={'LANG': 'en_US.UTF-8'})
-  proc_ifstat = subprocess.Popen(
-    ['ifstat', '-S', '1', '1'], stdout=subprocess.PIPE)
+  try:
+    proc_iostat = subprocess.Popen(
+        ['iostat', '1', '-c', '2', '-d'], stdout=subprocess.PIPE,
+        env={'LANG': 'en_US.UTF-8'})
+  except OSError:
+    print('Run "sudo apt-get install sysstat ifstat"')
+    return
+
+  try:
+    proc_ifstat = subprocess.Popen(
+        ['ifstat', '-S', '1', '1'], stdout=subprocess.PIPE)
+  except OSError:
+    print('ifstat requires "sudo apt-get install ifstat"')
+    return
 
   iostat = proc_iostat.communicate()[0].splitlines()
   tps = 0.
