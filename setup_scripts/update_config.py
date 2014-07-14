@@ -13,9 +13,11 @@ import subprocess
 import sys
 import tempfile
 
+BIN_PUB_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, BIN_PUB_DIR)
+
 import maruel
 
-BIN_PUB_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def diff(diff_cmd, dst, basename, content):
