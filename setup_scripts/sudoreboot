@@ -1,0 +1,13 @@
+# Copyright 2014 Marc-Antoine Ruel. All Rights Reserved. Use of this
+# source code is governed by a BSD-style license that can be found in the
+# LICENSE file.
+
+# Copy this file in /etc/sudoers.d/
+
+# For a group:
+#%admin ALL = NOPASSWD: /sbin/shutdown
+# For a user:
+#foo ALL = NOPASSWD: /sbin/shutdown
+
+# Allow all users to reboot.
+%users ALL=NOPASSWD:/sbin/shutdown
