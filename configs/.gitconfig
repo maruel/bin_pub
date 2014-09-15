@@ -35,9 +35,6 @@
         compact-log = !git log --pretty=format:\"%B\" $(git ancestor)..HEAD
 ; Squash all the commits against the ancestor into a single commit
         squash = "!OLDLOG=$(git compact-log); git reset --soft $(git ancestor) && git commit -m \"$OLDLOG\""
-; Blames against svn upstream. It's annoying that --date=short doesn't work
-; here.
-        sb = svn blame --git-format
 ; Blames against a branch given as an argument
         blamebranch = "!foo() { git diff --name-only \"$@\" | while read i; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr; }; foo"
 ; Blames against the 'upstream' branch
@@ -48,7 +45,7 @@
         blamefiles = "!foo() { for i in \"$@\"; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr; }; foo"
 	new = "!f() { git fetch && git checkout -b $@ origin/master; }; f"
 [push]
-	default = matching
+	default = current
 [mergetool "autodiff"]
 	cmd = autodiff $BASE $LOCAL $REMOTE $MERGED
 [merge]
@@ -67,5 +64,6 @@
 	autosetuprebase = local
 [mergetool]
 	prompt = false
+	keepBackup = false
 [mergetool "vimdiffnice"]
 	cmd = vimdiff -c \"wincmd J\" -c \"0\" $MERGED $LOCAL $BASE $REMOTE
