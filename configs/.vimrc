@@ -2,8 +2,7 @@
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 
-" For golang plugins.
-set rtp+=~/src/golang/misc/vim
+execute pathogen#infect()
 
 " Enable file type detection.
 filetype plugin indent on
