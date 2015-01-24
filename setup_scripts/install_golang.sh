@@ -9,15 +9,15 @@ OUT="$HOME/src/golang"
 echo "Installing Go in $OUT"
 if [ -d "$OUT" ]; then
   cd "$OUT"
-  hg pull
+  git fetch --all
 else
-  hg clone https://code.google.com/p/go/ "$OUT"
+  git clone https://go.googlesource.com/go "$OUT"
   cd "$OUT"
 fi
 
-TAG="$(hg tags | grep go | head -n 1 | cut -f 1 -d ' ')"
+TAG="$(git tag | grep "^go" | egrep -v "beta|rc" | tail -n 1)"
 echo "Using $TAG"
-hg co $TAG
+git checkout $TAG
 
 echo "Building."
 cd src
