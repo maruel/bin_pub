@@ -91,7 +91,7 @@ def load_files(config_dir, files):
 
     Appends the content if an entry is already present.
     """
-    blacklist = [r'.*README$', r'.*\.swp$']
+    blacklist = [r'.*README.md$', r'.*\.swp$']
     for basename in maruel.walk(config_dir, [r'.*'], blacklist):
         src = os.path.join(config_dir, basename)
         if os.path.isfile(src):
