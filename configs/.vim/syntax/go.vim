@@ -5,5 +5,6 @@ setlocal textwidth=0
 setlocal noexpandtab
 set listchars=
 set nolist
+let g:go_fmt_command = "goimports"
 
 "let w:m2=matchdelete(w:m1)
