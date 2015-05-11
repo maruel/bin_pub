@@ -67,7 +67,7 @@ fi
 
 # Go.
 export GOROOT="$HOME/src/golang"
-export GOPATH="$HOME/src/gocode"
+export GOPATH="$HOME/src/gopath"
 add_to_PATH "$GOPATH/bin"
 add_to_PATH "$GOROOT/bin"
 
