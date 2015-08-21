@@ -73,7 +73,7 @@ add_to_PATH "$GOROOT/bin"
 
 
 # My python stuff.
-export PYTHONPATH=$PYTHONPATH:$HOME/bin:$HOME/bin/bin_pub
+export PYTHONPATH="$PYTHONPATH:$HOME/bin:$HOME/bin/bin_pub"
 
 # So 'j' can be used.
 # sudo apt-get install autojump
