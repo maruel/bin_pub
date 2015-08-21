@@ -4,6 +4,7 @@
 	autocrlf = false
 	excludesfile = "~/.gitexcludes"
 	deltaBaseCacheLimit = 1G
+	askpass = 
 [alias]
 ; Common shortcuts.
 	st = status --ignore-submodule=all -sb
@@ -42,8 +43,7 @@
 ; Blames a for a few files. The length of arguments is relatively limited, it'll
 ; fail after ~100 files or so, depending on the actual string (total file names)
 ; length.
-        blamefiles = "!foo() { for i in \"$@\"; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr }; foo"
-        blamefile = "!foo() { git blame --date=short -C $@ | cut -d '(' -f 2 | cut -d ' ' -f 1 | sort -f | uniq -ic | sort -nr; }; foo"
+        blamefiles = "!foo() { for i in \"$@\"; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr; }; foo"
 	new = "!f() { git fetch && git checkout -b $@ origin/master; }; f"
 	df = "!git difftool \"$(git ancestor)\" -- "
 [push]
@@ -69,5 +69,5 @@
 	keepBackup = false
 [mergetool "vimdiffnice"]
 	cmd = vimdiff -c \"wincmd J\" -c \"0\" $MERGED $LOCAL $BASE $REMOTE
-[http]
-	cookiefile = /home/maruel/.gitcookies
+[grep]
+	patternType = perl
