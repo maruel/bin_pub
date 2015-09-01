@@ -62,7 +62,7 @@ add_to_PATH "$HOME/bin/bin_pub"
 add_to_PATH "$HOME/.local/bin"
 
 if [ "$PLATFORM" = "Darwin" ]; then
-  add_to_PATH "$HOME/bin/homebrew/bin"
+  add_to_PATH "$HOME/homebrew/bin"
 fi
 
 # Go.
@@ -81,8 +81,8 @@ if [ -e /usr/share/autojump/autojump.sh ]; then
   source /usr/share/autojump/autojump.sh
 fi
 # brew install autojump
-if [ -e "$HOME/bin/homebrew/etc/autojump.sh" ]; then
-  source "$HOME/bin/homebrew/etc/autojump.sh"
+if [ -e "$HOME/homebrew/etc/autojump.sh" ]; then
+  source "$HOME/homebrew/etc/autojump.sh"
 fi
 
 # Enable 2 finger scroll. Only for laptop.
