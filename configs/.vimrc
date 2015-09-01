@@ -2,6 +2,8 @@
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 
+let mapleader = ","
+
 execute pathogen#infect()
 
 " Enable file type detection.
