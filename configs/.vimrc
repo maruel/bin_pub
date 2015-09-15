@@ -10,8 +10,11 @@ execute pathogen#infect()
 filetype plugin indent on
 filetype plugin on
 
+" tmux sets TERM=screen, which confuses vim.
+set t_Co=256
+
 if &diff
-  syntax off
+  colorscheme diffing
   " if you would like to make tabs and trailing spaces visible without syntax
   " highlighting, use this:
   set listchars=tab:·\ ,trail:\·,extends:»,precedes:«
