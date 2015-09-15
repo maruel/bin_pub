@@ -12,4 +12,4 @@
 highlight DiffAdd    NONE
 highlight DiffDelete ctermfg=52 ctermbg=52
 highlight DiffChange NONE
-highlight DiffText   ctermbg=17
+highlight DiffText   ctermbg=17 cterm=NONE
