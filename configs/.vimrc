@@ -17,14 +17,15 @@ if &diff
   colorscheme diffing
   " if you would like to make tabs and trailing spaces visible without syntax
   " highlighting, use this:
-  set listchars=tab:·\ ,trail:\·,extends:»,precedes:«
+  "set listchars=tab:·\ ,trail:\·,extends:»,precedes:«
 else
   syntax on
   " show trailing spaces in yellow (or red, for users with dark backgrounds).
   " "set nolist" to disable this.
   " this only works if syntax highlighting is enabled.
   set list
-  set listchars=tab:\ \ ,trail:\ ,extends:»,precedes:«
+  set listchars=
+  "set listchars=tab:\ \ ,trail:\ ,extends:»,precedes:«
   if &background == "dark"
     highlight SpecialKey ctermbg=Red guibg=Red
   else
