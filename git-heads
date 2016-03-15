@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+# Copyright 2016 Marc-Antoine Ruel. All Rights Reserved. Use of this
+# source code is governed by a BSD-style license that can be found in the
+# LICENSE file.
+
+import os
+import subprocess
+import sys
+
+
+def main():
+  branches = [
+    l[2:] for l in subprocess.check_output(['git', 'branch']).splitlines()
+  ]
+  maxlen = max(len(i) for i in branches)
+  for branch in branches:
+    subject = subprocess.check_output(
+        ['git', 'log', '-1', '--format=%s', branch]).strip()
+    print('%*s: %s' % (maxlen, branch, subject))
+  return 0
+
+
+if __name__ == '__main__':
+  sys.exit(main())
