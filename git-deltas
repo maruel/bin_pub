@@ -15,7 +15,7 @@ def main():
   maxlen = max(len(i) for i in branches)
   for branch in branches:
     subject = subprocess.check_output(
-        ['git', 'diff', '--shortstat', '%s..origin/master' % branch]).strip()
+        ['git', 'diff', '--shortstat', 'origin/master..%s' % branch]).strip()
     print('%*s: %s' % (maxlen, branch, subject))
   return 0
 
