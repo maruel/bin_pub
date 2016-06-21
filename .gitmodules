@@ -3,10 +3,10 @@
 	url = https://github.com/lvv/git-prompt.git
 [submodule "git_utils"]
 	path = git_utils
-	url = git://github.com/maruel/git_utils.git
+	url = https://github.com/maruel/git_utils.git
 [submodule "keychain"]
 	path = keychain
-	url = git@github.com:maruel/keychain.py.git
+	url = https://github.com/maruel/keychain.py.git
 [submodule "configs/.vim/bundle/vim-go"]
 	path = configs/.vim/bundle/vim-go
 	url = https://github.com/fatih/vim-go.git
