@@ -9,4 +9,4 @@
 set -eu
 
 sudo apt-get install -y \
-  git ifstat ntpdate python sysstat tmux wireless-tools vim
+  git ifstat keychain ntpdate python sysstat tmux wireless-tools vim
