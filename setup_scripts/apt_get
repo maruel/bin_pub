@@ -4,6 +4,7 @@
 set -eu
 
 # Install useful packages I can't live without.
+# Assumes very minimal ubuntu server or Raspbian Jessie Lite installation.
 
 sudo apt-get install -y \
-  ifstat ntpdate openssh sysstat tmux vim
+  ifstat ntpdate openssh sysstat tmux wireless-tools vim
