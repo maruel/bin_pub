@@ -9,4 +9,4 @@
 set -eu
 
 sudo apt-get install -y \
-  git ifstat ntpdate openssh sysstat tmux wireless-tools vim
+  git ifstat ntpdate sysstat tmux wireless-tools vim

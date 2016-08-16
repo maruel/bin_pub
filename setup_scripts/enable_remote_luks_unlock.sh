@@ -13,9 +13,6 @@ if [ "$USER" != "root" ]; then
   exit 1
 fi
 
-echo "- Make sure openssh is installed; it must be installed *before* dropbear"
-apt-get install -y openssh
-
 # Doing this before dropbear will make it not complain.
 echo "- Copy authorized_keys to initram-fs"
 mkdir -p /etc/initramfs-tools/root/.ssh
