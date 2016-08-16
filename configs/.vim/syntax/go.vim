@@ -12,5 +12,5 @@ nnoremap <leader>v :vsp <CR>:exe "GoDef" <CR>
 nnoremap <leader>s :sp <CR>:exe "GoDef"<CR>
 nnoremap <leader>t :tab split <CR>:exe "GoDef"<CR>
 
-source ~/src/gopath/src/golang.org/x/tools/cmd/oracle/oracle.vim
+source $GOPATH/src/golang.org/x/tools/cmd/oracle/oracle.vim
 "let w:m2=matchdelete(w:m1)
