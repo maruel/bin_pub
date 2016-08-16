@@ -16,7 +16,7 @@ fi
 # Doing this before dropbear will make it not complain.
 echo "- Copy authorized_keys to initram-fs"
 mkdir -p /etc/initramfs-tools/root/.ssh
-cp .ssh/authorized_keys /etc/initramfs-tools/root/.ssh/
+cp $HOME/.ssh/authorized_keys /etc/initramfs-tools/root/.ssh/
 
 echo "- Install dropbear"
 apt-get install -y dropbear
@@ -33,6 +33,7 @@ echo "- Enable motd"
 echo 'To unlock root-partition run "unlock"' >> /etc/initramfs-tools/etc/motd
 
 echo "- Create the unlock script"
+mkdir -p /etc/initramfs-tools/sbin
 cat > /etc/initramfs-tools/sbin/unlock << 'EOF'
 #!/bin/sh
 if PATH=/lib/unlock:/bin:/sbin /scripts/local-top/cryptroot; then
