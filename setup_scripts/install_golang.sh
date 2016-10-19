@@ -3,16 +3,15 @@
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
 
-set -e
+set -eu
 
-OUT="$HOME/src/golang"
-echo "Installing Go in $OUT"
-if [ -d "$OUT" ]; then
-  cd "$OUT"
+echo "Installing Go in $GOROOT"
+if [ -d "$GOROOT" ]; then
+  cd "$GOROOT"
   git fetch --all
 else
-  git clone https://go.googlesource.com/go "$OUT"
-  cd "$OUT"
+  git clone https://go.googlesource.com/go "$GOROOT"
+  cd "$GOROOT"
 fi
 
 TAG="$(git tag | grep "^go" | egrep -v "beta|rc" | tail -n 1)"
@@ -21,4 +20,7 @@ git checkout $TAG
 
 echo "Building."
 cd src
-./all.bash
+./make.bash
+
+# Start getting useful projects right away.
+go get -v golang.org/x/tools/cmd/goimports golang.org/x/tools/cmd/stringer
