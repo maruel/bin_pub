@@ -13,15 +13,23 @@ URL='https://caddyserver.com/download/build?os=linux&arch=amd64&features=cors%2C
 
 if [ ! -d /etc/ssl/caddy ]; then
   echo "- Creating caddy directories"
-  #sudo groupadd -g 33 www-data
-  #sudo useradd \
-  #  -g www-data --no-user-group --home-dir /var/www --no-create-home \
-  #  --shell /usr/sbin/nologin --system --uid 33 www-data
   sudo mkdir -p /etc/caddy
   sudo chown -R root:www-data /etc/caddy
+  sudo touch /etc/caddy/Caddyfile
+  sudo chown -R root:www-data /etc/caddy/Caddyfile
+  sudo chmod 0640 /etc/caddy/Caddyfile
+
   sudo mkdir -p /etc/ssl/caddy
   sudo chown -R www-data:root /etc/ssl/caddy
-  sudo chmod 0770 /etc/ssl/caddy
+  sudo chmod 0755 /etc/ssl/caddy
+
+  sudo mkdir -p /var/log/caddy
+  sudo chown -R www-data:root /var/log/caddy
+  sudo chmod 0755 /var/log/caddy
+
+  sudo mkdir -p /var/www
+  sudo chown -R www-data:www-data /var/www
+  sudo chmod o+rx /var/www
 fi
 
 echo "- Downloading caddy"
@@ -53,7 +61,7 @@ Group=www-data
 Environment=CADDYPATH=/etc/ssl/caddy
 
 ; Always set "-root" to something safe in case it gets forgotten in the Caddyfile.
-ExecStart=/usr/local/bin/caddy -log stdout -agree=true -conf=/etc/caddy/Caddyfile -root=/var/tmp
+ExecStart=/usr/local/bin/caddy -log=/var/log/caddy/server.log -agree=true -conf=/etc/caddy/Caddyfile -root=/var/tmp
 ExecReload=/bin/kill -USR1 $MAINPID
 
 ; Limit the number of file descriptors; see "man systemd.exec" for more limit settings.
