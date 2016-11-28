@@ -1,14 +1,12 @@
-Marc-Antoine Ruel's utils
-=========================
+# Marc-Antoine Ruel's utils
 
-Use at your own risk.
+Use at your own risk but feel free to take what you find useful.
 
 See [LICENSE](https://github.com/maruel/bin_pub/blob/master/LICENSE) for
 licensing information.
 
 
-Tmux
------------
+## Tmux
 
 My .tmux.conf includes a call to print_load, which prints the 1s CPU load every
 5 seconds, including MB/s and IO/s for disks, and on linux additionally network
@@ -23,8 +21,7 @@ How it looks on OSX:
 ![OSX](/screenshots/osx.png)
 
 
-OSX
------
+## OSX
 
    1. Install brew: ./setup_scripts/install_homebrew.sh
    2. brew install bash
@@ -32,8 +29,7 @@ OSX
    4. User preferences, right click, Advanced options, paste
       /Users/<YOUR USERNAME>/bin/homebrew/bin/bash
 
-FAQ
----
+## FAQ
 
 You should use this directory structure:
 
@@ -48,10 +44,7 @@ your workstations all in sync, and using git submodule to fetch public
 repositories like git-prompt.
 
 
-Setup steps
------------
-
-git prior version 1.7.4 must call git submodule manually:
+## Setup steps
 
 ```bash
 cd ~
@@ -68,8 +61,13 @@ git commit -a -m "Initial commit into my private repo"
 ```
 
 
-Enable ssh login via public key authentication with encrypted home directory with ecryptfs
-------------------------------------------------------------------------------------------
+## Security
+
+- Edit `/etc/login.defs` so `UMASK 027`
+- Disable password based ssh login with: `sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' $ROOT_PATH/etc/ssh/sshd_config`
+
+
+## Enable ssh login via public key authentication with encrypted home directory with ecryptfs
 
 If you don't want to be owned, you probably already set
 *"PasswordAuthentication no"* in your */etc/ssh/sshd_config*. But then ecryptfs
@@ -146,6 +144,7 @@ chmod 500 .
 # Reboot and try to ssh with public key authentication without logging in first
 # via X.
 ```
+
 
 ### Notes
 
