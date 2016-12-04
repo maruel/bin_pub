@@ -27,12 +27,12 @@ def from_sources():
   tags = sorted(
       t for t in tags
       if t.startswith('go') and 'beta' not in t and 'rc' not in t)
-  tag = tags[0]
+  tag = tags[-1]
   print('Using %s' % tag)
   subprocess.check_call(['git', 'checkout', tag], cwd=goroot)
 
   print('Building.')
-  subprocess.check_call(['make.bash'], cwd=os.path.join(goroot, 'src'))
+  subprocess.check_call(['./make.bash'], cwd=os.path.join(goroot, 'src'))
 
 
 def from_binary():
