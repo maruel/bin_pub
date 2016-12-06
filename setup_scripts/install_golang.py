@@ -60,7 +60,7 @@ def from_binary():
       n = t.next()
       if not n:
         break
-      if n.name.startswith('.', '/') or '..' in n.name:
+      if n.name.startswith(('.', '/')) or '..' in n.name:
         raise Exception('Dangerous tar file')
       t.extract(n, goroot)
       # There's over 5650 files so print a dot at every 100 files.
