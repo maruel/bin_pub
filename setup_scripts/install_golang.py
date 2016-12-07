@@ -63,18 +63,24 @@ def from_binary():
 def main():
   parser = argparse.ArgumentParser(description=sys.modules[__name__].__doc__)
   parser.add_argument('--system', action='store_true')
+  parser.add_argument('--skip', action='store_true', help='Skip updating Golang')
   args = parser.parse_args()
-  if args.system:
-    from_binary()
+  if not args.skip:
+    if args.system:
+      from_binary()
+    else:
+      from_sources()
+  if os.geteuid() != 0:
+    # Start getting useful projects right away, if not running as root.
+    subprocess.check_call(
+        ['go', 'get', '-v',
+      'golang.org/x/tools/cmd/godoc',
+      'golang.org/x/tools/cmd/goimports',
+      'golang.org/x/tools/cmd/stringer',
+      'github.com/maruel/panicparse/cmd/pp'])
+    # github.com/FiloSottile/gorebuild
   else:
-    from_sources()
-  # Start getting useful projects right away.
-  subprocess.check_call(
-      ['go', 'get', '-v',
-    'golang.org/x/tools/cmd/godoc',
-    'golang.org/x/tools/cmd/goimports',
-    'golang.org/x/tools/cmd/stringer',
-    'github.com/maruel/panicparse/cmd/pp'])
+    print('Skipping tooling because running as root')
   return 0
 
 
