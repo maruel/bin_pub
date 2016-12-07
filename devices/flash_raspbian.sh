@@ -27,7 +27,7 @@ echo "This script has minimal use of 'sudo' for 'dd' and modifying the partition
 echo ""
 
 echo "- Unmounting"
-./umount.sh $SDCARD &>/dev/null
+./prep/umount.sh $SDCARD &>/dev/null
 
 
 # TODO(maruel): Figure the name automatically.
@@ -61,7 +61,7 @@ done
 
 
 echo "- Mounting"
-./umount.sh $SDCARD  &>/dev/null
+./prep/umount.sh $SDCARD  &>/dev/null
 # Needs 'p' for /dev/mmcblkN but not for /dev/sdX
 BOOT=$(LANG=C /usr/bin/udisksctl mount -b ${SDCARD}*1 | sed 's/.\+ at \(.\+\)\+\./\1/')
 echo "- /boot mounted as $BOOT"
@@ -94,12 +94,12 @@ fi
 
 
 echo "- First boot setup script"
-sudo cp ../setup.sh $ROOT_PATH/root/firstboot.sh
-sudo chmod +x $ROOT_PATH/root/firstboot.sh
+sudo cp ./setup.sh $ROOT/root/firstboot.sh
+sudo chmod +x $ROOT/root/firstboot.sh
 # Skip this step to debug firstboot.sh. Then login at the console and run the
 # script manually.
-sudo mv $ROOT_PATH/etc/rc.local $ROOT_PATH/etc/rc.local.old
-sudo tee $ROOT_PATH/etc/rc.local > /dev/null <<'EOF'
+sudo mv $ROOT/etc/rc.local $ROOT/etc/rc.local.old
+sudo tee $ROOT/etc/rc.local > /dev/null <<'EOF'
 #!/bin/sh -e
 # Copyright 2016 Marc-Antoine Ruel. All rights reserved.
 # Use of this source code is governed under the Apache License, Version 2.0
@@ -113,17 +113,17 @@ if [ ! -f $LOG_FILE ]; then
 fi
 exit 0
 EOF
-sudo chmod +x $ROOT_PATH/etc/rc.local
+sudo chmod +x $ROOT/etc/rc.local
 
 
 echo "- SSH keys"
 # This assumes you have properly set your own ssh keys and plan to use them.
-sudo mkdir $ROOT_PATH/home/pi/.ssh
-sudo cp $HOME/.ssh/authorized_keys $ROOT_PATH/home/pi/.ssh/authorized_keys
+sudo mkdir $ROOT/home/pi/.ssh
+sudo cp $HOME/.ssh/authorized_keys $ROOT/home/pi/.ssh/authorized_keys
 # pi(1000).
-sudo chown -R 1000:1000 $ROOT_PATH/home/pi/.ssh
+sudo chown -R 1000:1000 $ROOT/home/pi/.ssh
 # Force key based authentication since the password is known.
-sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' $ROOT_PATH/etc/ssh/sshd_config
+sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' $ROOT/etc/ssh/sshd_config
 
 
 echo "- Wifi"
@@ -137,7 +137,7 @@ if [ ! -f "/etc/NetworkManager/system-connections/$SSID" ]; then
 else
   WIFI_PWD="$(sudo grep -oP '(?<=psk=).+' /etc/NetworkManager/system-connections/$SSID)"
 fi
-sudo tee --append $ROOT_PATH/etc/wpa_supplicant/wpa_supplicant.conf > /dev/null <<EOF
+sudo tee --append $ROOT/etc/wpa_supplicant/wpa_supplicant.conf > /dev/null <<EOF
 
 network={
   ssid="$SSID"
@@ -148,7 +148,7 @@ EOF
 
 echo "- Unmounting"
 sync
-./umount.sh $SDCARD
+./prep/umount.sh $SDCARD
 
 echo ""
 echo "You can now remove the SDCard safely and boot your Raspberry Pi"

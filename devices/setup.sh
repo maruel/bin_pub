@@ -16,9 +16,6 @@
 
 set -eu
 
-# Obviously don't use that on your own C.H.I.P.; that's my keys. :)
-echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJKLhs80AouVRKus3NySEpRDwljUDC0V9dyNwhBuo4p6 maruel' >>.ssh/authorized_keys
-
 sudo apt-get update
 sudo apt-get upgrade -y
 # If you are space constrained, here's the approximative size:
@@ -30,8 +27,6 @@ sudo apt-get upgrade -y
 # tmux:    670kB
 # vim:      28MB (!)
 sudo apt-get install -y git ifstat python ssh sysstat tmux vim
-
-#sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' $ROOT_PATH/etc/ssh/sshd_config
 
 
 # Raspbian
@@ -71,23 +66,33 @@ EOF
   update-locale LANG=en_US.UTF-8
 fi
 
-# Do not run on C.H.I.P. Pro because of lack of space.
-sudo ./bin/bin_pub/setup_scripts/install_golang.py --system
-# Temporary until Go 1.8.
-cat >> .profile <<'EOF'
-export GOPATH=$HOME/go
-EOF
+# Obviously don't use that on your own C.H.I.P.; that's my keys. :)
+KEYS='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJKLhs80AouVRKus3NySEpRDwljUDC0V9dyNwhBuo4p6 maruel'
 
 if [ "${USER:=root}" != "root" ]; then
+  USERNAME="$USER"
   mkdir -p bin .ssh; git clone --recurse https://github.com/maruel/bin_pub bin/bin_pub; ./bin/bin_pub/setup_scripts/update_config.py
+  echo "$KEYS" >>.ssh/authorized_keys
 else
   # This needs to run as user:
   if [ -d /home/pi ]; then
-    sudo -n -i -u pi -s 'mkdir -p bin .ssh; git clone --recurse https://github.com/maruel/bin_pub bin/bin_pub; ./bin/bin_pub/setup_scripts/update_config.py'
+    USERNAME=pi
   elif [ -d /home/chip ]; then
-    sudo -n -i -u chip -s 'mkdir -p bin .ssh; git clone --recurse https://github.com/maruel/bin_pub bin/bin_pub; ./bin/bin_pub/setup_scripts/update_config.py'
+    USERNAME=chip
   else
     echo 'Unknown setup, aborting.'
     exit 1
   fi
+  sudo -n -i -u $USERNAME -s 'mkdir -p bin .ssh; git clone --recurse https://github.com/maruel/bin_pub bin/bin_pub; ./bin/bin_pub/setup_scripts/update_config.py'
+  echo "$KEYS" >>/home/$USERNAME/.ssh/authorized_keys
+  chown $USERNAME:$USERNAME /home/$USERNAME/.ssh/authorized_keys
 fi
+
+# Do not run on C.H.I.P. Pro because of lack of space.
+/home/$USERNAME/bin/bin_pub/setup_scripts/install_golang.py --system
+# Temporary until Go 1.8.
+cat >> /home/$USERNAME/.profile <<'EOF'
+export GOPATH=$HOME/go
+EOF
+
+sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' $ROOT_PATH/etc/ssh/sshd_config
