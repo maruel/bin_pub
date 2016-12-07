@@ -83,7 +83,8 @@ else
     echo 'Unknown setup, aborting.'
     exit 1
   fi
-  sudo -n -i -u $USERNAME -s 'mkdir -p bin .ssh; git clone --recurse https://github.com/maruel/bin_pub bin/bin_pub; ./bin/bin_pub/setup_scripts/update_config.py'
+  cd /home/$USERNAME
+  sudo -n -u $USERNAME -s 'mkdir -p bin .ssh; git clone --recurse https://github.com/maruel/bin_pub bin/bin_pub; ./bin/bin_pub/setup_scripts/update_config.py'
   echo "$KEYS" >>/home/$USERNAME/.ssh/authorized_keys
   chown $USERNAME:$USERNAME /home/$USERNAME/.ssh/authorized_keys
 fi
@@ -94,5 +95,6 @@ fi
 cat >> /home/$USERNAME/.profile <<'EOF'
 export GOPATH=$HOME/go
 EOF
+chown $USERNAME:$USERNAME /home/$USERNAME/.profile
 
 sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' $ROOT_PATH/etc/ssh/sshd_config
