@@ -20,12 +20,14 @@ echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJKLhs80AouVRKus3NySEpRDwljUDC0V9dyNwh
 sudo apt-get update
 sudo apt-get upgrade -y
 # If you are space constrained, here's the approximative size:
-# git:  17.7MB
-# python: 18MB
-# ssh:   130kB
-# tmux:  670kB
-# vim:    28MB (!)
-sudo apt-get install -y git tmux vim python ssh
+# git:    17.7MB
+# ifstat:  3.3MB
+# python:   18MB
+# sysstat: 1.3MB
+# ssh:     130kB
+# tmux:    670kB
+# vim:      28MB (!)
+sudo apt-get install -y git ifstat python ssh sysstat tmux vim
 mkdir -p bin .ssh
 git clone --recurse https://github.com/maruel/bin_pub bin/bin_pub
 ./bin/bin_pub/setup_scripts/update_config.py
