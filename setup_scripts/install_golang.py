@@ -8,7 +8,6 @@ import os
 import shutil
 import subprocess
 import tarfile
-import urllib2
 import sys
 
 
@@ -51,23 +50,11 @@ def from_binary():
   if sys.platform == 'linux2':
     os_name = 'linux'
   filename = 'go' + version + '.' + os_name + '-' + arch + '.tar.gz'
-  # TODO(maruel): It sucks that it doesn't validate TLS certificate.
   url = 'https://storage.googleapis.com/golang/' + filename
   print('Fetching %s' % url)
-  with tarfile.open(fileobj=urllib2.urlopen(url), mode='r|gz') as t:
-    i = 0
-    while True:
-      n = t.next()
-      if not n:
-        break
-      if n.name.startswith(('.', '/')) or '..' in n.name:
-        raise Exception('Dangerous tar file')
-      t.extract(n, goroot)
-      # There's over 5650 files so print a dot at every 100 files.
-      if not (i%100):
-        sys.stdout.write('.')
-        sys.stdout.flush()
-      i += 1
+  subprocess.check_call(['wget', url])
+  subprocess.check_call(['tar', '-C', '/usr/local', '-xzf', filename])
+  os.remove(filename)
   with open('/etc/profile.d/golang.sh', 'wb') as f:
     f.write('export PATH="$PATH:%s/bin"\n' % goroot)
   os.chmod('/etc/profile.d/golang.sh', 0555)
