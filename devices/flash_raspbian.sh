@@ -69,14 +69,17 @@ ROOT=$(LANG=C /usr/bin/udisksctl mount -b ${SDCARD}*2 | sed 's/.\+ at \(.\+\)\+\
 echo "- / mounted as $ROOT"
 
 
+# https://www.raspberrypi.org/documentation/remote-access/ssh/
+sudo touch $BOOT/ssh
+
+
 # Skip this if you don't use a small display.
 # Strictly speaking, you won't need a monitor at all since ssh will be up and
 # running and the device will connect to the SSID provided.
-if [ false ]; then
-  # Search for [5 Inch 800x480], found one at 23$USD with free shipping on
-  # aliexpress.
-  echo "- Enabling 5\" display support (optional)"
-  sudo tee --append $BOOT/config.txt > /dev/null <<EOF
+# Search for [5 Inch 800x480], found one at 23$USD with free shipping on
+# aliexpress.
+echo "- Enabling 5\" display support (optional)"
+sudo tee --append $BOOT/config.txt > /dev/null <<EOF
 
 # Enable support for 800x480 display:
 hdmi_group=2
@@ -90,7 +93,6 @@ hdmi_cvt 800 480 60 6 0 0 0
 #dtoverlay=ads7846,penirq=22,penirq_pull=2,speed=10000,xohms=150
 
 EOF
-fi
 
 
 echo "- First boot setup script"
