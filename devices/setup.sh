@@ -16,6 +16,9 @@
 
 set -eu
 
+# Try to work around:
+#  WARNING: The following packages cannot be authenticated!
+sudo apt-key update
 sudo apt-get update
 sudo apt-get upgrade -y
 # If you are space constrained, here's the approximative size:
