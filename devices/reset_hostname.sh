@@ -31,4 +31,4 @@ else
 fi
 
 echo "- Changing MOTD"
-echo "Welcome to $HOST" > /etc/motd
+echo "Welcome to $HOST" | sudo tee /etc/motd
