@@ -18,6 +18,14 @@ if [ "$#" -ne 2 ]; then
   exit 1
 fi
 
+function umount {
+  for i in $SDCARD*; do
+    if [ "$i" != "$SDCARD" ]; then
+      /usr/bin/udisksctl unmount -f -b $i || true
+    fi
+  done
+}
+
 SDCARD=$1
 SSID="$2"
 
@@ -27,7 +35,7 @@ echo "This script has minimal use of 'sudo' for 'dd' and modifying the partition
 echo ""
 
 echo "- Unmounting"
-./prep/umount.sh $SDCARD &>/dev/null
+umount
 
 
 # TODO(maruel): Figure the name automatically.
@@ -61,7 +69,7 @@ done
 
 
 echo "- Mounting"
-./prep/umount.sh $SDCARD  &>/dev/null
+umount
 # Needs 'p' for /dev/mmcblkN but not for /dev/sdX
 BOOT=$(LANG=C /usr/bin/udisksctl mount -b ${SDCARD}*1 | sed 's/.\+ at \(.\+\)\+\./\1/')
 echo "- /boot mounted as $BOOT"
@@ -150,7 +158,7 @@ EOF
 
 echo "- Unmounting"
 sync
-./prep/umount.sh $SDCARD
+umount
 
 echo ""
 echo "You can now remove the SDCard safely and boot your Raspberry Pi"
