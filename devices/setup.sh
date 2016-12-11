@@ -39,9 +39,10 @@ if [ $DIST==raspbian ]; then
   sudo apt-get install -y ntpdate
   # https://github.com/RPi-Distro/raspi-config/blob/master/raspi-config
   # 0 means enabled.
-  raspi-config nonint do_spi 0
-  raspi-config nonint do_i2c 0
+  sudo raspi-config nonint do_spi 0
+  sudo raspi-config nonint do_i2c 0
 
+  echo "raspi-config done"
   cat > /etc/systemd/system/hdmi_disable.service << EOF
 [Unit]
 Description=Disable HDMI output to lower overall power consumption
@@ -56,24 +57,25 @@ ExecStart=/bin/sh -c '[ -f /opt/vc/bin/tvservice ] && /opt/vc/bin/tvservice -o |
 [Install]
 WantedBy=default.target
 EOF
-  systemctl daemon-reload
-  systemctl enable disable_hdmi.service
+  sudo systemctl daemon-reload
+  sudo systemctl enable hdmi_disable
 
   # Use the us keyboard layout.
-  sed -i 's/XKBLAYOUT="gb"/XKBLAYOUT="us"/' /etc/default/keyboard
+  sudo sed -i 's/XKBLAYOUT="gb"/XKBLAYOUT="us"/' /etc/default/keyboard
   # Fix Wifi country settings for Canada.
-  raspi-config nonint do_wifi_country CA
+  sudo raspi-config nonint do_wifi_country CA
 
   # Switch to en_US.
-  sed -i 's/en_GB/en_US/' /etc/locale.gen
-  dpkg-reconfigure --frontend=noninteractive locales
-  update-locale LANG=en_US.UTF-8
+  sudo sed -i 's/en_GB/en_US/' /etc/locale.gen
+  sudo dpkg-reconfigure --frontend=noninteractive locales
+  sudo update-locale LANG=en_US.UTF-8
 fi
 
 # Obviously don't use that on your own C.H.I.P.; that's my keys. :)
 KEYS='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJKLhs80AouVRKus3NySEpRDwljUDC0V9dyNwhBuo4p6 maruel'
 
 if [ "${USER:=root}" != "root" ]; then
+  echo "Running as $USER"
   USERNAME="$USER"
   mkdir -p bin .ssh; git clone --recurse https://github.com/maruel/bin_pub bin/bin_pub; ./bin/bin_pub/setup_scripts/update_config.py
   echo "$KEYS" >>.ssh/authorized_keys
@@ -87,8 +89,9 @@ else
     echo 'Unknown setup, aborting.'
     exit 1
   fi
+  echo "Using /home/$USERNAME"
   cd /home/$USERNAME
-  sudo -n -u $USERNAME -s 'mkdir -p bin .ssh; git clone --recurse https://github.com/maruel/bin_pub bin/bin_pub; ./bin/bin_pub/setup_scripts/update_config.py'
+  sudo -n -u $USERNAME sh -c 'cd; mkdir -p bin .ssh; git clone --recurse https://github.com/maruel/bin_pub bin/bin_pub; ./bin/bin_pub/setup_scripts/update_config.py'
   echo "$KEYS" >>/home/$USERNAME/.ssh/authorized_keys
   chown $USERNAME:$USERNAME /home/$USERNAME/.ssh/authorized_keys
 fi
@@ -101,4 +104,4 @@ export GOPATH=$HOME/go
 EOF
 chown $USERNAME:$USERNAME /home/$USERNAME/.profile
 
-sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' $ROOT_PATH/etc/ssh/sshd_config
+sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
