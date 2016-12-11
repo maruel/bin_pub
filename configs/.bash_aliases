@@ -66,10 +66,12 @@ if [ "$PLATFORM" = "Darwin" ]; then
 fi
 
 # Go.
-export GOROOT="$HOME/src/golang"
+if [ -d "$HOME/src/golang" ]; then
+  export GOROOT="$HOME/src/golang"
+  add_to_PATH "$GOROOT/bin"
+fi
 export GOPATH="$HOME/src/gopath"
 add_to_PATH "$GOPATH/bin"
-add_to_PATH "$GOROOT/bin"
 
 
 # My python stuff.
