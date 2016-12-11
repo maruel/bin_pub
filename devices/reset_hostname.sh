@@ -11,20 +11,23 @@
 set -eu
 
 # Get the CPU serial number, otherwise the systemd machine ID.
-SERIAL="$(cat /proc/cpuinfo | grep Serial | cut -d ':' -f 2 | sed 's/^ 0\+//')"
+SERIAL="$(cat /proc/cpuinfo | grep Serial | cut -d ':' -f 2 | sed 's/^[ 0]\+//')"
 if [ "$SERIAL" == "" ]; then
   SERIAL="$(hostnamectl status | grep 'Machine ID' | cut -d ':' -f 2 | cut -c 2- | cut -c -8)"
 fi
 
 # Usually "raspberrypi" or "chip". Keep it.
-PREFIX="$(hostname)"
+OLD="$(hostname)"
 
-HOST="$PREFIX-$SERIAL"
+HOST="$OLD-$SERIAL"
 echo "- New hostname is: $HOST"
 if [ "$(grep 'ID=' /etc/os-release)" == "ID=raspbian" ]; then
-  raspi-config nonint do_hostname $HOST
+  sudo raspi-config nonint do_hostname $HOST
 else
-  hostnamectl set-hostname $HOST
+  # It hangs on the CHIP (?)
+  sudo sed -i "s/$OLD/$HOST/" /etc/hostname
+  sudo sed -i "s/$OLD/$HOST/" /etc/hosts
+  #sudo hostnamectl set-hostname $HOST
 fi
 
 echo "- Changing MOTD"
