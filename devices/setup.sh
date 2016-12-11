@@ -33,7 +33,7 @@ sudo apt-get install -y git ifstat python ssh sysstat tmux vim
 
 
 # Raspbian
-if [ "$(grep 'ID=' /etc/os-release)" == "ID=raspbian" ]; then
+if [ "$(grep '^ID=' /etc/os-release)" == "ID=raspbian" ]; then
   sudo apt-get -y remove triggerhappy
   sudo apt-get install -y ntpdate
   # https://github.com/RPi-Distro/raspi-config/blob/master/raspi-config
