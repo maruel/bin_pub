@@ -70,9 +70,12 @@ if [ -d "$HOME/src/golang" ]; then
   export GOROOT="$HOME/src/golang"
   add_to_PATH "$GOROOT/bin"
 fi
-export GOPATH="$HOME/src/gopath"
+if [ -d "$HOME/src/gopath" ]; then
+  export GOPATH="$HOME/src/gopath"
+else
+  export GOPATH="$HOME/go"
+fi
 add_to_PATH "$GOPATH/bin"
-
 
 # My python stuff.
 export PYTHONPATH="$PYTHONPATH:$HOME/bin:$HOME/bin/bin_pub"
