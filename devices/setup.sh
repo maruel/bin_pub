@@ -4,6 +4,7 @@
 # LICENSE file.
 #
 # - For C.H.I.P.:
+#   - User/pwd: chip/chip
 #   - Flash with http://flash.getchip.com : Choose the Headless image.
 #   - Connect with screen /dev/ttyACM0
 #   - Make sure you the C.H.I.P. has network access. This simplest is:
@@ -12,7 +13,11 @@
 #   - Run as:
 #     curl -sSL https://raw.githubusercontent.com/maruel/bin_pub/master/devices/setup.sh | bash
 # - For rasbian:
+#   - User/pwd: pi/raspberry
 #   - Flash with ./flash_rasbian.sh
+# - For Beaglebone:
+#   - User/pwd: debian/temppwd
+#   - sudo connmanctl services; sudo connmanctl connect wifi...
 
 set -eu
 
@@ -32,8 +37,14 @@ sudo apt-get upgrade -y
 sudo apt-get install -y git ifstat python ssh sysstat tmux vim
 
 
-# Raspbian
+# Automatic detection
 DIST="$(grep '^ID=' /etc/os-release | cut -c 4-)"
+BEAGLEBONE=0
+if [ -f /etc/dogtag ]; then
+  BEAGLEBONE=1
+fi
+
+# Raspbian
 if [ $DIST==raspbian ]; then
   sudo apt-get -y remove triggerhappy
   sudo apt-get install -y ntpdate
@@ -71,6 +82,33 @@ EOF
   sudo update-locale LANG=en_US.UTF-8
 fi
 
+if [ $BEAGLEBONE=1 ]; then
+  # The Beaglebone comes with a lot of packages, which fills up the small 4Gb
+  # eMMC quickly. Make some space as we won't be using these.
+  # Use the following to hunt and kill:
+  #   dpkg --get-selections | less
+  sudo apt-get remove -y \
+    'ruby*' \
+    apache2 \
+    apache2-bin \
+    apache2-data \
+    apache2-utils \
+    bb-bonescript-installer-beta \
+    bb-cape-overlays \
+    bb-customizations \
+    bb-doc-bone101-jekyll \
+    bb-node-red-installer \
+    c9-core-installer \
+    jekyll \
+    nodejs \
+    x11-common
+    # Removing one these causes the ethernet over USB to fail:
+    #rcn-ee-archive-keyring \
+    #rcnee-access-point \
+    #seeed-wificonfig-installer \
+  sudo apt-get purge -y apache2 mysql-common x11-common
+fi
+
 # Obviously don't use that on your own C.H.I.P.; that's my keys. :)
 KEYS='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJKLhs80AouVRKus3NySEpRDwljUDC0V9dyNwhBuo4p6 maruel'
 
@@ -82,9 +120,14 @@ if [ "${USER:=root}" != "root" ]; then
 else
   # This needs to run as user:
   if [ -d /home/pi ]; then
+    # Default on Raspbian.
     USERNAME=pi
   elif [ -d /home/chip ]; then
+    # Default on C.H.I.P.
     USERNAME=chip
+  elif [ -d /home/debian ]; then
+    # Default on Beaglebone and Armbian.
+    USERNAME=debian
   else
     echo 'Unknown setup, aborting.'
     exit 1
