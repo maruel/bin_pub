@@ -16,6 +16,13 @@ if [ "$SERIAL" == "" ]; then
   SERIAL="$(hostnamectl status | grep 'Machine ID' | cut -d ':' -f 2 | cut -c 2- | cut -c -8)"
 fi
 
+# Cut to keep the last 4 characters. Otherwise this quickly becomes unwieldy.
+# The first characters cannot be used because they matches when buying multiple
+# devices at once. 4 characters of hex encoded digits gives 65535 combinations.
+# Taking in account there will be at most 255 devices on the network subnet, it
+# should be "good enough". Increase to 5 if needed.
+SERIAL="$( echo $SERIAL | sed 's/.*\(....\)/\1/')"
+
 # Usually "raspberrypi" or "chip". Keep it.
 OLD="$(hostname)"
 
