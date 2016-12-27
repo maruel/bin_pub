@@ -107,6 +107,19 @@ if [ $BEAGLEBONE=1 ]; then
     #rcnee-access-point \
     #seeed-wificonfig-installer \
   sudo apt-get purge -y apache2 mysql-common x11-common
+
+  echo "Enabling SPI"
+  #git clone https://github.com/beagleboard/bb.org-overlays
+  cd /opt/source/bb.org-overlays
+  ./dtc-overlay.sh
+  ./install.sh
+
+  cat >> /boot/uEnv.txt << EOF
+
+# maruel
+cape_enable=bone_capemgr.enable_partno=BB-SPIDEV0
+EOF
+
 fi
 
 # Obviously don't use that on your own C.H.I.P.; that's my keys. :)
