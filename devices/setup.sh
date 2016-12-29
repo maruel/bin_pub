@@ -2,6 +2,9 @@
 # Copyright 2016 Marc-Antoine Ruel. All Rights Reserved. Use of this
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
+
+# Run as:
+#   curl -sSL https://raw.githubusercontent.com/maruel/bin_pub/master/devices/setup.sh | bash
 #
 # - For C.H.I.P.:
 #   - User/pwd: chip/chip
@@ -10,14 +13,16 @@
 #   - Make sure you the C.H.I.P. has network access. This simplest is:
 #     nmcli device wifi list
 #     sudo nmcli device wifi connect '<ssid>' password '<pwd>' ifname wlan0
-#   - Run as:
-#     curl -sSL https://raw.githubusercontent.com/maruel/bin_pub/master/devices/setup.sh | bash
 # - For rasbian:
 #   - User/pwd: pi/raspberry
 #   - Flash with ./flash_rasbian.sh
 # - For Beaglebone:
 #   - User/pwd: debian/temppwd
 #   - sudo connmanctl services; sudo connmanctl connect wifi...
+# - For ODROID-C1 with Ubuntu 16.04.1 minimal:
+#   - adduser odroid
+#   - usermod -a -G sudo odroid
+#   - apt install curl
 
 set -eu
 
@@ -37,15 +42,21 @@ sudo apt-get upgrade -y
 sudo apt-get install -y git ifstat python ssh sysstat tmux vim
 
 
-# Automatic detection
+# Automatic detection.
 DIST="$(grep '^ID=' /etc/os-release | cut -c 4-)"
-BEAGLEBONE=0
+BOARD=unknown
 if [ -f /etc/dogtag ]; then
-  BEAGLEBONE=1
+  BOARD=beaglebone
+fi
+if [ -f /etc/chip_build_info.txt ]; then
+  BOARD=chip
+fi
+if [ $DIST==raspbian ]; then
+  BOARD=raspberrypi
 fi
 
 # Raspbian
-if [ $DIST==raspbian ]; then
+if [ $BOARD=raspberrypi ]; then
   sudo apt-get -y remove triggerhappy
   sudo apt-get install -y ntpdate
   # https://github.com/RPi-Distro/raspi-config/blob/master/raspi-config
@@ -122,7 +133,7 @@ EOF
 
 fi
 
-# Obviously don't use that on your own C.H.I.P.; that's my keys. :)
+# Obviously don't use that on your own device; that's my keys. :)
 KEYS='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJKLhs80AouVRKus3NySEpRDwljUDC0V9dyNwhBuo4p6 maruel'
 
 if [ "${USER:=root}" != "root" ]; then
@@ -132,17 +143,17 @@ if [ "${USER:=root}" != "root" ]; then
   echo "$KEYS" >>.ssh/authorized_keys
 else
   # This needs to run as user:
-  if [ -d /home/pi ]; then
-    # Default on Raspbian.
-    USERNAME=pi
-  elif [ -d /home/chip ]; then
-    # Default on C.H.I.P.
-    USERNAME=chip
-  elif [ -d /home/debian ]; then
-    # Default on Beaglebone and Armbian.
+  if [ $BOARD=beaglebone ]; then
     USERNAME=debian
+  elif [ $BOARD=chip ]; then
+    USERNAME=chip
+  elif [ $BOARD=raspberrypi ]; then
+    USERNAME=pi
+  elif [ $BOARD=odroid ]; then
+    # Manually created on ODROID Ubuntu 16.04 minimal.
+    USERNAME=odroid
   else
-    echo 'Unknown setup, aborting.'
+    echo "Unknown board $BOARD, aborting."
     exit 1
   fi
   echo "Using /home/$USERNAME"
@@ -154,10 +165,9 @@ fi
 
 # Do not run on C.H.I.P. Pro because of lack of space.
 /home/$USERNAME/bin/bin_pub/setup_scripts/install_golang.py --system
-# Temporary until Go 1.8.
-cat >> /home/$USERNAME/.profile <<'EOF'
-export GOPATH=$HOME/go
-EOF
-chown $USERNAME:$USERNAME /home/$USERNAME/.profile
 
 sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+
+if [ $BOARD=odroid ]; then
+  sudo sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
+fi
