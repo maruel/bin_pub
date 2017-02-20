@@ -50,28 +50,36 @@
 
 set -eu
 
-sudo apt install ecryptfs-utils
+cd "$HOME"
 
-# Preparation work: make .ssh/authorized_keys always accessible.
-mkdir /home/.ecryptfs/$USER/.ssh
+if [ ! -f /usr/bin/ecryptfs-umount-private ]; then
+  sudo apt install ecryptfs-utils
+fi
+
+echo "Preparation work: make .ssh/authorized_keys always accessible"
+mkdir -p /home/.ecryptfs/$USER/.ssh
+if [ ! -f .ssh/authorized_keys ]; then
+  echo ".ssh/authorized_keys must be present"
+  exit 1
+fi
 mv .ssh/authorized_keys /home/.ecryptfs/$USER/.ssh/authorized_keys
 chmod 400 /home/.ecryptfs/$USER/.ssh/authorized_keys
 chmod 500 /home/.ecryptfs/$USER/.ssh
 ln -s /home/.ecryptfs/$USER/.ssh/authorized_keys $HOME/.ssh/authorized_keys
 
-# Unmount the encrypted home directory to see the real unencrypted home
-# directory.
+echo "Unmount the encrypted home directory to see the real unencrypted home directory"
 ecryptfs-umount-private
-# Jump to the real /home/$USER. It's mostly empty except with 2 symlinks. Add
-# the necessary .ssh/ file.
+echo "Jump to the real /home/$USER"
+# It's mostly empty except with 2 symlinks. Add the necessary .ssh/ file.
 cd $HOME
 chmod 700 .
-mkdir .ssh
+mkdir -p .ssh
 ln -s /home/.ecryptfs/$USER/.ssh/authorized_keys $HOME/.ssh/authorized_keys
 chmod 500 .ssh
 
-# Create the auto-mount script so you can easily mount your encrypted home
-# directory via ssh.
+echo "Create the auto-mount script"
+# So you can easily mount your encrypted home directory via ssh. Note that this
+# script is *not* accessible when ecryptfs is mounted.
 cat << EOF > .profile
 /usr/bin/ecryptfs-mount-private
 cd
@@ -79,7 +87,6 @@ source ~/.bashrc
 EOF
 chmod 400 .profile
 
-# Important: secure the real /home/$USER back.
+echo "Secure the real /home/$USER back"
 chmod 500 .
-# Reboot and try to ssh with public key authentication without logging in first
-# via X/tty.
+echo "Reboot and try to ssh with public key authentication without logging in first via X/tty"
