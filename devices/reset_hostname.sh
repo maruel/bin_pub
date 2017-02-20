@@ -19,17 +19,17 @@ fi
 if [ -f /etc/chip_build_info.txt ]; then
   BOARD=chip
 fi
-if [ $DIST==raspbian ]; then
+if [ $DIST = raspbian ]; then
   BOARD=raspberrypi
 fi
 
 # Get the CPU serial number, otherwise the systemd machine ID.
 SERIAL="$(cat /proc/cpuinfo | grep Serial | cut -d ':' -f 2 | sed 's/^[ 0]\+//')"
-if [ "$SERIAL" == "" ]; then
+if [ "$SERIAL" = "" ]; then
   SERIAL="$(hostnamectl status | grep 'Machine ID' | cut -d ':' -f 2 | cut -c 2-)"
 fi
 # On ODROID, Serial is 1b00000000000000.
-if [ "$SERIAL" == "1b00000000000000" ]; then
+if [ "$SERIAL" = "1b00000000000000" ]; then
   SERIAL="$(hostnamectl status | grep 'Machine ID' | cut -d ':' -f 2 | cut -c 2-)"
 fi
 
@@ -42,7 +42,7 @@ SERIAL="$(echo $SERIAL | sed 's/.*\(....\)/\1/')"
 
 HOST="$BOARD-$SERIAL"
 echo "- New hostname is: $HOST"
-if [ $BOARD=raspberrypi ]; then
+if [ $BOARD = raspberrypi ]; then
   sudo raspi-config nonint do_hostname $HOST
 else
   # It hangs on the CHIP (?)

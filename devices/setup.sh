@@ -145,6 +145,7 @@ EOF
   sudo sed -i 's/en_GB/en_US/' /etc/locale.gen
   sudo dpkg-reconfigure --frontend=noninteractive locales
   sudo update-locale LANG=en_US.UTF-8
+  echo "Awesome" | sudo tee /etc/motd
 fi
 
 
