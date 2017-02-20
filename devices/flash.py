@@ -266,7 +266,9 @@ def main():
   parser.add_argument(
       '--skip-flash', action='store_true',
       help='Skip flashing, just modify the image')
-  parser.add_argument('path', help='Path to SD card')
+  parser.add_argument(
+      'path',
+      help='Path to SD card, generally in the form of /dev/sdX or /dev/mmcblkN')
   args = parser.parse_args()
 
   if args.distro == 'raspbian':
