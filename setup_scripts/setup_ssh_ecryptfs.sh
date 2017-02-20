@@ -38,6 +38,9 @@
 #    ssh and umount on your last login. Note that keeping a screen session
 #    active or an X session active will keep your virtual home directory
 #    mounted.
+# 3. Stop automatic unmounting. The goal is to protect against people stealing
+#    your hardware which would hard cut the power in the process. ecryptfs
+#    doesn't protect against targetted attacks.
 #
 # Notes
 #
@@ -50,24 +53,25 @@
 
 set -eu
 
-cd "$HOME"
-
 if [ ! -f /usr/bin/ecryptfs-umount-private ]; then
   sudo apt install ecryptfs-utils
 fi
 
+echo "Disabling auto-unmount"
+rm -f $HOME/.ecryptfs/auto-umount
+
 echo "Preparation work: make .ssh/authorized_keys always accessible"
 mkdir -p /home/.ecryptfs/$USER/.ssh
 chmod 0700 /home/.ecryptfs/$USER/.ssh
-if [ -L .ssh/authorized_keys ]; then
-  echo ".ssh/authorized_keys is already a symlink, oops"
+if [ -L $HOME/.ssh/authorized_keys ]; then
+  echo "$HOME/.ssh/authorized_keys is already a symlink, oops"
   exit 1
 fi
-if [ ! -f .ssh/authorized_keys ]; then
-  echo ".ssh/authorized_keys must be present"
+if [ ! -f $HOME/.ssh/authorized_keys ]; then
+  echo "$HOME/.ssh/authorized_keys must be present"
   exit 1
 fi
-mv .ssh/authorized_keys /home/.ecryptfs/$USER/.ssh/authorized_keys
+mv $HOME/.ssh/authorized_keys /home/.ecryptfs/$USER/.ssh/authorized_keys
 chmod 400 /home/.ecryptfs/$USER/.ssh/authorized_keys
 chmod 500 /home/.ecryptfs/$USER/.ssh
 ln -s /home/.ecryptfs/$USER/.ssh/authorized_keys $HOME/.ssh/authorized_keys
@@ -77,21 +81,21 @@ ecryptfs-umount-private
 echo "Jump to the real /home/$USER"
 # It's mostly empty except with 2 symlinks. Add the necessary .ssh/ file.
 cd $HOME
-chmod 700 .
-mkdir -p .ssh
+chmod 700 $HOME
+mkdir -p $HOME/.ssh
 ln -s /home/.ecryptfs/$USER/.ssh/authorized_keys $HOME/.ssh/authorized_keys
-chmod 500 .ssh
+chmod 500 $HOME/.ssh
 
 echo "Create the auto-mount script"
 # So you can easily mount your encrypted home directory via ssh. Note that this
 # script is *not* accessible when ecryptfs is mounted.
-cat << EOF > .profile
+cat << EOF > $HOME/.profile
 /usr/bin/ecryptfs-mount-private
 cd
 source ~/.bashrc
 EOF
-chmod 400 .profile
+chmod 400 $HOME/.profile
 
 echo "Secure the real /home/$USER back"
-chmod 500 .
+chmod 500 $HOME
 echo "Reboot and try to ssh with public key authentication without logging in first via X/tty"
