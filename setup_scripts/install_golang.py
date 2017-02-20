@@ -41,7 +41,7 @@ def from_binary():
   if os.path.isdir(goroot):
     shutil.rmtree(goroot)
   # TODO(maruel): Magically figure out latest version.
-  version = '1.7.4'
+  version = '1.8'
   uname = os.uname()[4]
   arch = 'amd64'
   if uname.startswith('arm'):
