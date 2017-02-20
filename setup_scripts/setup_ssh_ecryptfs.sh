@@ -54,7 +54,14 @@
 set -eu
 
 if [ ! -f /usr/bin/ecryptfs-umount-private ]; then
+  echo "Package 'ecryptfs-utils' is missing, installing"
   sudo apt install ecryptfs-utils
+fi
+
+if [ ! -L $HOME/.ecryptfs ]; then
+  echo "This script only makes sense if the current user home directory"
+  echo "is encrypted with ecryptfs. See 'man ecryptfs-setup-private'"
+  exit 1
 fi
 
 echo "Disabling auto-unmount"
