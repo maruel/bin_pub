@@ -51,49 +51,14 @@ fi
 if [ -f /etc/chip_build_info.txt ]; then
   BOARD=chip
 fi
+# TODO(maruel): detect odroid.
 if [ $DIST==raspbian ]; then
   BOARD=raspberrypi
 fi
+echo "Detected board: $BOARD"
 
-# Raspbian
-if [ $BOARD=raspberrypi ]; then
-  sudo apt-get -y remove triggerhappy
-  sudo apt-get install -y ntpdate
-  # https://github.com/RPi-Distro/raspi-config/blob/master/raspi-config
-  # 0 means enabled.
-  sudo raspi-config nonint do_spi 0
-  sudo raspi-config nonint do_i2c 0
 
-  echo "raspi-config done"
-  cat > /etc/systemd/system/hdmi_disable.service << EOF
-[Unit]
-Description=Disable HDMI output to lower overall power consumption
-After=auditd.service
-
-[Service]
-Type=oneshot
-Restart=no
-# It is only present on Raspbian.
-ExecStart=/bin/sh -c '[ -f /opt/vc/bin/tvservice ] && /opt/vc/bin/tvservice -o || true'
-
-[Install]
-WantedBy=default.target
-EOF
-  sudo systemctl daemon-reload
-  sudo systemctl enable hdmi_disable
-
-  # Use the us keyboard layout.
-  sudo sed -i 's/XKBLAYOUT="gb"/XKBLAYOUT="us"/' /etc/default/keyboard
-  # Fix Wifi country settings for Canada.
-  sudo raspi-config nonint do_wifi_country CA
-
-  # Switch to en_US.
-  sudo sed -i 's/en_GB/en_US/' /etc/locale.gen
-  sudo dpkg-reconfigure --frontend=noninteractive locales
-  sudo update-locale LANG=en_US.UTF-8
-fi
-
-if [ $BEAGLEBONE=1 ]; then
+if [ $BOARD = beaglebone ]; then
   # The Beaglebone comes with a lot of packages, which fills up the small 4Gb
   # eMMC quickly. Make some space as we won't be using these.
   # Use the following to hunt and kill:
@@ -133,23 +98,69 @@ EOF
 
 fi
 
-# Obviously don't use that on your own device; that's my keys. :)
-KEYS='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJKLhs80AouVRKus3NySEpRDwljUDC0V9dyNwhBuo4p6 maruel'
 
+if [ $BOARD = chip ]; then
+  echo "TODO: C.H.I.P."
+fi
+
+
+if [ $BOARD = odroid ]; then
+  echo "TODO: O-DROID"
+fi
+
+
+if [ $BOARD = raspberrypi ]; then
+  sudo apt-get -y remove triggerhappy
+  sudo apt-get install -y ntpdate
+  # https://github.com/RPi-Distro/raspi-config/blob/master/raspi-config
+  # 0 means enabled.
+  sudo raspi-config nonint do_spi 0
+  sudo raspi-config nonint do_i2c 0
+
+  echo "raspi-config done"
+  cat > /etc/systemd/system/hdmi_disable.service << EOF
+[Unit]
+Description=Disable HDMI output to lower overall power consumption
+After=auditd.service
+
+[Service]
+Type=oneshot
+Restart=no
+# It is only present on Raspbian.
+ExecStart=/bin/sh -c '[ -f /opt/vc/bin/tvservice ] && /opt/vc/bin/tvservice -o || true'
+
+[Install]
+WantedBy=default.target
+EOF
+  sudo systemctl daemon-reload
+  sudo systemctl enable hdmi_disable
+
+  # Use the us keyboard layout.
+  sudo sed -i 's/XKBLAYOUT="gb"/XKBLAYOUT="us"/' /etc/default/keyboard
+  # Fix Wifi country settings for Canada.
+  sudo raspi-config nonint do_wifi_country CA
+
+  # Switch to en_US.
+  sudo sed -i 's/en_GB/en_US/' /etc/locale.gen
+  sudo dpkg-reconfigure --frontend=noninteractive locales
+  sudo update-locale LANG=en_US.UTF-8
+fi
+
+
+# Install ~/bin/bin_pub; optional.
 if [ "${USER:=root}" != "root" ]; then
   echo "Running as $USER"
   USERNAME="$USER"
-  mkdir -p bin .ssh; git clone --recurse https://github.com/maruel/bin_pub bin/bin_pub; ./bin/bin_pub/setup_scripts/update_config.py
-  echo "$KEYS" >>.ssh/authorized_keys
+  mkdir -p bin; git clone --recurse https://github.com/maruel/bin_pub bin/bin_pub; ./bin/bin_pub/setup_scripts/update_config.py
 else
   # This needs to run as user:
-  if [ $BOARD=beaglebone ]; then
+  if [ $BOARD = beaglebone ]; then
     USERNAME=debian
-  elif [ $BOARD=chip ]; then
+  elif [ $BOARD = chip ]; then
     USERNAME=chip
-  elif [ $BOARD=raspberrypi ]; then
+  elif [ $BOARD = raspberrypi ]; then
     USERNAME=pi
-  elif [ $BOARD=odroid ]; then
+  elif [ $BOARD = odroid ]; then
     # Manually created on ODROID Ubuntu 16.04 minimal.
     USERNAME=odroid
   else
@@ -158,16 +169,37 @@ else
   fi
   echo "Using /home/$USERNAME"
   cd /home/$USERNAME
-  sudo -n -u $USERNAME sh -c 'cd; mkdir -p bin .ssh; git clone --recurse https://github.com/maruel/bin_pub bin/bin_pub; ./bin/bin_pub/setup_scripts/update_config.py'
-  echo "$KEYS" >>/home/$USERNAME/.ssh/authorized_keys
-  chown $USERNAME:$USERNAME /home/$USERNAME/.ssh/authorized_keys
+  sudo -n -u $USERNAME sh -c 'cd; mkdir -p bin; git clone --recurse https://github.com/maruel/bin_pub bin/bin_pub; ./bin/bin_pub/setup_scripts/update_config.py'
 fi
 
-# Do not run on C.H.I.P. Pro because of lack of space.
-/home/$USERNAME/bin/bin_pub/setup_scripts/install_golang.py --system
 
-sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+# Obviously don't use that on your own device; that's my keys. :)
+# Uncomment and put your keys if desired. flash.py already handles this.
+# KEYS='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJKLhs80AouVRKus3NySEpRDwljUDC0V9dyNwhBuo4p6 maruel'
+#if [ "${USER:=root}" != "root" ]; then
+#  mkdir -p .sshI
+#  echo "$KEYS" >>.ssh/authorized_keys
+#else
+#  mkdir -p /home/$USERNAME/.ssh
+#  echo "$KEYS" >>/home/$USERNAME/.ssh/authorized_keys
+#  chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
+#fi
+
+
+if [ -f /home/$USERNAME/.ssh/authorized_keys ]; then
+  echo "Disabling ssh password authentication support"
+  sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+fi
+
 
 if [ $BOARD=odroid ]; then
+  # OMG WTF.
+  echo "Disabling root ssh support"
   sudo sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
 fi
+
+
+# TODO(maruel): Do not run on C.H.I.P. Pro because of lack of space.
+# This installs tooling as root as binary install.
+sudo /home/$USERNAME/bin/bin_pub/setup_scripts/install_golang.py --system
+#sudo -n -u $USERNAME sh -c '/home/$USERNAME/bin/bin_pub/setup_scripts/install_golang.py --skip'
