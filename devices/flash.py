@@ -239,15 +239,21 @@ def as_root(args):
   return 0
 
 
+def find_public_key():
+  for i in ('authorized_keys', 'id_ed25519.pub', 'id_ecdsa.pub', 'id_rsa.pub'):
+    p = os.path.join(os.environ['HOME'], '.ssh', i)
+    if os.path.isfile(p):
+      return p
+
+
 def main():
   os.chdir(BASE)
   parser = argparse.ArgumentParser(description=sys.modules[__name__].__doc__)
   parser.add_argument('--as-root', action='store_true', help=argparse.SUPPRESS)
   parser.add_argument('--img', help=argparse.SUPPRESS)
   parser.add_argument(
-      '--ssh-key',
-      default=os.path.join(os.environ['HOME'], '.ssh/authorized_keys'),
-      help='ssh public key to use, default to ~/.ssh/authorized_keys')
+      '--ssh-key', default=find_public_key(),
+      help='ssh public key to use, default: $(default)s')
   parser.add_argument(
       '--distro', choices=('raspbian', ),
       help='Select the distribution to install',

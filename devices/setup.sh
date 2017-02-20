@@ -110,12 +110,13 @@ fi
 
 
 if [ $BOARD = raspberrypi ]; then
-  sudo apt-get -y remove triggerhappy
-  sudo apt-get install -y ntpdate
+  sudo apt -y remove triggerhappy
+  sudo apt install -y ntpdate
   # https://github.com/RPi-Distro/raspi-config/blob/master/raspi-config
   # 0 means enabled.
   sudo raspi-config nonint do_spi 0
   sudo raspi-config nonint do_i2c 0
+  sudo raspi-config nonint do_ssh 0
 
   echo "raspi-config done"
   cat > /etc/systemd/system/hdmi_disable.service << EOF
