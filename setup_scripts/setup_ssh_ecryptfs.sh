@@ -58,6 +58,11 @@ fi
 
 echo "Preparation work: make .ssh/authorized_keys always accessible"
 mkdir -p /home/.ecryptfs/$USER/.ssh
+chmod 0700 /home/.ecryptfs/$USER/.ssh
+if [ -L .ssh/authorized_keys ]; then
+  echo ".ssh/authorized_keys is already a symlink, oops"
+  exit 1
+fi
 if [ ! -f .ssh/authorized_keys ]; then
   echo ".ssh/authorized_keys must be present"
   exit 1
