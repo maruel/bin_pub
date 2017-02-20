@@ -45,13 +45,14 @@ hdmi_cvt 800 480 60 6 0 0 0
 """
 
 
-RC_LOCAL = """
-#!/bin/sh -e
+RC_LOCAL = """#!/bin/sh
 # Copyright 2016 Marc-Antoine Ruel. All rights reserved.
 # Use of this source code is governed under the Apache License, Version 2.0
 # that can be found in the LICENSE file.
 
 # Part of https://github.com/maruel/bin_pub
+
+set -e
 
 LOG_FILE=/var/log/firstboot.log
 if [ ! -f $LOG_FILE ]; then
