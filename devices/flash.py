@@ -265,6 +265,11 @@ def main():
 
   if args.distro == 'raspbian':
     args.user = 'pi'
+  elif args.distro == 'chip':
+    args.user = 'chip'
+  else:
+    args.user = 'debian'
+
   if args.as_root:
     return as_root(args)
 
