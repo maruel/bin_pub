@@ -21,13 +21,32 @@ How it looks on OSX:
 ![OSX](/screenshots/osx.png)
 
 
+## Ubuntu
+
+For a public workstation without a private *bin*:
+
+```
+mkdir bin
+git clone --recursive https://github.com/maruel/bin_pub bin/bin_pub
+bin/bin_pub/setup/apt_get.sh
+bin/bin_pub/setup/update_config.py
+bin/bin_pub/setup/install_golang.py
+```
+
+
 ## OSX
 
-   1. Install brew: ./setup_scripts/install_homebrew.sh
-   2. brew install bash
-   3. sudo vi /etc/shells
-   4. User preferences, right click, Advanced options, paste
+```
+mkdir bin
+git clone --recursive https://github.com/maruel/bin_pub bin/bin_pub
+./setup_scripts/install_homebrew.sh
+brew install bash
+sudo vi /etc/shells
+```
+
+* User preferences, right click, Advanced options, paste
       /Users/<YOUR USERNAME>/bin/homebrew/bin/bash
+
 
 ## FAQ
 
@@ -41,10 +60,11 @@ You should use this directory structure:
 
 Then you can just *git pull computer:bin* from all your workstations to keep
 your workstations all in sync, and using git submodule to fetch public
-repositories like git-prompt.
+repositories like git-prompt. You can also create a *bin* private repository on
+github.
 
 
-## Setup steps
+## Initial setup steps
 
 ```bash
 cd ~
