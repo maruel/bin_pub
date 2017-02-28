@@ -9,5 +9,9 @@
 
 set -eu
 
-sudo apt-get install -y \
+sudo apt install -y \
   git ifstat keychain ntpdate python sysstat tmux wireless-tools vim
+
+sudo apt remove -y deja-dup
+
+sudo apt autoremove -y
