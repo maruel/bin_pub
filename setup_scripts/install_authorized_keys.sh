@@ -17,4 +17,4 @@ set -eu
 if [ ! -d $HOME/.ssh ]; then
   mkdir -p $HOME/.ssh
 fi
-echo 'sh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPuXx13VbQQGbYEPAw5UIAbKmoMs45/HD/bsjXDR6WtQ Agent Jean' >> $HOME/.ssh/authorized_keys
+echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPuXx13VbQQGbYEPAw5UIAbKmoMs45/HD/bsjXDR6WtQ Agent Jean' >> $HOME/.ssh/authorized_keys
