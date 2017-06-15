@@ -68,6 +68,6 @@
 	prompt = false
 	keepBackup = false
 [mergetool "vimdiffnice"]
-	cmd = vimdiff -c \"wincmd J\" -c \"0\" $MERGED $LOCAL $BASE $REMOTE
+	cmd = vimdiff -c \"wincmd J\" -c \"0\" -c \"/<<<<<<< \" $MERGED $LOCAL $BASE $REMOTE
 [grep]
 	patternType = perl
