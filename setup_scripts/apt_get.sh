@@ -10,8 +10,10 @@
 set -eu
 
 sudo apt install -y \
-  git ifstat keychain ntpdate python sysstat tmux wireless-tools vim
+  git ifstat gparted keychain ntpdate python smartmontools sysstat tmux vim \
+  vlc wireless-tools
 
-sudo apt remove -y deja-dup
+sudo apt remove -y deja-dup evolution-data-server 'libreoffice*' \
+  'thunderbird*' unity-scope-gdrive unity-scope-yelp
 
 sudo apt autoremove -y
