@@ -13,7 +13,7 @@ sudo apt install -y \
   git ifstat gparted keychain ntpdate python smartmontools sysstat tmux vim \
   vlc wireless-tools
 
-sudo apt remove -y cups deja-dup evince evolution-data-server \
+sudo apt remove -y apport cups deja-dup evince evolution-data-server \
   'libreoffice*' shotwell \
   'thunderbird*' unity-scope-gdrive unity-scope-yelp
 
