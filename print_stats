@@ -60,7 +60,11 @@ def linux(tmux_status):
     if not line:
       continue
     if seen_device:
-      cpu_usage = 100. - float(line.split()[-1])
+      v = line.split()[-1].strip('\x00')
+      try:
+        cpu_usage = 100. - float(v)
+      except Exception as e:
+        cpu_usage = 0.
       break
     if line.startswith('Device'):
       seen_device = True
