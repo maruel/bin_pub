@@ -4,17 +4,6 @@
 
 PLATFORM=$(uname)
 
-# Write .bash_history on each new line.
-export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ;} history -a; history -n"
-
-# <3 perforce.
-export P4CONFIG=.p4config
-#export P4DIFF=vimdiff
-#export P4MERGE=vimmerge
-export P4DIFF=autodiff
-export P4MERGE=automerge
-export P4EDITOR=vim
-
 export EDITOR=vim
 export HISTCONTROL="ignoredups"
 export PYTHONDONTWRITEBYTECODE=x
@@ -70,11 +59,7 @@ if [ -d "$HOME/src/golang" ]; then
   export GOROOT="$HOME/src/golang"
   add_to_PATH "$GOROOT/bin"
 fi
-if [ -d "$HOME/src/gopath" ]; then
-  export GOPATH="$HOME/src/gopath"
-else
-  export GOPATH="$HOME/go"
-fi
+export GOPATH="$HOME/go"
 add_to_PATH "$GOPATH/bin"
 
 # My python stuff.
@@ -82,30 +67,20 @@ export PYTHONPATH="$PYTHONPATH:$HOME/bin:$HOME/bin/bin_pub"
 
 # So 'j' can be used.
 # sudo apt-get install autojump
-if [ -e /usr/share/autojump/autojump.sh ]; then
-  source /usr/share/autojump/autojump.sh
-fi
+#if [ -e /usr/share/autojump/autojump.sh ]; then
+#  source /usr/share/autojump/autojump.sh
+#fi
 # brew install autojump
-if [ -e "$HOME/homebrew/etc/autojump.sh" ]; then
-  source "$HOME/homebrew/etc/autojump.sh"
-fi
-
-# Enable 2 finger scroll. Only for laptop.
-if [ $(grep "ROLE=laptop" /etc/lsb-release 2>/dev/null) ]; then
-  if [ ! "$DISPLAY" = "" ]; then
-    synclient VertTwoFingerScroll=1
-    synclient HorizTwoFingerScroll=1
-    synclient EmulateTwoFingerMinW=5
-    synclient EmulateTwoFingerMinZ=48
-  fi
-fi
+#if [ -e "$HOME/homebrew/etc/autojump.sh" ]; then
+#  source "$HOME/homebrew/etc/autojump.sh"
+#fi
 
 # git-prompt; it is too slow on cygwin.
-if [ ! "$OS" = "Windows_NT" ]; then
-  if [ -f ~/bin/bin_pub/git-prompt/git-prompt.sh ]; then
-    . ~/bin/bin_pub/git-prompt/git-prompt.sh
-  fi
-fi
+#if [ ! "$OS" = "Windows_NT" ]; then
+#  if [ -f ~/bin/bin_pub/git-prompt/git-prompt.sh ]; then
+#    . ~/bin/bin_pub/git-prompt/git-prompt.sh
+#  fi
+#fi
 
 # git-completion
 if [ "$PLATFORM" = "Darwin" ]; then
@@ -128,15 +103,15 @@ fi
 
 # Enhanced ssh-agent.
 # sudo apt-get install keychain
-if which keychain &>/dev/null; then
-  # This call costs one second.
-  # TODO(maruel): Figure out a way to skip it when unnecessary.
-  keychain --quiet -Q --inherit any identity
-  [[ -f $HOME/.keychain/$HOSTNAME-sh ]] && source $HOME/.keychain/$HOSTNAME-sh
-  [[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]] && source $HOME/.keychain/$HOSTNAME-sh-gpg
-  rm -f $HOME/.keychain/$HOSTNAME-csh
-  rm -f $HOME/.keychain/$HOSTNAME-fish
-fi
+#if which keychain &>/dev/null; then
+#  # This call costs one second.
+#  # TODO(maruel): Figure out a way to skip it when unnecessary.
+#  keychain --quiet -Q --inherit any identity
+#  [[ -f $HOME/.keychain/$HOSTNAME-sh ]] && source $HOME/.keychain/$HOSTNAME-sh
+#  [[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]] && source $HOME/.keychain/$HOSTNAME-sh-gpg
+#  rm -f $HOME/.keychain/$HOSTNAME-csh
+#  rm -f $HOME/.keychain/$HOSTNAME-fish
+#fi
 
 
 # End of public configuration.
