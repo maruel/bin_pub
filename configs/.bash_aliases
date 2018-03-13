@@ -32,6 +32,8 @@ fi
 # chromium tree.
 if [ "$OS" = "Windows_NT" ]; then
   PS1="\[\e]0;\w\a\]\[\e[33m\]\w\[\e[0m\] \$ "
+else
+  PS1="\[\e]0;\w\a\]\[\e[33m\]\w\[\e[0m\]🐰"
 fi
 
 
@@ -112,6 +114,8 @@ fi
 #  rm -f $HOME/.keychain/$HOSTNAME-csh
 #  rm -f $HOME/.keychain/$HOSTNAME-fish
 #fi
+
+export GOTRACEBACK=all
 
 
 # End of public configuration.
