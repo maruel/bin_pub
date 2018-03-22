@@ -63,6 +63,7 @@ if [ -d "$HOME/src/golang" ]; then
 fi
 export GOPATH="$HOME/go"
 add_to_PATH "$GOPATH/bin"
+export GOTRACEBACK=all
 
 # My python stuff.
 export PYTHONPATH="$PYTHONPATH:$HOME/bin:$HOME/bin/bin_pub"
@@ -114,8 +115,6 @@ fi
 #  rm -f $HOME/.keychain/$HOSTNAME-csh
 #  rm -f $HOME/.keychain/$HOSTNAME-fish
 #fi
-
-export GOTRACEBACK=all
 
 
 # End of public configuration.
