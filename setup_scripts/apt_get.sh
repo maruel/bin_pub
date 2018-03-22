@@ -15,6 +15,7 @@ sudo apt install -y \
 
 sudo apt remove -y apport cups deja-dup evince evolution-data-server \
   'libreoffice*' shotwell \
-  'thunderbird*' unity-scope-gdrive unity-scope-yelp
+  'thunderbird*' unity-scope-gdrive unity-scope-yelp \
+  zeitgeist-core
 
 sudo apt autoremove -y
