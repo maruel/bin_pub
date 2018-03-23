@@ -5,6 +5,7 @@
 	excludesfile = "~/.gitexcludes"
 	deltaBaseCacheLimit = 1G
 	askpass = 
+	precomposeunicode = true
 [alias]
 ; Common shortcuts.
 	st = status --ignore-submodule=all -sb
@@ -46,6 +47,7 @@
         blamefiles = "!foo() { for i in \"$@\"; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr; }; foo"
 	new = "!f() { git fetch && git checkout -b $@ origin/master; }; f"
 	df = "!git difftool \"$(git ancestor)\" -- "
+	lp = "log -p @{u}.."
 [push]
 	default = current
 [mergetool "autodiff"]
