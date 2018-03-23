@@ -24,6 +24,7 @@ alias lsf='ll | grep -v "^d"'
 if [ "$PLATFORM" = "Darwin" ]; then
   alias ls='ls -F'
   export CLICOLOR=1
+  alias m='echo -e "\u001b[3;0;0t\u001b[8;500;500t"'
 else
   alias ls='ls -F --color=tty'
 fi
