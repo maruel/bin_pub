@@ -23,7 +23,7 @@ else
   " show trailing spaces in yellow (or red, for users with dark backgrounds).
   " "set nolist" to disable this.
   " this only works if syntax highlighting is enabled.
-  set list
+  "set list
   set listchars=
   "set listchars=tab:\ \ ,trail:\ ,extends:»,precedes:«
   if &background == "dark"
@@ -58,6 +58,9 @@ set foldlevel=99
 " In general, it's not worth the trade-off sadly.
 "au BufWinLeave * mkview
 "au BufWinEnter * silent loadview
+
+" Simple space betweem sentences.
+set nojoinspaces
 
 
 "
@@ -120,8 +123,8 @@ set showmatch
 " Don't request terminal version string (for xterm)
 set t_RV=
 
-" Use 8 spaces for <Tab> and :retab
-set tabstop=8
+" Use 2 spaces for <Tab> and :retab
+set tabstop=2
 
 " Write swap file to disk after every 50 characters
 set updatecount=50
@@ -156,6 +159,10 @@ let loaded_matchparen = 1
 
 " netRW: Open files in a split window
 let g:netrw_browse_split = 1
+
+" Annoying dummy vim-go file.
+let g:go_template_autocreate = 0
+
 
 "
 " MAPPINGS
@@ -192,11 +199,15 @@ nnoremap <Esc>p  p'[v']=
 vnoremap < <gv
 vnoremap > >gv
 
-" Toggle fold with space in normal mode or F9 all the time. Ctrl-space opens all
+" Toggle fold with space in normal mode or F8 all the time. Ctrl-space opens all
 " inner folds
 nnoremap <space> za
-noremap <F9> za
-noremap <F8> zO
+map <silent> <F10> :bn<CR>
+map <silent> <F9> :bp<CR>
+map <silent> <F8> :za<CR>
+map <silent> <F7> :zO<CR>
+map <silent> <F5> :GoCoverage<CR>
+map <silent> <F6> :'<,'>sort<CR>
 " Doesn't work: imap <Nul> zO
 
 
