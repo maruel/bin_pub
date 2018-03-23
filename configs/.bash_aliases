@@ -20,11 +20,16 @@ alias ll='ls -la'
 alias lsd='ll | grep "^d"'
 alias lsf='ll | grep -v "^d"'
 
+# See "CSI Ps ; Ps ; Ps t" at
+# http://invisible-island.net/xterm/ctlseqs/ctlseqs.html
+# Works on gnome-terminal and macOS Terminal.app.
+# TODO(maruel): Doesn't work inside tmux, quite a bummer.
+alias m='echo -e "\x1b[3;0;0t\x1b[8;500;500t"'
+
 # Want color and / or @ at end of directory/symlink.
 if [ "$PLATFORM" = "Darwin" ]; then
   alias ls='ls -F'
   export CLICOLOR=1
-  alias m='echo -e "\x1b[3;0;0t\x1b[8;500;500t"'
 else
   alias ls='ls -F --color=tty'
 fi
