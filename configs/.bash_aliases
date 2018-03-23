@@ -34,8 +34,14 @@ fi
 if [ "$OS" = "Windows_NT" ]; then
   PS1="\[\e]0;\w\a\]\[\e[33m\]\w\[\e[0m\] \$ "
 else
+  # - Set current directory as window title
+  # - Reset color
+  # - Display non-zero exit code as red
+  # - Current directory
+  # Bash think an emoji is 4 chars wide, but we want it to think it's one.
+  # Work around by adding a fake non-width 3 characters.
   _CHAR="🐟"
-  PS1="\e[0m\$(_V=\"\$?\"; if [ \$_V != 0 ]; then echo -e -n \"\e[31m\$_V \" ; fi)\[\e]0;\w\a\]\[\e[33m\]\w\[\e[0m\]$_CHAR"
+  PS1="\[\e]0;\W\a\]\[\e[0m\]\$(_V=\$?; if [ \$_V != 0 ]; then echo -e -n \"\\[\\e[31m\\]\$_V \" ; fi)\[\e[33m\]\w\[\e[0m\]$_CHAR"
 fi
 
 

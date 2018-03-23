@@ -9,11 +9,14 @@
 
 set -eu
 
+# Recent ssh-agent is finally kinda-working, so keychain isn't necessary
+# anymore.
 sudo apt install -y \
-  git ifstat gparted keychain ntpdate python smartmontools sysstat tmux vim \
+  git ifstat gparted ntpdate python smartmontools sysstat tmux vim \
   vlc wireless-tools
 
 sudo apt remove -y apport cups deja-dup evince evolution-data-server \
+  indicator-messages \
   'libreoffice*' shotwell \
   'thunderbird*' unity-scope-gdrive unity-scope-yelp \
   zeitgeist-core
