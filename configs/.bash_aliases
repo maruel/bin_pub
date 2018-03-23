@@ -24,7 +24,7 @@ alias lsf='ll | grep -v "^d"'
 if [ "$PLATFORM" = "Darwin" ]; then
   alias ls='ls -F'
   export CLICOLOR=1
-  alias m='echo -e "\u001b[3;0;0t\u001b[8;500;500t"'
+  alias m='echo -e "\x1b[3;0;0t\x1b[8;500;500t\"'
 else
   alias ls='ls -F --color=tty'
 fi
@@ -34,7 +34,8 @@ fi
 if [ "$OS" = "Windows_NT" ]; then
   PS1="\[\e]0;\w\a\]\[\e[33m\]\w\[\e[0m\] \$ "
 else
-  PS1="\[\e]0;\w\a\]\[\e[33m\]\w\[\e[0m\]🐰"
+  _CHAR="🐟"
+  PS1="\e[0m\$(_V=\"\$?\"; if [ \$_V != 0 ]; then echo -e -n \"\e[31m\$_V \" ; fi)\[\e]0;\w\a\]\[\e[33m\]\w\[\e[0m\]$_CHAR"
 fi
 
 
