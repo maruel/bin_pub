@@ -38,8 +38,7 @@ else
   # - Reset color
   # - Display non-zero exit code as red
   # - Current directory
-  # Bash think an emoji is 4 chars wide, but we want it to think it's one.
-  # Work around by adding a fake non-width 3 characters.
+  # For this to work well, this requires a recent version of tmux (2.6)
   _CHAR="🐟"
   PS1="\[\e]0;\W\a\]\[\e[0m\]\$(_V=\$?; if [ \$_V != 0 ]; then echo -e -n \"\\[\\e[31m\\]\$_V \" ; fi)\[\e[33m\]\w\[\e[0m\]$_CHAR"
 fi
