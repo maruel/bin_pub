@@ -1,0 +1,40 @@
+#!/usr/bin/env python
+# Copyright 2018 Marc-Antoine Ruel. All Rights Reserved. Use of this
+# source code is governed by a BSD-style license that can be found in the
+# LICENSE file.
+
+import subprocess
+import sys
+
+
+def get_ps_tree():
+  # TODO(maruel): time, user
+  cmd = ['ps', 'axo', 'ppid,pid,command']
+  tree = {}
+  for l in subprocess.check_output(cmd).splitlines()[1:]:
+    parts = l.split()
+    # TODO(maruel): cmd is slightly corrupted w.r.t. whitespaces.
+    tree.setdefault(parts[0], []).append((parts[1], ' '.join(parts[2:])))
+  return tree
+
+
+def print_tree(tree, pid, cmd, indent):
+  # Skip kernel processes starting with '['.
+  if not cmd.startswith('['):
+    print('%s|_ %-6s %s' % (indent, pid, cmd))
+  for child_pid, child_cmd in tree.get(pid, []):
+    print_tree(tree, child_pid, child_cmd, indent + '  ')
+
+
+def main():
+  tree = get_ps_tree()
+  if len(sys.argv) > 1:
+    print_tree(tree, sys.argv[1], '', '')
+  else:
+    # process 1 is first child of process 0.
+    print_tree(tree, '1', tree['0'][0][1], '')
+  return 0
+
+
+if __name__ == '__main__':
+  sys.exit(main())
