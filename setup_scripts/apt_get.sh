@@ -15,10 +15,14 @@ sudo apt install -y \
   git ifstat gparted ntpdate python smartmontools sysstat tmux vim \
   vlc wireless-tools
 
-sudo apt remove -y apport cups deja-dup evince evolution-data-server \
+# avahi-daemon
+sudo apt remove -y \
+  apport cups cups-* \
+  deja-dup evince evolution-data-server \
   indicator-messages \
   'libreoffice*' shotwell \
   'thunderbird*' unity-scope-gdrive unity-scope-yelp \
+  whoopsie \
   zeitgeist-core
 
 sudo apt autoremove -y
