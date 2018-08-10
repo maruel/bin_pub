@@ -44,7 +44,11 @@ else
   # - Display non-zero exit code as red
   # - Current directory
   # For this to work well, this requires a recent version of tmux (2.6)
-  _CHAR="🐟"
+  if [ "$PLATFORM" = "Darwin" ]; then
+    _CHAR=""
+  else
+    _CHAR="🐟"
+  fi
   PS1="\[\e]0;\W\a\]\[\e[0m\]\$(_V=\$?; if [ \$_V != 0 ]; then echo -e -n \"\\[\\e[31m\\]\$_V \" ; fi)\[\e[33m\]\w\[\e[0m\]$_CHAR"
 fi
 
@@ -65,7 +69,7 @@ add_to_PATH "$HOME/bin/bin_pub"
 add_to_PATH "$HOME/.local/bin"
 
 if [ "$PLATFORM" = "Darwin" ]; then
-  add_to_PATH "$HOME/homebrew/bin"
+  add_to_PATH "$HOME/bin/homebrew/bin"
 fi
 
 # Go.
@@ -86,8 +90,8 @@ export PYTHONPATH="$PYTHONPATH:$HOME/bin:$HOME/bin/bin_pub"
 #  source /usr/share/autojump/autojump.sh
 #fi
 # brew install autojump
-#if [ -e "$HOME/homebrew/etc/autojump.sh" ]; then
-#  source "$HOME/homebrew/etc/autojump.sh"
+#if [ -e "$HOME/bin/homebrew/etc/autojump.sh" ]; then
+#  source "$HOME/bin/homebrew/etc/autojump.sh"
 #fi
 
 # git-prompt; it is too slow on cygwin.
