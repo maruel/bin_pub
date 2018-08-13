@@ -70,6 +70,12 @@ add_to_PATH "$HOME/.local/bin"
 
 if [ "$PLATFORM" = "Darwin" ]; then
   add_to_PATH "$HOME/bin/homebrew/bin"
+  if [ -e "$HOME/bin/homebrew/bin/bash" ]; then
+    if ! grep -q -s "^$HOME/bin/homebrew/bin/bash$" /etc/shells; then
+      echo "Don't forget to sudo vi /etc/shells to add $HOME/bin/homebrew/bin/bash!"
+    fi
+    export SHELL="$HOME/bin/homebrew/bin/bash"
+  fi
 fi
 
 # Go.
