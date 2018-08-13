@@ -19,22 +19,24 @@ import subprocess
 import sys
 
 
-def osx(tmux_status):
+def osx():
+  """Returns cpu_usage, disk_mb_per_s, disk_io_per_s, 0."""
   # Ignore anything other than the first drive. Fix this if this is a problem
   # for you.
   # TODO(maruel): It'd be nice to have the equivalent of ifstat. At that point,
   # it's probably worth rewritting in C++.
+
   stats = subprocess.check_output(['iostat', '-w', '1', '-n', '1', '-c', '2'])
   # KB/t tps MB/s us sy id 1m 5m 15m
   items = map(float, stats.splitlines()[-1].split())
-  io_per_s = items[1]
-  mb_per_s = items[2]
+  disk_io_per_s = items[1]
+  disk_mb_per_s = items[2]
   cpu_usage = 100. - items[5]
-  return cpu_usage, mb_per_s, int(io_per_s)
-  print('%5.1f%% %5.1fMB/s %4dIO/s' % (cpu_usage, mb_per_s, int(io_per_s)))
+  return cpu_usage, disk_mb_per_s, int(disk_io_per_s), 0
 
 
-def linux(tmux_status):
+def linux():
+  """Returns cpu_usage, disk_mb_per_s, disk_io_per_s, net_kb_per_s."""
   try:
     proc_iostat = subprocess.Popen(
         ['iostat', '1', '-c', '2', '-d'], stdout=subprocess.PIPE,
@@ -51,8 +53,8 @@ def linux(tmux_status):
     return
 
   iostat = proc_iostat.communicate()[0].splitlines()
-  tps = 0.
-  kb_s = 0.
+  disk_io_per_s = 0.
+  disk_kb_per_s = 0.
   seen_device = False
   # Cheezy.
   for i in xrange(len(iostat)-1, -1, -1):
@@ -70,33 +72,37 @@ def linux(tmux_status):
       seen_device = True
       continue
     items = map(float, line.split()[1:])
-    tps += items[0]
-    kb_s += items[1]
-    kb_s += items[2]
+    disk_io_per_s += items[0]
+    disk_kb_per_s += items[1]
+    disk_kb_per_s += items[2]
 
   # Sum all the networks, both inbound and outbound. It's really just to get a
   # rough idea of network usage.
-  net_io_kb_s = sum(
+  net_kb_per_s = sum(
       map(float, proc_ifstat.communicate()[0].splitlines()[-1].split()))
-  #print(
-  #    '%4.1f%% %5.1fMB/s %4sIO/s %5sKB/s' %
-  #    (cpu_usage, kb_s / 1024., int(tps), int(net_io_kb_s)))
-  if tmux_status:
-    print(
-        '#[fg=colour58]%4.1f%%#[fg=colour52]%4.1fMB/s#[fg=colour94]%2sIO/s#[fg=colour8]%2sKB/s' %
-        (cpu_usage, kb_s / 1024., int(tps), int(net_io_kb_s)))
-  else:
-    print(
-        '\033[31m%4.1f%%\033[32m%4.1fMB/s\033[33m%2sIO/s\033[34m%2sKB/s\033[0m' %
-        (cpu_usage, kb_s / 1024., int(tps), int(net_io_kb_s)))
+  return cpu_usage, disk_kb_per_s / 1024., int(disk_io_per_s), int(net_kb_per_s)
 
 
 def main():
+  colors = True
   tmux_status = 'TMUX' in os.environ and 'TMUX_PANE' not in os.environ
   if sys.platform == 'darwin':
-    osx(tmux_status)
+    cpu_usage, disk_mb_per_s, disk_io_per_s, net_kb_per_s = osx()
   else:
-    linux(tmux_status)
+    cpu_usage, disk_mb_per_s, disk_io_per_s, net_kb_per_s = linux()
+
+  if tmux_status:
+    print(
+        '#[fg=colour58]%4.1f%%#[fg=colour52]%4.1fMB/s#[fg=colour94]%2sIO/s#[fg=colour8]%2sKB/s' %
+        (cpu_usage, disk_mb_per_s, disk_io_per_s, net_kb_per_s))
+  elif colors:
+    print(
+        '\033[31m%4.1f%%\033[32m%4.1fMB/s\033[33m%2sIO/s\033[34m%2sKB/s\033[0m' %
+        (cpu_usage, disk_mb_per_s, disk_io_per_s, net_kb_per_s))
+  else:
+    print(
+        '%4.1f%% %4.1fMB/s %2sIO/s %2sKB/s' %
+        (cpu_usage, disk_mb_per_s, disk_io_per_s, net_kb_per_s))
   return 0
 
 
