@@ -13,3 +13,9 @@ set -e
 cd ~/bin
 mkdir homebrew
 curl -sL https://github.com/mxcl/homebrew/tarball/master | tar xz --strip 1 -C homebrew
+
+echo 'Then do:'
+echo '  brew update'
+echo '    (and fiddle with XCode)'
+echo '  brew install bash'
+echo '  brew install bash-completion'
