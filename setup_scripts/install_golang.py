@@ -77,7 +77,8 @@ def main():
       'golang.org/x/tools/cmd/godoc',
       'golang.org/x/tools/cmd/goimports',
       'golang.org/x/tools/cmd/stringer',
-      'github.com/maruel/panicparse/cmd/pp'])
+      'github.com/maruel/panicparse/cmd/pp',
+      'github.com/rjeczalik/bin/cmd/gobin'])
     # github.com/FiloSottile/gorebuild
   else:
     print('Skipping tooling because running as root')
