@@ -69,6 +69,7 @@ add_to_PATH "$HOME/bin/bin_pub"
 add_to_PATH "$HOME/.local/bin"
 
 if [ "$PLATFORM" = "Darwin" ]; then
+  # Homebrew, the best package manager ever.
   add_to_PATH "$HOME/bin/homebrew/bin"
   if [ -e "$HOME/bin/homebrew/bin/bash" ]; then
     if ! grep -q -s "^$HOME/bin/homebrew/bin/bash$" /etc/shells; then
@@ -76,6 +77,8 @@ if [ "$PLATFORM" = "Darwin" ]; then
     fi
     export SHELL="$HOME/bin/homebrew/bin/bash"
   fi
+  # Python local pip.
+  add_to_PATH "$HOME/Library/Python/2.7/bin"
 fi
 
 # Go.
