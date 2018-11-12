@@ -79,7 +79,12 @@ def main():
       'golang.org/x/tools/cmd/stringer',
       'github.com/maruel/panicparse/cmd/pp',
       'github.com/rjeczalik/bin/cmd/gobin'])
-    # github.com/FiloSottile/gorebuild
+    # Rebuild all binaries in $GOPATH/bin:
+    #   github.com/FiloSottile/gorebuild
+    # Find unused packages:
+    #   github.com/nf/deadleaves
+    # Count lines of code:
+    #   github.com/bytbox/sloc
   else:
     print('Skipping tooling because running as root')
   return 0
