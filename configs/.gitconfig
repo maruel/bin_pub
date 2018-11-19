@@ -2,7 +2,6 @@
 	ui = auto
 [core]
 	autocrlf = false
-	excludesfile = "~/.gitexcludes"
 	deltaBaseCacheLimit = 1G
 	askpass = 
 	precomposeunicode = true
