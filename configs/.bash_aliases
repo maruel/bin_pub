@@ -19,6 +19,12 @@ alias s='if tmux has; then tmux -2 attach -d; else tmux -2; fi'
 alias ll='ls -la'
 alias lsd='ll | grep "^d"'
 alias lsf='ll | grep -v "^d"'
+# Create with:
+#   $HOME/bin/bin_pub/setup_scripts/get_pip.sh
+#   pip install --user virtualenv
+#   mkdir -p $HOME/src/venv
+#   virtualenv $HOME/src/venv
+alias venv='source $HOME/src/venv/bin/activate'
 
 # See "CSI Ps ; Ps ; Ps t" at
 # http://invisible-island.net/xterm/ctlseqs/ctlseqs.html
