@@ -24,7 +24,7 @@
 ; Prints the repo's description if it exists.
 	which = !cat $(git rev-parse --git-dir)/description
 ; Prints a graph about the current state of the branches
-	confused = log --graph --decorate --pretty=format:\"%Cgreen%d %Cred%ad %Creset%s\" --branches --date-order --date=short
+	confused = log --graph --decorate --pretty=format:\"%Cgreen%h%d %Cred%ad %Creset%s\" --branches --date-order --date=short --tags
 ; Returns the upstream branch, using some lame git-svn heuristics if it's not set
 ; correctly. TODO: Default to <first remote found>/master ?
         upstream = "!f() { git rev-parse --verify -q $1 >/dev/null 2>&1 && git rev-parse --symbolic-full-name $1 2>/dev/null; }; f @{u} || f origin/trunk || f trunk"
@@ -72,3 +72,5 @@
 	cmd = vimdiff -c \"wincmd J\" -c \"0\" -c \"/<<<<<<< \" $MERGED $LOCAL $BASE $REMOTE
 [grep]
 	patternType = perl
+[http]
+	cookiefile = ~/.config/git/cookies
