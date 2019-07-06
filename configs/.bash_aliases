@@ -58,6 +58,8 @@ else
     #_CHAR="💻"
     # Main workstation:
     #_CHAR="🐟"
+    # VM in the cloud
+    #_CHAR="☁"
   fi
   PS1="\[\e]0;\W\a\]\[\e[0m\]\$(_V=\$?; if [ \$_V != 0 ]; then echo -e -n \"\\[\\e[31m\\]\$_V \" ; fi)\[\e[33m\]\w\[\e[0m\]$_CHAR"
 fi
