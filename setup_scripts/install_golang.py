@@ -11,9 +11,28 @@ import tarfile
 import sys
 
 
+def _semver(v):
+  v = v.split('.')
+  for i in range(len(v)):
+    try:
+      v[i] = int(v[i])
+    except ValueError:
+      pass
+  return v
+
+
+def _check_output(*args, **kwargs):
+  if sys.version_info.major == 3:
+    kwargs['universal_newlines'] = True
+  return subprocess.check_output(*args, **kwargs)
+
+
 def from_sources():
   """Installing from sources."""
-  goroot = os.environ['GOROOT']
+  home = os.path.expanduser('~')
+  goroot = os.environ.get('GOROOT')
+  if not goroot:
+    goroot = os.path.join(home, 'src', 'golang')
   print('Installing Go in %s' % goroot)
   if os.path.isdir(goroot):
     subprocess.check_call(['git', 'fetch', '--all'], cwd=goroot)
@@ -22,42 +41,55 @@ def from_sources():
         ['git', 'clone', 'https://go.googlesource.com/go', goroot])
 
   #TAG="$(git tag | grep "^go" | egrep -v "beta|rc" | tail -n 1)"
-  tags = subprocess.check_output(['git', 'tag'], cwd=goroot).splitlines()
+  tags = _check_output(['git', 'tag'], cwd=goroot).splitlines()
   tags = sorted(
-      t for t in tags
-      if t.startswith('go') and 'beta' not in t and 'rc' not in t)
+      (t for t in tags
+      if t.startswith('go') and 'beta' not in t and 'rc' not in t),
+      key=_semver)
   tag = tags[-1]
   print('Using %s' % tag)
   subprocess.check_call(['git', 'checkout', tag], cwd=goroot)
+
+  go14 = os.path.join(home, 'go1.4')
+  if not os.path.isdir(go14):
+    from_binary(go14)
 
   print('Building.')
   subprocess.check_call(['./make.bash'], cwd=os.path.join(goroot, 'src'))
 
 
-def from_binary():
-  """Install globally from pre-built binaries as root."""
-  goroot = '/usr/local/go'
+def from_binary(goroot):
+  """Installs from pre-built binaries."""
   print('Installing Go in %s' % goroot)
   if os.path.isdir(goroot):
     shutil.rmtree(goroot)
-  # TODO(maruel): Magically figure out latest version.
-  version = '1.8'
+  # TODO(maruel): Magically figure out latest version as done in
+  # https://github.com/periph/bootstrap/blob/master/setup.sh
+  version = '1.12.7'
   uname = os.uname()[4]
   arch = 'amd64'
   if uname.startswith('arm'):
     # ~70MB, at 1Mbit it takes 12 minutes...
     arch = 'armv6l'
-  if sys.platform == 'linux2':
+
+  os_name = sys.platform
+  if os_name == 'linux2':
     os_name = 'linux'
   filename = 'go' + version + '.' + os_name + '-' + arch + '.tar.gz'
   url = 'https://storage.googleapis.com/golang/' + filename
   print('Fetching %s' % url)
   subprocess.check_call(['wget', url])
-  subprocess.check_call(['tar', '-C', '/usr/local', '-xzf', filename])
+  if not os.path.isdir(goroot):
+    os.mkdir(goroot)
+  subprocess.check_call(['tar', '-C', goroot, '--strip-components=1', '-xzf', filename])
   os.remove(filename)
+
+
+def setup_profile(goroot):
+  """Sets up the global profilet to include system wide Go."""
   with open('/etc/profile.d/golang.sh', 'wb') as f:
     f.write('export PATH="$PATH:%s/bin"\n' % goroot)
-  os.chmod('/etc/profile.d/golang.sh', 0555)
+  os.chmod('/etc/profile.d/golang.sh', 0o555)
 
 
 def main():
@@ -67,7 +99,9 @@ def main():
   args = parser.parse_args()
   if not args.skip:
     if args.system:
-      from_binary()
+      goroot = '/usr/local/go'
+      from_binary(goroot)
+      setup_profile(goroot)
     else:
       from_sources()
   if os.geteuid() != 0:
