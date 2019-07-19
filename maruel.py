@@ -36,13 +36,15 @@ def capture(*args, **kwargs):
 
 def write(filename, content):
     """Writes a file"""
-    with open(filename, 'w') as f:
+    mode = 'wb' if filename.endswith('.png') else 'wt'
+    with open(filename, mode) as f:
         f.write(content)
 
 
 def read(filename):
     """Reads a file"""
-    with open(filename, 'r') as f:
+    mode = 'rb' if filename.endswith('.png') else 'rt'
+    with open(filename, mode) as f:
         return f.read()
 
 
@@ -62,7 +64,7 @@ def walk(path, whitelist, blacklist=(r'^(.*/|)\.[^/]+/$',), relative=True):
         assert dirpath.startswith(path)
         if relative:
             dirpath = dirpath[lenpath + 1:]
-        for index in xrange(len(dirnames) - 1, -1, -1):
+        for index in range(len(dirnames) - 1, -1, -1):
             d = os.path.join(dirpath, dirnames[index]) + os.sep
             if os.altsep:
                 converted_d = d.replace(os.sep, os.altsep)

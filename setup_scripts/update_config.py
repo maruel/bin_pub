@@ -95,8 +95,10 @@ def load_files(config_dir, files):
     for basename in maruel.walk(config_dir, [r'.*'], blacklist):
         src = os.path.join(config_dir, basename)
         if os.path.isfile(src):
-            files.setdefault(basename, '')
-            files[basename] += maruel.read(src)
+            if basename not in files:
+                files[basename] = maruel.read(src)
+            else:
+                files[basename] += maruel.read(src)
 
 
 def main():
