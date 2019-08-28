@@ -64,7 +64,7 @@ else
     _CHAR="💻"
   elif grep -q GOOGLE /etc/os-release; then
     # VM in the cloud
-    _CHAR="☁"
+    _CHAR="☁ "
   else
     # Default:
     _CHAR="$ "
