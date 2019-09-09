@@ -2,6 +2,7 @@
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 
+"let mapleader = "\<Space>"
 let mapleader = ","
 
 execute pathogen#infect()
@@ -70,7 +71,7 @@ set nojoinspaces
 "
 
 " Write contents of the file, if it has been modified, on buffer exit
-"set autowrite
+set autowrite
 
 " Allow backspacing over everything
 set backspace=indent,eol,start
@@ -206,8 +207,10 @@ map <silent> <F10> :bn<CR>
 map <silent> <F9> :bp<CR>
 map <silent> <F8> :za<CR>
 map <silent> <F7> :zO<CR>
+" https://github.com/fatih/vim-go
 map <silent> <F5> :GoCoverage<CR>
-map <silent> <F6> :'<,'>sort<CR>
+map <silent> <F6> :GoTestFunc<CR>
+"map <silent> <F6> :'<,'>sort<CR>
 " Doesn't work: imap <Nul> zO
 
 
