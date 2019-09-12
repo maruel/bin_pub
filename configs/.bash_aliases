@@ -69,7 +69,16 @@ else
     # Default:
     _CHAR="$ "
   fi
-  PS1="\[\e]0;\W\a\]\[\e[0m\]\$(_V=\$?; if [ \$_V != 0 ]; then echo -e -n \"\\[\\e[31m\\]\$_V \" ; fi)\[\e[33m\]\w\[\e[0m\]$_CHAR"
+  # Original
+  #PS1="\[\e]0;\W\a\]\[\e[0m\]\$(_V=\$?; if [ \$_V != 0 ]; then echo -e -n \"\\[\\e[31m\\]\$_V \" ; fi)\[\e[33m\]\w\[\e[0m\]$_CHAR"
+
+  # New
+  #. ~/bin/bin_pub/git-prompt.sh
+  GIT_PS1_SHOWDIRTYSTATE=1
+  GIT_PS1_SHOWSTASHSTATE=1
+  GIT_PS1_SHOWUNTRACKEDFILES=1
+  GIT_PS1_SHOWUPSTREAM="auto"
+  PROMPT_COMMAND='__git_ps1 "\[\e]0;\W\a\]\[\e[0m\]\$(_V=\$?; if [ \$_V != 0 ]; then echo -e -n \"\\[\\e[31m\\]\$_V\\[\\e[0m\\]\" ; fi)" "\[\e[33m\]\w\[\e[0m\]$_CHAR"'
 fi
 
 
