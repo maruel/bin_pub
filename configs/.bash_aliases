@@ -84,7 +84,7 @@ else
   #  >  ahead upstream
   #  <> diverged from upstream
   #  =  equals upstream
-  GIT_PS1_DESCRIBE_STYLE="describe"
+  GIT_PS1_DESCRIBE_STYLE="tag"
   GIT_PS1_SHOWCOLORHINTS=1
   GIT_PS1_SHOWDIRTYSTATE=1
   GIT_PS1_SHOWSTASHSTATE=1
