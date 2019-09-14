@@ -67,6 +67,10 @@ def update_config(files, diff_cmd):
             os.makedirs(dst_dir)
         content = files[basename]
         if not os.path.isfile(dst):
+            if os.path.isdir(dst):
+                print('Skipping file which is directory at destination %s' %
+                        basename)
+                continue
             print('Copying %s' % basename)
             maruel.write(dst, content)
             ok_files.append(basename)
