@@ -64,6 +64,11 @@ set foldlevel=99
 set nojoinspaces
 
 
+" Do not copy when pasting by default
+xnoremap o pgvy
+" xnoremap p pgv"@=v:register.'y'<cr>
+
+
 "
 " http://zmievski.org/2007/02/vim-for-php-programmers-slides-and-resources
 "
