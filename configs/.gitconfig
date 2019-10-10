@@ -62,6 +62,7 @@
 	cmd = autodiff $LOCAL $REMOTE
 [diff]
 	tool = vimdiff
+	noprefix = true
 [branch]
 	autosetupmerge = always
 	autosetuprebase = local
