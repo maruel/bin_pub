@@ -62,7 +62,7 @@ else
   elif [[ $HOSTNAME == *laptop* ]]; then
     # Laptop:
     _CHAR="💻"
-  elif grep -q GOOGLE /etc/lsb-release; then
+  elif grep -q GOOGLE /etc/lsb-release 2>/dev/null; then
     # VM in the cloud
     _CHAR="☁ "
   else
