@@ -13,6 +13,11 @@ export PYTHONDONTWRITEBYTECODE=x
 
 # My Windows roots show through
 alias cd..='cd ..'
+# I stole this from twitter.
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
 # This is the command I use the most: "ssh <workstation>" then "s"
 alias s='if tmux has; then tmux -2 attach -d; else tmux -2; fi'
 # 'll' is not on mac and cygwin by default.
