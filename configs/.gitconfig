@@ -1,77 +1,68 @@
 [color]
-	ui = auto
+  ui = auto
 [core]
-	autocrlf = false
-	deltaBaseCacheLimit = 1G
-	askpass = 
-	precomposeunicode = true
+  autocrlf = false
+  deltaBaseCacheLimit = 1G
+  askpass = 
+  precomposeunicode = true
 [alias]
 ; Common shortcuts.
-	st = status --ignore-submodule=all -sb
-	ci = commit
-	br = branch
-	sed = "!git ls-files -- . | xargs -L 1 sed -i"
-        graphviz = "!f() { echo 'digraph git {' ; git log --pretty='format:  %h -> { %p }' \"$@\" | sed 's/[0-9a-f][0-9a-f]*/\"&\"/g' ; echo '}'; }; f"
-	bd = branch -D
-	sr = svn rebase
-        co = checkout
-; Add "git alias"
-        alias = "!sh -c '[ $# = 2 ] && git config --global alias.\"$1\" \"$2\" && exit 0 || echo \"usage: git alias <new alias> <original command>\" >&2 && exit 1' -"
+  st = status --ignore-submodule=all -sb
+  ci = commit
+  br = branch
+  sed = "!git ls-files -- . | xargs -L 1 sed -i"
+  graphviz = "!f() { echo 'digraph git {' ; git log --pretty='format:  %h -> { %p }' \"$@\" | sed 's/[0-9a-f][0-9a-f]*/\"&\"/g' ; echo '}'; }; f"
+  bd = branch -D
+  co = checkout
 ; Prints untracked files
-	untracked = "!cd \"$(git rev-parse --show-cdup)\" && git clean -n -d | cut -c 14- | sed -e \"s/\\/$//\" | while read i; do echo /$i; done"
+  untracked = "!cd \"$(git rev-parse --show-cdup)\" && git clean -n -d | cut -c 14- | sed -e \"s/\\/$//\" | while read i; do echo /$i; done"
 ; Add all untracked files to .git/info/exclude
-        ignoreall = "!cd \"$(git rev-parse --show-cdup)\" && git clean -n -d | cut -c 14- | sed -e \"s/\\/$//\" >> $(git rev-parse --git-dir)/info/exclude"
+  ignoreall = "!cd \"$(git rev-parse --show-cdup)\" && git clean -n -d | cut -c 14- | sed -e \"s/\\/$//\" >> $(git rev-parse --git-dir)/info/exclude"
 ; Prints the repo's description if it exists.
-	which = !cat $(git rev-parse --git-dir)/description
+  which = !cat $(git rev-parse --git-dir)/description
 ; Prints a graph about the current state of the branches
-	confused = log --graph --decorate --pretty=format:\"%Cgreen%h%d %Cred%ad %Creset%s\" --branches --date-order --date=short --tags
-; Returns the upstream branch, using some lame git-svn heuristics if it's not set
-; correctly. TODO: Default to <first remote found>/master ?
-        upstream = "!f() { git rev-parse --verify -q $1 >/dev/null 2>&1 && git rev-parse --symbolic-full-name $1 2>/dev/null; }; f @{u} || f origin/trunk || f trunk"
+  confused = log --graph --decorate --pretty=format:\"%Cgreen%h%d %Cred%ad %Creset%s\" --branches --date-order --date=short --tags
+; Returns the upstream branch. TODO: Default to <first remote found>/master ?
+  upstream = "!f() { git rev-parse --verify -q $1 >/dev/null 2>&1 && git rev-parse --symbolic-full-name $1 2>/dev/null; }; f @{u} || f origin/master"
 ; Returns the 'ancestor' hash at which the current branch is based on
-        ancestor = !git merge-base HEAD $(git upstream)
+  ancestor = !git merge-base HEAD $(git upstream)
 ; Rebase against the ancestor
-	reroll = !git rebase -i $(git ancestor)
+  reroll = !git rebase -i $(git ancestor)
 ; Smaller log against the ancestor
-        compact-log = !git log --pretty=format:\"%B\" $(git ancestor)..HEAD
+  compact-log = !git log --pretty=format:\"%B\" $(git ancestor)..HEAD
 ; Squash all the commits against the ancestor into a single commit
-        squash = "!OLDLOG=$(git compact-log); git reset --soft $(git ancestor) && git commit -m \"$OLDLOG\""
+  squash = "!OLDLOG=$(git compact-log); git reset --soft $(git ancestor) && git commit -m \"$OLDLOG\""
 ; Blames against a branch given as an argument
-        blamebranch = "!foo() { git diff --name-only \"$@\" | while read i; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr; }; foo"
+  blamebranch = "!foo() { git diff --name-only \"$@\" | while read i; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr; }; foo"
 ; Blames against the 'upstream' branch
-        blameup = !git blamebranch $(git ancestor)
+  blameup = !git blamebranch $(git ancestor)
 ; Blames a for a few files. The length of arguments is relatively limited, it'll
 ; fail after ~100 files or so, depending on the actual string (total file names)
 ; length.
-        blamefiles = "!foo() { for i in \"$@\"; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr; }; foo"
-	new = "!f() { git fetch && git checkout -b $@ origin/master; }; f"
-	df = "!git difftool \"$(git ancestor)\" -- "
-	lp = "log -p @{u}.."
+  blamefiles = "!foo() { for i in \"$@\"; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr; }; foo"
+  new = "!f() { git fetch && git checkout -b $@ origin/master; }; f"
+  df = "!git difftool \"$(git ancestor)\" -- "
+  lp = "log -p @{u}.."
 [push]
-	default = current
-[mergetool "autodiff"]
-	cmd = autodiff $BASE $LOCAL $REMOTE $MERGED
+  default = current
 [merge]
-#	tool = autodiff
-	tool = vimdiffnice
+	tool = vimdiff4way
 [gui]
-	pruneduringfetch = true
+  pruneduringfetch = true
 [receive]
-	denyCurrentBranch = warn
-[difftool "autodiff"]
-	cmd = autodiff $LOCAL $REMOTE
+  denyCurrentBranch = warn
 [diff]
-	tool = vimdiff
-	noprefix = true
+  tool = vimdiff
+  noprefix = true
 [branch]
-	autosetupmerge = always
-	autosetuprebase = local
+  autosetupmerge = always
+  autosetuprebase = local
 [mergetool]
-	prompt = false
-	keepBackup = false
-[mergetool "vimdiffnice"]
+  prompt = false
+  keepBackup = false
+[mergetool "vimdiff4way"]
 	cmd = vimdiff -c \"wincmd J\" -c \"0\" -c \"/<<<<<<< \" $MERGED $LOCAL $BASE $REMOTE
 [grep]
-	patternType = perl
+  patternType = perl
 [http]
-	cookiefile = ~/.config/git/cookies
+  cookiefile = ~/.config/git/cookies
