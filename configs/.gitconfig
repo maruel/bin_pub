@@ -46,7 +46,7 @@
 [push]
   default = current
 [merge]
-	tool = vimdiff4way
+  tool = vimdiff4way
 [gui]
   pruneduringfetch = true
 [receive]
@@ -61,7 +61,7 @@
   prompt = false
   keepBackup = false
 [mergetool "vimdiff4way"]
-	cmd = vimdiff -c \"wincmd J\" -c \"0\" -c \"/<<<<<<< \" $MERGED $LOCAL $BASE $REMOTE
+  cmd = vimdiff -c \"wincmd J\" -c \"0\" -c \"/<<<<<<< \" $MERGED $LOCAL $BASE $REMOTE
 [grep]
   patternType = perl
 [http]
