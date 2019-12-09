@@ -43,6 +43,7 @@
   new = "!f() { git fetch && git checkout -b $@ origin/master; }; f"
   df = "!git difftool \"$(git ancestor)\" -- "
   lp = "log -p @{u}.."
+  p = pull --rebase
 [push]
   default = current
 [merge]
