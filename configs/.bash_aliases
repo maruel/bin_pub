@@ -62,11 +62,14 @@ else
     # Raspberry Pi
     _CHAR="🍓"
   elif [ "$HOSTNAME" = "ogre" ]; then
-    # Main workstation:
+    # Personal workstation:
     _CHAR="🐟"
   elif [[ $HOSTNAME == *laptop* ]]; then
     # Laptop:
     _CHAR="💻"
+  elif [[ $HOSTNAME == *p920* ]]; then
+    # Workstation:
+    _CHAR="☢ "
   elif grep -q GOOGLE /etc/lsb-release 2>/dev/null; then
     # VM in the cloud
     _CHAR="☁ "
