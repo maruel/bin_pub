@@ -20,8 +20,9 @@ alias ....='cd ../../..'
 alias .....='cd ../../../..'
 # This is the command I use the most: "ssh <workstation>" then "s"
 alias s='if tmux has; then tmux -2 attach -d; else tmux -2; fi'
-# 'll' is not on mac and cygwin by default.
-alias ll='ls -la'
+# 'll' is not on mac and cygwin by default, and the default time format used
+# is an abomination.
+alias ll='ls -la --time-style=long-iso'
 alias lsd='ll | grep "^d"'
 alias lsf='ll | grep -v "^d"'
 # Create with:
