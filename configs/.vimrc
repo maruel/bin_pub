@@ -218,6 +218,9 @@ map <silent> <F6> :GoTestFunc<CR>
 "map <silent> <F6> :'<,'>sort<CR>
 " Doesn't work: imap <Nul> zO
 
+" K = doc
+" gd = go to definition
+" Ctrl-t = go back
 
 " Abbreviations
 ab #i #include
