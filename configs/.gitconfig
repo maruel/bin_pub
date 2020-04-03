@@ -67,3 +67,5 @@
   patternType = perl
 [http]
   cookiefile = ~/.config/git/cookies
+[pull]
+  rebase = true
