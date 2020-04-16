@@ -2,7 +2,13 @@
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
 
-PLATFORM=$(uname)
+# Exports this so it is always quickly accessible. This is leveraged in
+# .tmux.conf to save time.
+export UNAME=$(uname)
+
+# HOSTNAME is generally defined as a pseudo environment variable. Define it for
+# real so it's usable in .tmux.conf.
+export HOSTNAME=$HOSTNAME
 
 export EDITOR=vim
 export HISTCONTROL="ignoredups"
@@ -39,7 +45,7 @@ alias venv='source $HOME/src/venv/bin/activate'
 alias m='echo -e "\x1b[3;0;0t\x1b[8;500;500t"'
 
 # Want color and / or @ at end of directory/symlink.
-if [ "$PLATFORM" = "Darwin" ]; then
+if [ "$UNAME" = "Darwin" ]; then
   alias ls='ls -F'
   export CLICOLOR=1
 else
@@ -56,7 +62,7 @@ else
   # - Display non-zero exit code as red
   # - Current directory
   # For this to work well, this requires a recent version of tmux (2.6)
-  if [ "$PLATFORM" = "Darwin" ]; then
+  if [ "$UNAME" = "Darwin" ]; then
     # macOS
     _CHAR=""
   elif [ "$USER" = "pi" ]; then
@@ -103,12 +109,8 @@ else
 fi
 
 
-# PATH
-
-# http://superuser.com/questions/39751/add-directory-to-path-if-its-not-already-there
 add_to_PATH() {
   if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
-    #PATH="${PATH:+"$PATH:"}$1"
     PATH="$1:$PATH"
   fi
 }
@@ -118,7 +120,7 @@ add_to_PATH "$HOME/bin"
 add_to_PATH "$HOME/bin/bin_pub"
 add_to_PATH "$HOME/.local/bin"
 
-if [ "$PLATFORM" = "Darwin" ]; then
+if [ "$UNAME" = "Darwin" ]; then
   # Homebrew, the best package manager ever.
   add_to_PATH "$HOME/bin/homebrew/bin"
   if [ -e "$HOME/bin/homebrew/bin/bash" ]; then
@@ -132,12 +134,8 @@ if [ "$PLATFORM" = "Darwin" ]; then
 fi
 
 # Go.
-if [ -d "$HOME/src/golang" ]; then
-  export GOROOT="$HOME/src/golang"
-  add_to_PATH "$GOROOT/bin"
-fi
-export GOPATH="$HOME/go"
-add_to_PATH "$GOPATH/bin"
+add_to_PATH "$HOME/src/golang/bin"
+add_to_PATH "$HOME/go/bin"
 export GOTRACEBACK=all
 
 # My python stuff.
@@ -153,15 +151,9 @@ export PYTHONPATH="$PYTHONPATH:$HOME/bin:$HOME/bin/bin_pub"
 #  source "$HOME/bin/homebrew/etc/autojump.sh"
 #fi
 
-# git-prompt; it is too slow on cygwin.
-#if [ ! "$OS" = "Windows_NT" ]; then
-#  if [ -f ~/bin/bin_pub/git-prompt/git-prompt.sh ]; then
-#    . ~/bin/bin_pub/git-prompt/git-prompt.sh
-#  fi
-#fi
 
 # git-completion
-if [ "$PLATFORM" = "Darwin" ]; then
+if [ "$UNAME" = "Darwin" ]; then
   # It's not at the same place on MacOSX.
   if [ -f /usr/local/git/contrib/completion/git-completion.bash ]; then
     source /usr/local/git/contrib/completion/git-completion.bash
@@ -192,4 +184,7 @@ fi
 #fi
 
 
-# End of public configuration.
+# Load private configuration if present.
+if test -f ~/.config/bash_aliases; then
+  source ~/.config/bash_aliases
+fi
