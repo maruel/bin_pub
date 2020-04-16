@@ -1,6 +1,3 @@
-[submodule "git-prompt"]
-	path = git-prompt
-	url = https://github.com/lvv/git-prompt.git
 [submodule "git_utils"]
 	path = git_utils
 	url = https://github.com/maruel/git_utils.git
