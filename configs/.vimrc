@@ -208,15 +208,21 @@ vnoremap > >gv
 " Toggle fold with space in normal mode or F8 all the time. Ctrl-space opens all
 " inner folds
 nnoremap <space> za
+" Next file
 map <silent> <F10> :bn<CR>
+" Previous file
 map <silent> <F9> :bp<CR>
-map <silent> <F8> :za<CR>
-map <silent> <F7> :zO<CR>
+" Expand
+"map <silent> <F8> :za<CR>
+" Collapse
+"map <silent> <F7> :zO<CR>
 " https://github.com/fatih/vim-go
 map <silent> <F5> :GoCoverage<CR>
 map <silent> <F6> :GoTestFunc<CR>
 "map <silent> <F6> :'<,'>sort<CR>
 " Doesn't work: imap <Nul> zO
+" map <F7> to toggle Fmt
+"nmap <silent> <F7> :Fmt<CR>
 
 " K = doc
 " gd = go to definition
@@ -254,5 +260,9 @@ endif
 " MARUEL
 set ttymouse=xterm2
 
-" map <F7> to toggle Fmt
-nmap <silent> <F7> :Fmt<CR>
+" zg add to dict
+" z= suggestions
+set spell
+highlight clear SpellBad
+" highlight SpellBad term=standout ctermfg=1
+highlight SpellBad term=underline cterm=underline
