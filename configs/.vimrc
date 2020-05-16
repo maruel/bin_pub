@@ -266,3 +266,5 @@ set spell
 highlight clear SpellBad
 " highlight SpellBad term=standout ctermfg=1
 highlight SpellBad term=underline cterm=underline
+
+nnoremap <Leader>s :<C-u>call gitblame#echo()<CR>
