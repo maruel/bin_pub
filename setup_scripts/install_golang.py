@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2016 Marc-Antoine Ruel. All Rights Reserved. Use of this
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import tarfile
 import sys
+import urllib.request
 
 
 def _semver(v):
@@ -40,6 +41,7 @@ def from_sources():
     subprocess.check_call(
         ['git', 'clone', 'https://go.googlesource.com/go', goroot])
 
+  # Equivalent of:
   #TAG="$(git tag | grep "^go" | egrep -v "beta|rc" | tail -n 1)"
   tags = _check_output(['git', 'tag'], cwd=goroot).splitlines()
   tags = sorted(
@@ -52,20 +54,19 @@ def from_sources():
 
   go14 = os.path.join(home, 'go1.4')
   if not os.path.isdir(go14):
-    from_binary(go14)
+    from_precompiled(go14)
 
   print('Building.')
   subprocess.check_call(['./make.bash'], cwd=os.path.join(goroot, 'src'))
 
 
-def from_binary(goroot):
+def from_precompiled(goroot):
   """Installs from pre-built binaries."""
   print('Installing Go in %s' % goroot)
   if os.path.isdir(goroot):
     shutil.rmtree(goroot)
-  # TODO(maruel): Magically figure out latest version as done in
-  # https://github.com/periph/bootstrap/blob/master/setup.sh
-  version = '1.12.7'
+  version = urllib.request.urlopen(
+      'https://golang.org/VERSION?m=text').read().decode('utf-8')
   uname = os.uname()[4]
   arch = 'amd64'
   if uname.startswith('arm'):
@@ -75,8 +76,10 @@ def from_binary(goroot):
   os_name = sys.platform
   if os_name == 'linux2':
     os_name = 'linux'
-  filename = 'go' + version + '.' + os_name + '-' + arch + '.tar.gz'
-  url = 'https://storage.googleapis.com/golang/' + filename
+  filename = version + '.' + os_name + '-' + arch + '.tar.gz'
+  # Used to be:
+  # url = 'https://storage.googleapis.com/golang/' + filename
+  url = 'https://dl.google.com/go/' + filename
   print('Fetching %s' % url)
   subprocess.check_call(['wget', url])
   if not os.path.isdir(goroot):
@@ -100,7 +103,7 @@ def main():
   if not args.skip:
     if args.system:
       goroot = '/usr/local/go'
-      from_binary(goroot)
+      from_precompiled(goroot)
       setup_profile(goroot)
     else:
       from_sources()
