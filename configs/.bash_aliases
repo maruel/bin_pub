@@ -31,6 +31,8 @@ alias s='if tmux has; then tmux -2 attach -d; else tmux -2; fi'
 alias ll='ls -la --time-style=long-iso'
 alias lsd='ll | grep "^d"'
 alias lsf='ll | grep -v "^d"'
+# git diff implementation is much better than default diff.
+alias diff="git diff --no-index"
 # Create with:
 #   $HOME/bin/bin_pub/setup_scripts/get_pip.sh
 #   pip install --user virtualenv
