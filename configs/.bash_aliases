@@ -32,7 +32,7 @@ alias ll='ls -la --time-style=long-iso'
 alias lsd='ll | grep "^d"'
 alias lsf='ll | grep -v "^d"'
 # git diff implementation is much better than default diff.
-alias diff="git diff --no-index"
+alias diff="git diff --no-index --no-ext-diff --no-prefix"
 # Create with:
 #   $HOME/bin/bin_pub/setup_scripts/get_pip.sh
 #   pip install --user virtualenv
