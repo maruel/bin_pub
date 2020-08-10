@@ -139,19 +139,22 @@ fi
 add_to_PATH "$HOME/src/golang/bin"
 add_to_PATH "$HOME/go/bin"
 export GOTRACEBACK=all
+# Try always on Go module mode.
+export GO111MODULE=on
 
 # My python stuff.
 export PYTHONPATH="$PYTHONPATH:$HOME/bin:$HOME/bin/bin_pub"
 
+
 # So 'j' can be used.
 # sudo apt-get install autojump
-#if [ -e /usr/share/autojump/autojump.sh ]; then
-#  source /usr/share/autojump/autojump.sh
-#fi
+if [ -e /usr/share/autojump/autojump.sh ]; then
+  source /usr/share/autojump/autojump.sh
+fi
 # brew install autojump
-#if [ -e "$HOME/bin/homebrew/etc/autojump.sh" ]; then
-#  source "$HOME/bin/homebrew/etc/autojump.sh"
-#fi
+if [ -e "$HOME/bin/homebrew/etc/autojump.sh" ]; then
+  source "$HOME/bin/homebrew/etc/autojump.sh"
+fi
 
 
 # git-completion
