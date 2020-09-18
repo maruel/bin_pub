@@ -114,6 +114,7 @@ def main():
       'golang.org/x/tools/cmd/godoc',
       'golang.org/x/tools/cmd/goimports',
       'golang.org/x/tools/cmd/stringer',
+      #'github.com/axw/gocov/gocov',
       'github.com/boyter/scc@v2',
       'github.com/maruel/panicparse/v2/cmd/pp',
       'github.com/monochromegane/the_platinum_searcher/cmd/pt@v2',
