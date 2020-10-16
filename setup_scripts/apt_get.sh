@@ -4,25 +4,23 @@
 # LICENSE file.
 
 # Install useful packages I can't live without.
-# Assumes very minimal Ubuntu desktop/server 16.04 or later, or Raspbian Jessie
-# Lite installation.
+# Assumes minimal Ubuntu desktop/server 20.04.
 
 set -eu
 
 # Recent ssh-agent is finally kinda-working, so keychain isn't necessary
 # anymore.
-sudo apt install -y \
-  git ifstat gparted ntpdate python smartmontools sysstat tmux vim \
-  vlc wireless-tools
+# These are occasionally useful: gparted vlc
+sudo apt install \
+  git ifstat ntpdate python3 smartmontools sysstat tmux vim \
+  wireless-tools
 
 # avahi-daemon
-sudo apt remove -y \
-  apport cups cups-* \
-  deja-dup evince evolution-data-server \
-  indicator-messages \
-  'libreoffice*' shotwell \
-  'thunderbird*' unity-scope-gdrive unity-scope-yelp \
-  whoopsie \
-  zeitgeist-core
+# evolution-data-server
+# indicator-messages
+sudo apt remove \
+  apport \
+  evince \
+  whoopsie
 
 sudo apt autoremove -y
