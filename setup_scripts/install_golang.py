@@ -58,6 +58,7 @@ def from_sources():
 
   print('Building.')
   subprocess.check_call(['./make.bash'], cwd=os.path.join(goroot, 'src'))
+  return goroot
 
 
 def from_precompiled(goroot):
@@ -106,11 +107,14 @@ def main():
       from_precompiled(goroot)
       setup_profile(goroot)
     else:
-      from_sources()
+      goroot = from_sources()
   if os.geteuid() != 0:
     # Start getting useful projects right away, if not running as root.
+    go = 'go'
+    if goroot:
+      go = os.path.join(goroot, 'bin', 'go')
     subprocess.check_call(
-        ['go', 'get', '-v',
+        [go, 'get', '-v',
       'golang.org/x/tools/cmd/godoc',
       'golang.org/x/tools/cmd/goimports',
       'golang.org/x/tools/cmd/stringer',
