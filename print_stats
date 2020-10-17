@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2014 Marc-Antoine Ruel. All Rights Reserved. Use of this
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
@@ -28,7 +28,7 @@ def osx():
 
   stats = subprocess.check_output(['iostat', '-w', '1', '-n', '1', '-c', '2'])
   # KB/t tps MB/s us sy id 1m 5m 15m
-  items = map(float, stats.splitlines()[-1].split())
+  items = [float(i) for i in stats.splitlines()[-1].split()]
   disk_io_per_s = items[1]
   disk_mb_per_s = items[2]
   cpu_usage = 100. - items[5]
@@ -57,21 +57,21 @@ def linux():
   disk_kb_per_s = 0.
   seen_device = False
   # Cheezy.
-  for i in xrange(len(iostat)-1, -1, -1):
+  for i in range(len(iostat)-1, -1, -1):
     line = iostat[i]
     if not line:
       continue
     if seen_device:
-      v = line.split()[-1].strip('\x00')
+      v = line.split()[-1].strip(b'\x00')
       try:
         cpu_usage = 100. - float(v)
       except Exception as e:
         cpu_usage = 0.
       break
-    if line.startswith('Device'):
+    if line.startswith(b'Device'):
       seen_device = True
       continue
-    items = map(float, line.split()[1:])
+    items = [float(i) for i in line.split()[1:]]
     disk_io_per_s += items[0]
     disk_kb_per_s += items[1]
     disk_kb_per_s += items[2]
@@ -79,7 +79,7 @@ def linux():
   # Sum all the networks, both inbound and outbound. It's really just to get a
   # rough idea of network usage.
   net_kb_per_s = sum(
-      map(float, proc_ifstat.communicate()[0].splitlines()[-1].split()))
+      float(i) for i in proc_ifstat.communicate()[0].splitlines()[-1].split())
   return cpu_usage, disk_kb_per_s / 1024., int(disk_io_per_s), int(net_kb_per_s)
 
 
