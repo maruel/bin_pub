@@ -33,7 +33,7 @@ def from_sources():
   home = os.path.expanduser('~')
   goroot = os.environ.get('GOROOT')
   if not goroot:
-    goroot = os.path.join(home, 'src', 'golang')
+    goroot = os.path.join(home, 'src-oth', 'golang')
   print('Installing Go in %s' % goroot)
   if os.path.isdir(goroot):
     subprocess.check_call(['git', 'fetch', '--all'], cwd=goroot)
@@ -57,7 +57,7 @@ def from_sources():
     from_precompiled(go14)
 
   print('Building.')
-  subprocess.check_call(['./make.bash'], cwd=os.path.join(goroot, 'src'))
+  subprocess.check_call(['./make.bash'], cwd=os.path.join(goroot, 'src-oth'))
   return goroot
 
 
