@@ -31,7 +31,7 @@ def diff(diff_cmd, dst, basename, content):
     handle, name = tempfile.mkstemp()
     try:
         try:
-            os.write(handle, content)
+            os.write(handle, content.encode('utf-8'))
         finally:
             os.close(handle)
         result = subprocess.call(
