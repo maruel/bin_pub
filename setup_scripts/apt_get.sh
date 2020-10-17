@@ -12,7 +12,15 @@ set -eu
 # anymore.
 # These are occasionally useful: gparted vlc
 sudo apt install \
-  git ifstat ntpdate python3 smartmontools sysstat tmux vim \
+  git \
+  ifstat \
+  net-tools \
+  ntpdate \
+  python3 \
+  smartmontools \
+  sysstat \
+  tmux \
+  vim \
   wireless-tools
 
 # avahi-daemon
