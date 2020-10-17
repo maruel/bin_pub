@@ -136,7 +136,7 @@ if [ "$UNAME" = "Darwin" ]; then
 fi
 
 # Go.
-add_to_PATH "$HOME/src/golang/bin"
+add_to_PATH "$HOME/src-oth/golang/bin"
 add_to_PATH "$HOME/go/bin"
 export GOTRACEBACK=all
 # Try always on Go module mode.
