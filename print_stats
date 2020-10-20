@@ -14,6 +14,7 @@ didn't print out iostats out of the box. As a matter of fact, it's simpler to
 run a script on all my systems than build it once for each. I'm _that_ lazy.
 """
 
+import json
 import os
 import subprocess
 import sys
@@ -32,55 +33,49 @@ def osx():
   disk_io_per_s = items[1]
   disk_mb_per_s = items[2]
   cpu_usage = 100. - items[5]
-  return cpu_usage, disk_mb_per_s, int(disk_io_per_s), 0
+  return cpu_usage, disk_mb_per_s, int(round(disk_io_per_s)), 0
 
 
 def linux():
   """Returns cpu_usage, disk_mb_per_s, disk_io_per_s, net_kb_per_s."""
+  env = os.environ.copy()
+  env['LANG'] = 'en_US.UTF-8'
+  cmd = ['iostat', '1', '1', '-c', '-d', '-o', 'JSON']
   try:
-    proc_iostat = subprocess.Popen(
-        ['iostat', '1', '-c', '2', '-d'], stdout=subprocess.PIPE,
-        env={'LANG': 'en_US.UTF-8'})
+    p_io = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env)
   except OSError:
     print('Run "sudo apt-get install sysstat ifstat"')
     return
 
+  cmd = ['ifstat', '-S', '1', '1']
   try:
-    proc_ifstat = subprocess.Popen(
-        ['ifstat', '-S', '1', '1'], stdout=subprocess.PIPE)
+    p_if = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env)
   except OSError:
     print('ifstat requires "sudo apt-get install ifstat"')
     return
 
-  iostat = proc_iostat.communicate()[0].splitlines()
+  iostat = json.loads(
+      p_io.communicate()[0])['sysstat']['hosts'][0]['statistics'][0]
+  cpu_usage = 100. - float(iostat['avg-cpu']['idle'])
   disk_io_per_s = 0.
   disk_kb_per_s = 0.
-  seen_device = False
-  # Cheezy.
-  for i in range(len(iostat)-1, -1, -1):
-    line = iostat[i]
-    if not line:
+  # Sum all disks that are not dm-X or loopX.
+  for i in iostat['disk']:
+    if i['disk_device'].startswith(('dm-', 'loop')):
       continue
-    if seen_device:
-      v = line.split()[-1].strip(b'\x00')
-      try:
-        cpu_usage = 100. - float(v)
-      except Exception as e:
-        cpu_usage = 0.
-      break
-    if line.startswith(b'Device'):
-      seen_device = True
-      continue
-    items = [float(i) for i in line.split()[1:]]
-    disk_io_per_s += items[0]
-    disk_kb_per_s += items[1]
-    disk_kb_per_s += items[2]
+    # Generally something like sda or nvme0n1.
+    disk_io_per_s += i['tps']
+    disk_kb_per_s += i['kB_read/s'] + i['kB_wrtn/s'] + i['kB_dscd/s']
 
   # Sum all the networks, both inbound and outbound. It's really just to get a
   # rough idea of network usage.
   net_kb_per_s = sum(
-      float(i) for i in proc_ifstat.communicate()[0].splitlines()[-1].split())
-  return cpu_usage, disk_kb_per_s / 1024., int(disk_io_per_s), int(net_kb_per_s)
+      float(i) for i in p_if.communicate()[0].splitlines()[-1].split())
+  return (
+      cpu_usage,
+      disk_kb_per_s / 1024.,
+      int(round(disk_io_per_s)),
+      int(round(net_kb_per_s)))
 
 
 def main():
