@@ -44,14 +44,14 @@ def linux():
   try:
     p_io = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env)
   except OSError:
-    print('Run "sudo apt-get install sysstat ifstat"')
+    print('Run "sudo apt install sysstat ifstat"')
     return
 
   cmd = ['ifstat', '-S', '1', '1']
   try:
     p_if = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env)
   except OSError:
-    print('ifstat requires "sudo apt-get install ifstat"')
+    print('ifstat requires "sudo apt install ifstat"')
     return
 
   iostat = json.loads(

@@ -91,7 +91,7 @@ def update_config(files, diff_cmd):
 
 
 def load_files(config_dir, files):
-    """Loads all the files content into dictionnary |files|.
+    """Loads all the files content into dictionary |files|.
 
     Appends the content if an entry is already present.
     """
