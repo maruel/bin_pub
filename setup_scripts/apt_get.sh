@@ -46,4 +46,7 @@ sudo apt purge \
   sosreport \
   ubuntu-advantage-tools
 
+# On Ubuntu Server:
+# sudo timedatectl set-timezone America/Toronto
+
 sudo apt autoremove -y
