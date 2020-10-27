@@ -8,9 +8,12 @@
 
 set -eu
 
-# Recent ssh-agent is finally kinda-working, so keychain isn't necessary
-# anymore.
-# These are occasionally useful: gparted vlc
+# These are occasionally useful:
+#   gparted
+#   libvirt
+#   qemu-kvm
+#   virt-manager
+#   vlc
 sudo apt install \
   git \
   ifstat \
@@ -23,12 +26,24 @@ sudo apt install \
   vim \
   wireless-tools
 
+# Desktop:
 # avahi-daemon
 # evolution-data-server
 # indicator-messages
-sudo apt remove \
+sudo apt purge \
   apport \
   evince \
   whoopsie
+
+# Ubuntu Server 20.04:
+sudo apt purge \
+  cloud-guest-utils \
+  cloud-init \
+  cloud-initramfs-copymods \
+  cloud-initramfs-dyn-netconf \
+  open-vm-tools \
+  snapd \
+  sosreport \
+  ubuntu-advantage-tools
 
 sudo apt autoremove -y
