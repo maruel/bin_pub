@@ -1,19 +1,82 @@
+; General nicer UI with colors.
 [color]
   ui = auto
+
+
+; Super power git grep:
+[grep]
+  patternType = perl
+
+
+; Only meaningful if you use HTTPS cookies authentication.
+[http]
+  cookiefile = ~/.config/git/cookies
+
+
+; Make it work reasonably well on Windows. The auto-crlf breaks the file's hash,
+; which can break things if you hash the file content outside of git, like for
+; releases.
 [core]
   autocrlf = false
   deltaBaseCacheLimit = 1G
   askpass = 
   precomposeunicode = true
+
+
+; Super power git mergetool. It starts vimdiff in 4 windows mode.
+; The top panes are LOCAL, BASE, REMOTE.
+; The bottom pane is the output file, with the merge conflict markers.
+; Upon startup, a search for the first merge conflict marker is done to point
+; the cursor at the right place. Then you can furiously press 'd' and down arrow
+; to remove the unnecessary lines, then :wqa to move to the next file. Works
+; great!
+[merge]
+  tool = vimdiff4way
+[mergetool]
+  prompt = false
+  keepBackup = false
+[mergetool "vimdiff4way"]
+  cmd = vimdiff -c \"wincmd J\" -c \"0\" -c \"/<<<<<<< \" $MERGED $LOCAL $BASE $REMOTE
+
+
+; Coupled with color.ui = auto above, makes git diff output nice. I recommend to
+; set in bash the following alias:
+;   alias diff="git diff --no-index --no-ext-diff --no-prefix"
+[diff]
+  tool = vimdiff
+  noprefix = true
+
+
+; May not be great ideas to set as default. I like to live dangerously.
+[push]
+  default = current
+[gui]
+  pruneduringfetch = true
+[receive]
+  denyCurrentBranch = warn
+
+
+; Required to use a flow where "one PR/CL equals one named branch". This is
+; explicitly using a "rebase flow" which is used in Chromium and other related
+; projects that aims towards a linear commit history but less often used
+; elsewhere.
+[branch]
+  autosetupmerge = always
+  autosetuprebase = local
+[pull]
+  rebase = true
+
+
+; Common shortcuts. Caveat: some of these dates from my time when I was working
+; with git-svn. The most useful ones are: st, ci, br, sed, squash.
 [alias]
-; Common shortcuts.
   st = status --ignore-submodule=all -sb
   ci = commit
+  co = checkout
   br = branch
   sed = "!git ls-files -- . | xargs -L 1 sed -i"
   graphviz = "!f() { echo 'digraph git {' ; git log --pretty='format:  %h -> { %p }' \"$@\" | sed 's/[0-9a-f][0-9a-f]*/\"&\"/g' ; echo '}'; }; f"
   bd = branch -D
-  co = checkout
 ; Prints untracked files
   untracked = "!cd \"$(git rev-parse --show-cdup)\" && git clean -n -d | cut -c 14- | sed -e \"s/\\/$//\" | while read i; do echo /$i; done"
 ; Add all untracked files to .git/info/exclude
@@ -44,28 +107,11 @@
   df = "!git difftool \"$(git ancestor)\" -- "
   lp = "log -p @{u}.."
   p = pull --rebase
-[push]
-  default = current
-[merge]
-  tool = vimdiff4way
-[gui]
-  pruneduringfetch = true
-[receive]
-  denyCurrentBranch = warn
-[diff]
-  tool = vimdiff
-  noprefix = true
-[branch]
-  autosetupmerge = always
-  autosetuprebase = local
-[mergetool]
-  prompt = false
-  keepBackup = false
-[mergetool "vimdiff4way"]
-  cmd = vimdiff -c \"wincmd J\" -c \"0\" -c \"/<<<<<<< \" $MERGED $LOCAL $BASE $REMOTE
-[grep]
-  patternType = perl
-[http]
-  cookiefile = ~/.config/git/cookies
-[pull]
-  rebase = true
+
+
+; Soon. Just need to finish some clean up first.
+;[init]
+;  defaultBranch = main
+
+
+; Add user.name and user.email here.
