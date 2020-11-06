@@ -22,3 +22,5 @@ cat << 'EOF' | sudo tee /etc/update-motd.d/20-fuck-yeah
 echo "$(hostname) - fuck yeah!"
 EOF
 sudo chmod +x /etc/update-motd.d/20-fuck-yeah
+
+sudo systemctl disable motd-news
