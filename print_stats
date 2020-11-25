@@ -40,7 +40,7 @@ def linux():
   """Returns cpu_usage, disk_mb_per_s, disk_io_per_s, net_kb_per_s."""
   env = os.environ.copy()
   env['LANG'] = 'en_US.UTF-8'
-  cmd = ['iostat', '1', '1', '-c', '-d', '-o', 'JSON']
+  cmd = ['iostat', '1', '2', '-c', '-d', '-o', 'JSON']
   try:
     p_io = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env)
   except OSError:
@@ -55,7 +55,7 @@ def linux():
     return
 
   iostat = json.loads(
-      p_io.communicate()[0])['sysstat']['hosts'][0]['statistics'][0]
+      p_io.communicate()[0])['sysstat']['hosts'][0]['statistics'][-1]
   cpu_usage = 100. - float(iostat['avg-cpu']['idle'])
   disk_io_per_s = 0.
   disk_kb_per_s = 0.
