@@ -21,6 +21,22 @@
   deltaBaseCacheLimit = 1G
   askpass = 
   precomposeunicode = true
+  ; Requires https://github.com/dandavison/delta to be installed.
+  pager = delta
+
+
+; Requires https://github.com/dandavison/delta to be installed.
+[interactive]
+  diffFilter = delta --color-only
+
+[delta]
+  features = side-by-side line-numbers decorations
+  whitespace-error-style = 22 reverse
+
+[delta "decorations"]
+  commit-decoration-style = bold yellow box ul
+  file-style = bold yellow ul
+  file-decoration-style = none
 
 
 ; Super power git mergetool. It starts vimdiff in 4 windows mode.
