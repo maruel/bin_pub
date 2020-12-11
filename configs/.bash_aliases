@@ -135,6 +135,7 @@ if [ "$UNAME" = "Darwin" ]; then
   add_to_PATH "$HOME/Library/Python/2.7/bin"
 fi
 
+
 # Go.
 add_to_PATH "$HOME/src-oth/golang/bin"
 add_to_PATH "$HOME/go/bin"
@@ -142,8 +143,10 @@ export GOTRACEBACK=all
 # Try always on Go module mode.
 export GO111MODULE=on
 
-# My python stuff.
-export PYTHONPATH="$PYTHONPATH:$HOME/bin:$HOME/bin/bin_pub"
+
+# Rust.
+add_to_PATH "$HOME/sdk/bin"
+add_to_PATH "$HOME/.cargo/bin"
 
 
 # So 'j' can be used.
