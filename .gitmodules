@@ -7,3 +7,6 @@
 [submodule "configs/.vim/bundle/vim-go"]
 	path = configs/.vim/bundle/vim-go
 	url = https://github.com/fatih/vim-go.git
+[submodule "ctrlp.vim"]
+	path = ctrlp.vim
+	url = https://github.com/ctrlpvim/ctrlp.vim
