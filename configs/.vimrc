@@ -7,6 +7,8 @@ let mapleader = ","
 
 execute pathogen#infect()
 
+set runtimepath^=~/bin/bin_pub/ctrlp.vim
+
 " Enable file type detection.
 filetype plugin indent on
 filetype plugin on
