@@ -1,0 +1,19 @@
+# Source: https://github.com/maruel/bin_pub
+#
+# Install with:
+#   sudo cp 99-maruel /etc/apt/apt.conf.d/
+
+# Enable /etc/cron.daily/apt.
+APT::Periodic::Enable "1";
+# Automatically reboot.
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-Time "03:48";
+# Clean up disk space.
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+# Makes it a bit slower but safer; it will not corrupt itself if the host is
+# shutdown during installation.
+Unattended-Upgrade::MinimalSteps "true";
+# Limit download speed to NN Kbps
+Acquire::http::Dl-Limit "100";
+# apt-get autoclean every NN days.
+APT::Periodic::AutocleanInterval "21";
