@@ -23,4 +23,4 @@ echo "$(hostname) - fuck yeah!"
 EOF
 sudo chmod +x /etc/update-motd.d/20-fuck-yeah
 
-sudo systemctl disable motd-news
+sudo systemctl disable motd-news.timer
