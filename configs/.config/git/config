@@ -125,8 +125,15 @@
 
   ; Squash all the commits against the ancestor into a single commit
   squash = "!OLDLOG=$(git compact-log); git reset --soft $(git ancestor) && git commit -m \"$OLDLOG\""
-  ; Run sed on all files
-  sed = "!git ls-files -- . | xargs -L 1 sed -i"
+  ; Run sed on all files skipping symlinks. It is significantly slower than
+  ; git sed-fast but does the right thing.
+  sed = "!git ls-files -z -- . | xargs -0 -P 10 -i git sed-internal \"{}\""
+  ; Internal script used by git sed to reorder the arguments. Not meant to be
+  ; used directly.
+  sed-internal = "!foo() { [ -L \"$1\" ] || sed -i \"${@:2}\" \"$1\"; }; foo"
+  ; Run sed on all files; fast version. The caveat is that it converts symlinks
+  ; in the tree to files.
+  sed-fast = "!git ls-files -z -- . | xargs -0 -P 10 -L 1 sed -i"
   ; Delete branch
   bd = branch -D
   ; Add all untracked files to .git/info/exclude
