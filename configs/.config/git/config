@@ -21,8 +21,9 @@
   deltaBaseCacheLimit = 1G
   askpass = 
   precomposeunicode = true
+  commitGraph = true
   ; Requires https://github.com/dandavison/delta to be installed.
-  pager = delta
+  ;pager = delta
 
 
 ; Requires https://github.com/dandavison/delta to be installed.
