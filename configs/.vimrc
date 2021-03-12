@@ -47,12 +47,13 @@ let is_bash=1                  " informs sh syntax that /bin/sh is actually bash
 let java_allow_cpp_keywords=1  " don't highlight C++ kewords as errors in Java
 let java_highlight_functions=1 " highlight method decls in Java (when syntax on)
 
-set textwidth=80
 set expandtab
 set modeline
 set smartcase
-" Too bad this isn't updated when textwidth is changed.
-let w:m1=matchadd('ErrorMsg', '\%>'.&textwidth.'v.\+', -1)
+set textwidth=80
+set colorcolumn=80
+highlight ColorColumn ctermbg=0 guibg=lightgrey
+
 
 " Use automatic folding but unfolded by default.
 set foldmethod=indent
