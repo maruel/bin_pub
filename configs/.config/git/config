@@ -26,6 +26,11 @@
   ;pager = delta
 
 
+; Reduce noise.
+[advice]
+	detachedHead = false
+
+
 ; Requires https://github.com/dandavison/delta to be installed.
 [interactive]
   diffFilter = delta --color-only
