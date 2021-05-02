@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright (c) 2011 Marc-Antoine Ruel. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -8,85 +8,84 @@
 Can be used in a pipe to naturally short output.
 """
 
+import functools
 import re
 import sys
 
 
-def natcmp(a, b):
-  """Natural string comparison, case sensitive.
-
-  TODO(maruel): Ignore leading whitespace when comparing integers.
-  """
-  try_int = lambda s: int(s) if s.isdigit() else s
-  def natsort_key(s):
-    if not isinstance(s, basestring):
-      # Since re.findall() generates a list out of a string, returns a list here
-      # to balance the comparison done in cmp().
-      return [s]
-    return map(try_int, re.findall(r'(\d+|\D+)', s))
-  return cmp(natsort_key(a), natsort_key(b))
+@functools.total_ordering
+class _Item(object):
+  #__slots__ = ('i')
+  def __init__(self, i):
+    self.i = i
+  def __lt__(self, rhs):
+    if type(self.i) != type(rhs.i):
+      return type(self.i) == str
+    return self.i < rhs.i
+  def __eq__(self, rhs):
+    return self.i == rhs.i
 
 
-def try_lower(x):
-  """Opportunistically lower() a string if it is a string."""
-  return x.lower() if hasattr(x, 'lower') else x
+def key(s):
+  """Natural string comparison key."""
+  if not isinstance(s, str):
+    return (_Item(s),)
+  return tuple(_Item(int(x) if x.isdigit() else x) for x in re.findall(r'(\d+|\D+)', s))
 
 
-def naticasecmp(a, b):
-  """Natural string comparison, ignores case."""
-  return natcmp(try_lower(a), try_lower(b))
+def ikey(x):
+  """Natural string comparison key ignoring case."""
+  return key(x.lower() if hasattr(x, 'lower') else x)
 
 
-def natsort(seq, cmp=natcmp, *args, **kwargs):  # pylint: disable=W0622
+def sort(seq, key=key, *args, **kwargs):
   """In-place natural string sort.
 
   >>> a = ['3A2', '3a1']
-  >>> natsort(a, key=try_lower)
+  >>> sort(a, key=ikey)
   >>> a
   ['3a1', '3A2']
   >>> a = ['3a2', '3A1']
-  >>> natsort(a, key=try_lower)
+  >>> sort(a, key=key)
   >>> a
   ['3A1', '3a2']
   >>> a = ['3A2', '3a1']
-  >>> natsort(a, cmp=naticasecmp)
+  >>> sort(a, key=ikey)
   >>> a
   ['3a1', '3A2']
   >>> a = ['3a2', '3A1']
-  >>> natsort(a, cmp=naticasecmp)
+  >>> sort(a, key=ikey)
   >>> a
   ['3A1', '3a2']
   """
-  seq.sort(cmp=cmp, *args, **kwargs)
+  seq.sort(key=key, *args, **kwargs)
 
 
-def natsorted(seq, cmp=natcmp, *args, **kwargs):  # pylint: disable=W0622
+def sorted(seq, key=key, *args, **kwargs):
   """Returns a copy of seq, sorted by natural string sort.
 
-  >>> natsorted(i for i in [4, '3a', '2', 1])
+  >>> sorted(i for i in [4, '3a', '2', 1])
   [1, '2', '3a', 4]
-  >>> natsorted(['a4', 'a30'])
+  >>> sorted(['a4', 'a30'])
   ['a4', 'a30']
-  >>> natsorted(['3A2', '3a1'], key=try_lower)
+  >>> sorted(['3A2', '3a1'], key=ikey)
   ['3a1', '3A2']
-  >>> natsorted(['3a2', '3A1'], key=try_lower)
+  >>> sorted(['3a2', '3A1'], key=ikey)
   ['3A1', '3a2']
-  >>> natsorted(['3A2', '3a1'], cmp=naticasecmp)
+  >>> sorted(['3A2', '3a1'], key=ikey)
   ['3a1', '3A2']
-  >>> natsorted(['3a2', '3A1'], cmp=naticasecmp)
+  >>> sorted(['3a2', '3A1'], key=ikey)
   ['3A1', '3a2']
-  >>> natsorted(['3A2', '3a1'])
+  >>> sorted(['3A2', '3a1'])
   ['3A2', '3a1']
-  >>> natsorted(['3a2', '3A1'])
+  >>> sorted(['3a2', '3A1'])
   ['3A1', '3a2']
-  >>> natsorted(['1', ' 10'])
-  ['1', ' 10']
-
-  # TODO(maruel): Fix me.
-  >>> natsorted([' 1', '10'])
-  ['10', ' 1']
+  >>> sorted(['1', ' 10'])
+  [' 10', '1']
+  >>> sorted([' 1', '10'])
+  [' 1', '10']
   """
-  return sorted(seq, cmp=cmp, *args, **kwargs)
+  return __builtins__.sorted(seq, key=key, *args, **kwargs)
 
 
 def main():
@@ -95,15 +94,13 @@ def main():
 
   try:
     if len(sys.argv) > 1:
-      lines = open(sys.argv[1], 'rb').readlines()
+      with open(sys.argv[1], 'r') as f:
+        lines = f.readlines()
     else:
       lines = sys.stdin.readlines()
   except:
     pass
-  try:
-    print(''.join(natsorted(lines)))
-  except:
-    pass
+  sys.stdout.write(''.join(sorted(lines)))
   return 0
 
 
