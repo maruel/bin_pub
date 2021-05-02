@@ -8,6 +8,7 @@
 Can be used in a pipe to naturally short output.
 """
 
+import builtins
 import functools
 import re
 import sys
@@ -85,7 +86,7 @@ def sorted(seq, key=key, *args, **kwargs):
   >>> sorted([' 1', '10'])
   [' 1', '10']
   """
-  return __builtins__.sorted(seq, key=key, *args, **kwargs)
+  return builtins.sorted(seq, key=key, *args, **kwargs)
 
 
 def main():
