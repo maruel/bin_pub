@@ -150,9 +150,8 @@
   new = "!f() { git fetch && git checkout -b $@ origin/master; }; f"
 
 
-; Soon. Just need to finish some clean up first.
-;[init]
-;  defaultBranch = main
+[init]
+  defaultBranch = main
 
 
 ; Add user.name and user.email here.
