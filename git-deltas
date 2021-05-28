@@ -10,12 +10,12 @@ import sys
 
 
 STATS = re.compile(
-    r'(?P<files>\d+) files? changed(?:, (?P<insertions>\d+) insertions?\(\+\)|)'
+    r'\s*(?P<files>\d+) files? changed(?:, (?P<insertions>\d+) insertions?\(\+\)|)'
     r'(?:, (?P<deletions>\d+) deletions?\(\-\)|)')
 
 
 def run(*args):
-  return subprocess.check_output(*args).decode('utf-8').strip()
+  return subprocess.check_output(*args).decode('utf-8').rstrip()
 
 
 def main():
@@ -32,11 +32,15 @@ def main():
     except:
       print('If origin/HEAD doesn\'t exist, run: git remote set-head origin -a')
       return 1
-    m = STATS.match(l)
-    if m:
-      stats.append((branch, m.groupdict('')))
-    else:
+    if not l:
       stats.append((branch, {'files': '', 'insertions': '', 'deletions': ''}))
+    else:
+      m = STATS.match(l)
+      if m:
+        stats.append((branch, m.groupdict('')))
+      else:
+        print('Unexpected output: %s' % l)
+        return 1
   maxlen0 = max(len(i[0]) for i in stats)
   maxlen1 = max(len(i[1]['files']) for i in stats)
   maxlen2 = max(len(i[1]['insertions']) for i in stats)
@@ -48,7 +52,7 @@ def main():
         maxlen2+1, '+'+line[1]['insertions'] if line[1]['insertions'] else '',
         maxlen3+1, '-'+line[1]['deletions'] if line[1]['deletions'] else ''))
     else:
-      print('%*s:' % (maxlen0, line[0]))
+      print('%*s: <no diff>' % (maxlen0, line[0]))
   return 0
 
 
