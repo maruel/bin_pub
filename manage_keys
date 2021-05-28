@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # Copyright 2013 Marc-Antoine Ruel. All Rights Reserved. Use of this
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
@@ -30,11 +30,14 @@ try:
     import keyring
 except ImportError:
     keyring = None
-try:
-    sys.path.insert(0, os.path.join(BASE_DIR, 'keychain'))
-    import keychain
-except ImportError:
-    keychain = None
+
+keychain = None
+if sys.platform == 'darwin':
+    try:
+        sys.path.insert(0, os.path.join(BASE_DIR, 'keychain'))
+        import keychain
+    except ImportError:
+        keychain = None
 
 import natsort
 
@@ -46,7 +49,7 @@ def gnomekeyring_unlock():
                 None, getpass.getpass('Keyring password: '))
         return True
     except Exception as e:
-        print >> sys.stderr, 'Failed to unlock keyring: %s' % e
+        print('Failed to unlock keyring: %s' % e, f=sys.stderr)
         return False
 
 
@@ -121,19 +124,19 @@ def gnomekeyring_retrieve_password(bucket, key):
         logging.info('Getting password for key %s (%s)', key, actual_key)
         value = keyring.get_password(bucket, actual_key)
         if value is not None:
-            print value
+            print(value)
             return 0
     except Exception as e:
-        print >> sys.stderr, 'Failed to get password from keyring: %s' % e
+        print('Failed to get password from keyring: %s' % e, f=sys.stderr)
         if gnomekeyring_unlock():
             # Unlocking worked, try getting the password again.
             try:
                 value = keyring.get_password(bucket, actual_key)
                 if value is not None:
-                    print value
+                    print(value)
                     return 0
             except Exception as e:
-                print >> sys.stderr, 'Failed to get password from keyring: %s' % e
+                print('Failed to get password from keyring: %s' % e, f=sys.stderr)
 
     # At this point, it failed to get the password from keyring. Ask the user.
     value = getpass.getpass('Please enter the password: ')
@@ -143,7 +146,7 @@ def gnomekeyring_retrieve_password(bucket, key):
         keyring.set_password(bucket, actual_key, value)
         return 0
     except Exception as e:
-        print >> sys.stderr, 'Failed to save in keyring: %s' % e
+        print('Failed to save in keyring: %s' % e, f=sys.stderr)
         return 1
 
 
@@ -165,7 +168,7 @@ def gnomekeyring_delete_secrets(items):
                         continue
                     except gnomekeyring.IOError as e:
                         logging.info('%s', e)
-            print >> sys.stderr, 'Failed to delete %s #%d' % (container, itemid)
+            print('Failed to delete %s #%d' % (container, itemid), f=sys.stderr)
             ret = 1
     return ret
 
