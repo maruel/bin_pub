@@ -102,6 +102,8 @@
 
   ; status but don't look into submodules.
   st = status --ignore-submodule=all -sb
+  ; list all local branches and their recent commit subject
+  heads = "branch --format=\"%(color:red)%(align:30,right)%(refname:short)%(end)%(color:reset): %(subject)\""
   ; diff against merge base using vimdiff.
   df = "!git difftool \"$(git ancestor)\" -- "
   ; log with patches until merge base.

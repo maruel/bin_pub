@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # Copyright 2018 Marc-Antoine Ruel. All Rights Reserved. Use of this
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
@@ -9,9 +9,12 @@ import subprocess
 import sys
 
 
+def run(*args):
+  return subprocess.check_output(*args).decode('utf-8').strip()
+
+
 def get_imports(pkg):
-  return subprocess.check_output(
-      ['go', 'list', '-f', '{{join .Imports "\\n"}}', pkg]).splitlines()
+  return run(['go', 'list', '-f', '{{join .Imports "\\n"}}', pkg]).splitlines()
 
 
 def recurse(pkg, seen, indent):
@@ -33,8 +36,7 @@ def main(args):
     return 1
   pkg = args[0]
   if pkg == '.':
-    pkg = subprocess.check_output(
-        ['go', 'list', '-f', '{{.ImportPath}}', pkg]).strip()
+    pkg = run(['go', 'list', '-f', '{{.ImportPath}}', pkg])
   if pkg.startswith('./'):
     print >> sys.stderr, './ format is not yet supported'
     return 1
