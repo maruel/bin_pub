@@ -37,7 +37,12 @@ set t_Co=256
 set t_RV=
 
 if &diff
+  " Disable syntax highlighting, it's confusing when diffing/merging.
+  syntax off
   colorscheme diffing
+  " TODO(maruel): There are still words that get highlighted, I'm not sure why
+  " yet.
+
   " if you would like to make tabs and trailing spaces visible without syntax
   " highlighting, use this:
   "set listchars=tab:·\ ,trail:\·,extends:»,precedes:«
@@ -54,14 +59,17 @@ else
   else
     highlight SpecialKey ctermbg=Yellow guibg=Yellow
   end
+  " Don't highlight C++ keywords as errors in Java.
+  let java_allow_cpp_keywords=1
+  " Highlights method decls in Java (when syntax on).
+  let java_highlight_functions=1
+  " Generic highlight changes
+  highlight Comment cterm=none ctermfg=LightBlue
+  highlight String cterm=none ctermfg=DarkGreen
 end
 
 " Informs sh syntax that /bin/sh is actually bash.
 let is_bash=1
-" Don't highlight C++ keywords as errors in Java.
-let java_allow_cpp_keywords=1
-" Highlights method decls in Java (when syntax on).
-let java_highlight_functions=1
 
 " Make gw wrap at 80 columns.
 set textwidth=80
@@ -70,10 +78,8 @@ set colorcolumn=80
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 
 " Generic highlight changes
-highlight Comment cterm=none ctermfg=LightBlue
-highlight IncSearch cterm=none ctermfg=Black ctermbg=DarkYellow
 highlight Search cterm=none ctermfg=Black ctermbg=DarkYellow
-highlight String cterm=none ctermfg=DarkGreen
+highlight IncSearch cterm=none ctermfg=Black ctermbg=DarkYellow
 highlight treeDir cterm=none ctermfg=Cyan
 highlight treeUp cterm=none ctermfg=DarkYellow
 highlight treeCWD cterm=none ctermfg=DarkYellow
