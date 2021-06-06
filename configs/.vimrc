@@ -40,59 +40,61 @@ if &diff
   " Disable syntax highlighting, it's confusing when diffing/merging.
   syntax off
   colorscheme diffing
-  " TODO(maruel): There are still words that get highlighted, I'm not sure why
-  " yet.
-
-  " if you would like to make tabs and trailing spaces visible without syntax
-  " highlighting, use this:
-  "set listchars=tab:·\ ,trail:\·,extends:»,precedes:«
 else
   syntax on
-  " show trailing spaces in yellow (or red, for users with dark backgrounds).
-  " "set nolist" to disable this.
-  " this only works if syntax highlighting is enabled.
-  "set list
-  set listchars=
-  "set listchars=tab:\ \ ,trail:\ ,extends:»,precedes:«
-  if &background == "dark"
-    highlight SpecialKey ctermbg=Red guibg=Red
-  else
-    highlight SpecialKey ctermbg=Yellow guibg=Yellow
-  end
-  " Don't highlight C++ keywords as errors in Java.
-  let java_allow_cpp_keywords=1
-  " Highlights method decls in Java (when syntax on).
-  let java_highlight_functions=1
-  " Generic highlight changes
-  highlight Comment cterm=none ctermfg=LightBlue
-  highlight String cterm=none ctermfg=DarkGreen
 end
 
-" Informs sh syntax that /bin/sh is actually bash.
-let is_bash=1
+" First set Normal to regular white on black text colors:
+highlight Normal guifg=White guibg=Black
 
-" Make gw wrap at 80 columns.
+" Show trailing spaces and tabs as red dots.
+set list
+set listchars=tab:\·\·,trail:\·,extends:»,precedes:«
+highlight SpecialKey ctermfg=Red
+
+" Make 'gw' wrap at 80 columns.
 set textwidth=80
 " Use a subtle highlight at 80 columns.
 set colorcolumn=80
-highlight ColorColumn ctermbg=0 guibg=lightgrey
+highlight ColorColumn ctermbg=Black guibg=DarkGray
 
-" Generic highlight changes
-highlight Search cterm=none ctermfg=Black ctermbg=DarkYellow
-highlight IncSearch cterm=none ctermfg=Black ctermbg=DarkYellow
-highlight treeDir cterm=none ctermfg=Cyan
-highlight treeUp cterm=none ctermfg=DarkYellow
-highlight treeCWD cterm=none ctermfg=DarkYellow
-highlight netrwDir cterm=none ctermfg=Cyan
+" Syntax highlighting for the primary groups. These only take effect when
+" 'syntax on' is used.
+" (see :help group-name):
+highlight Comment    ctermfg=LightBlue
+highlight Constant   ctermfg=White
+  highlight String     ctermfg=DarkGreen
+highlight Identifier ctermfg=White
+"Keep statements highlighted: highlight Statement  ctermfg=White
+highlight PreProc    ctermfg=White
+highlight Type       ctermfg=White
+highlight Special    ctermfg=White
+
+" Highlight changes outside of groups. They take effect even when 'syntax off'
+" is used.
+highlight Search     ctermfg=Black ctermbg=DarkYellow
+highlight IncSearch  ctermfg=Black ctermbg=DarkYellow
+highlight treeDir    ctermfg=Cyan
+highlight netrwDir   ctermfg=Cyan
 
 " Enable mispell detection.
 " zg add to dict
 " z= suggestions
 set spell
 
-" Change misspell highlighting to be a simple underline.
+" Change misspell highlighting to be a simple underline. Note that spelling
+" highlight even works when 'syntax off' is used.
 highlight clear SpellBad
 highlight SpellBad term=underline cterm=underline
+" This renders weird output, especially when diffing.
+highlight SpellCap ctermbg=Black
+
+" Informs sh syntax that /bin/sh is actually bash.
+let is_bash=1
+" Don't highlight C++ keywords as errors in Java.
+let java_allow_cpp_keywords=1
+" Highlights method decls in Java (when syntax on).
+let java_highlight_functions=1
 
 
 """" KEYBINDINGS
