@@ -95,6 +95,9 @@ def load_files(config_dir, files):
 
     Appends the content if an entry is already present.
     """
+    # TODO(maruel): If the source directory contains a .git (currently in
+    # .vim/bundle), we should obliterate the destination directory and replace
+    # the files without the .git directory.
     blacklist = [r'.*README.md$', r'.*\.swp$']
     for basename in maruel.walk(config_dir, [r'.*'], blacklist):
         src = os.path.join(config_dir, basename)
