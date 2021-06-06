@@ -105,10 +105,11 @@ else
   GIT_PS1_SHOWUPSTREAM="auto"
 
   # - Enable git prompt
-  # - Set current directory as window title (requires recent tmux >=2.6)
+  # - Set current directory as window title. Requires recent tmux >=2.6 to work
+  #   within tmux. See ./.tmux.conf for my tmux configuration.
   # - Reset color
   # - Display non-zero exit code as red
-  # - Current directory
+  # - Current directory with $HOME elided as ~.
   PROMPT_COMMAND='__git_ps1 "\[\e]0;\W\a\]\[\e[0m\]\$(_V=\$?; if [ \$_V != 0 ]; then echo -e -n \"\\[\\e[31m\\]\$_V\\[\\e[0m\\]\" ; fi)" "\[\e[33m\]\w\[\e[0m\]$_CHAR"'
 fi
 
