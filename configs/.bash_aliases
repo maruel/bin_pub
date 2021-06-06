@@ -59,11 +59,7 @@ fi
 if [ "$OS" = "Windows_NT" ]; then
   PS1="\[\e]0;\w\a\]\[\e[33m\]\w\[\e[0m\] \$ "
 else
-  # - Set current directory as window title
-  # - Reset color
-  # - Display non-zero exit code as red
-  # - Current directory
-  # For this to work well, this requires a recent version of tmux (2.6)
+  # Adapt the prompt based on the machine I'm ssh'ed into.
   if [ "$UNAME" = "Darwin" ]; then
     # macOS
     _CHAR=""
@@ -86,11 +82,11 @@ else
     # Default:
     _CHAR="$ "
   fi
-  # Original
-  #PS1="\[\e]0;\W\a\]\[\e[0m\]\$(_V=\$?; if [ \$_V != 0 ]; then echo -e -n \"\\[\\e[31m\\]\$_V \" ; fi)\[\e[33m\]\w\[\e[0m\]$_CHAR"
 
-  # New
+  # Local copy of
+  # https://github.com/git/git/blob/HEAD/contrib/completion/git-prompt.sh
   source ~/bin/bin_pub/git-prompt.sh
+
   # Flags:
   #  *  unstaged
   #  +  staged
@@ -107,6 +103,12 @@ else
   GIT_PS1_SHOWSTASHSTATE=1
   GIT_PS1_SHOWUNTRACKEDFILES=1
   GIT_PS1_SHOWUPSTREAM="auto"
+
+  # - Enable git prompt
+  # - Set current directory as window title (requires recent tmux >=2.6)
+  # - Reset color
+  # - Display non-zero exit code as red
+  # - Current directory
   PROMPT_COMMAND='__git_ps1 "\[\e]0;\W\a\]\[\e[0m\]\$(_V=\$?; if [ \$_V != 0 ]; then echo -e -n \"\\[\\e[31m\\]\$_V\\[\\e[0m\\]\" ; fi)" "\[\e[33m\]\w\[\e[0m\]$_CHAR"'
 fi
 
