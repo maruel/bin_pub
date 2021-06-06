@@ -70,7 +70,7 @@ else
   elif [ "$USER" = "pi" ]; then
     # Raspberry Pi
     _CHAR="🍓"
-  elif [ "$HOSTNAME" = "ogre" ]; then
+  elif [ "$HOSTNAME" = "quick" ]; then
     # Personal workstation:
     _CHAR="🐟"
   elif [[ $HOSTNAME == *laptop* ]]; then
