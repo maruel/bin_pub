@@ -66,23 +66,17 @@ def walk(path, whitelist, blacklist=(r'^(.*/|)\.[^/]+/$',), relative=True):
             dirpath = dirpath[lenpath + 1:]
         for index in range(len(dirnames) - 1, -1, -1):
             d = os.path.join(dirpath, dirnames[index]) + os.sep
-            if os.altsep:
-                converted_d = d.replace(os.sep, os.altsep)
-            else:
-                converted_d = d
-            if blacklisted(converted_d):
+            posix_d = d.replace(os.sep, '/')
+            if blacklisted(posix_d):
                 # This speeds up searching by blacklisting directories that
                 # should not be looked into like .git or .svn.
                 dirnames.pop(index)
-            elif not blacklisted(converted_d) and whitelisted(converted_d):
+            elif whitelisted(posix_d):
                 out.append(d)
         for f in filenames:
             f = os.path.join(dirpath, f)
-            if os.altsep:
-                converted_f = f.replace(os.sep, os.altsep)
-            else:
-                converted_f = f
-            if not blacklisted(converted_f) and whitelisted(converted_f):
+            posix_f = f.replace(os.sep, '/')
+            if not blacklisted(posix_f) and whitelisted(posix_f):
                 out.append(f)
     return sorted(out)
 

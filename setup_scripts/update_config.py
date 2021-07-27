@@ -5,8 +5,8 @@
 
 """Updates the config files without destroying anything."""
 
+import argparse
 import difflib
-import optparse
 import os
 import shutil
 import subprocess
@@ -18,6 +18,10 @@ sys.path.insert(0, BIN_PUB_DIR)
 
 import maruel
 
+
+class Symlink(object):
+    def __init__(self, src):
+        self.src = src
 
 
 def diff(diff_cmd, dst, basename, content):
@@ -60,12 +64,15 @@ def update_config(files, diff_cmd):
     home_dir = os.environ.get('HOME') or os.environ['USERPROFILE']
     to_diff = []
     ok_files = []
-    for basename in sorted(files):
+    for basename, content in sorted(files.items()):
         dst = os.path.join(home_dir, basename)
+        if isinstance(content, Symlink):
+            # Create a symlink.
+            os.symlink(content.src, dst)
+            continue
         dst_dir = os.path.dirname(dst)
         if not os.path.isdir(dst_dir):
             os.makedirs(dst_dir)
-        content = files[basename]
         if not os.path.isfile(dst):
             if os.path.isdir(dst):
                 print('Skipping file which is directory at destination %s' %
@@ -95,13 +102,19 @@ def load_files(config_dir, files):
 
     Appends the content if an entry is already present.
     """
-    # TODO(maruel): If the source directory contains a .git (currently in
-    # .vim/bundle), we should obliterate the destination directory and replace
-    # the files without the .git directory.
     blacklist = [r'.*README.md$', r'.*\.swp$']
+    skips = []
     for basename in maruel.walk(config_dir, [r'.*'], blacklist):
         src = os.path.join(config_dir, basename)
-        if os.path.isfile(src):
+        if any(basename.startswith(s) for s in skips):
+            # Inside one of the symlinked directory.
+            continue
+        if src.endswith(os.sep):
+            if os.path.exists(src + '.git'):
+                # Do a symlink instead and skip everything in this directory.
+                files[basename[:-1]] = Symlink(src[:-1])
+                skips.append(basename)
+        else:
             if basename not in files:
                 files[basename] = maruel.read(src)
             else:
@@ -109,11 +122,11 @@ def load_files(config_dir, files):
 
 
 def main():
-    parser = optparse.OptionParser()
-    parser.add_option('-u', action='store_true', help='Unified diff')
-    options, args = parser.parse_args()
-    if args:
-      parser.error('Unsupported args %s' % args)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-u', action='store_true', help='Unified diff')
+    parser.add_argument(
+            '--dry-run', action='store_true', help='Do not modify files')
+    args = parser.parse_args()
 
     files = {}
     load_files(os.path.join(BIN_PUB_DIR, 'configs'), files)
@@ -123,8 +136,13 @@ def main():
       load_files(os.path.join(BIN_PUB_DIR, '..', 'configs'), files)
 
     cmd = ['vim', '-d']
-    if options.u:
+    if args.u:
         cmd = ['diff', '-u']
+    if args.dry_run:
+        l = max(len(l) for l in files)
+        for f in sorted(files):
+            print('%-*s' % (l, f))
+        return
     return update_config(files, cmd)
 
 
