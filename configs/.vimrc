@@ -61,14 +61,15 @@ highlight ColorColumn ctermbg=Black guibg=DarkGray
 " Syntax highlighting for the primary groups. These only take effect when
 " 'syntax on' is used.
 " (see :help group-name):
+" To print the current scheme: so $VIMRUNTIME/syntax/hitest.vim
 highlight Comment    ctermfg=LightBlue
 highlight Constant   ctermfg=White
-  highlight String     ctermfg=DarkGreen
+highlight String     ctermfg=DarkGreen
 highlight Identifier ctermfg=White
 "Keep statements highlighted: highlight Statement  ctermfg=White
 highlight PreProc    ctermfg=White
 highlight Type       ctermfg=White
-highlight Special    ctermfg=White
+highlight Special    ctermfg=DarkGreen
 
 " Highlight changes outside of groups. They take effect even when 'syntax off'
 " is used.
