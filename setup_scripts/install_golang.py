@@ -57,7 +57,7 @@ def from_sources():
     from_precompiled(go14)
 
   print('Building.')
-  subprocess.check_call(['./make.bash'], cwd=os.path.join(goroot, 'src-oth'))
+  subprocess.check_call(['./make.bash'], cwd=os.path.join(goroot, 'src'))
   return goroot
 
 
@@ -114,7 +114,7 @@ def main():
     if goroot:
       go = os.path.join(goroot, 'bin', 'go')
     subprocess.check_call(
-        [go, 'get', '-v',
+        [go, 'install', '-v',
       'golang.org/x/tools/cmd/godoc',
       'golang.org/x/tools/cmd/goimports',
       'golang.org/x/tools/cmd/stringer',
