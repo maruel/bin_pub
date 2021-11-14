@@ -6,7 +6,7 @@
 P = '/sys/class/power_supply/BAT0/'
 
 # Battery voltage. Impacted by charging.
-with open(P+ 'voltage_now', 'r') as 
+with open(P+ 'voltage_now', 'r') as f:
 	voltage = int(f.read()) / 1000000.0
 
 # Energy in the battery.
