@@ -29,6 +29,7 @@
 ; Reduce noise.
 [advice]
   detachedHead = false
+	skippedCherryPicks = false
 
 
 ; Requires https://github.com/dandavison/delta to be installed.
@@ -149,6 +150,10 @@
   reroll = !git rebase -i $(git ancestor)
   ; TODO(maruel): How to not hardcode origin/master?
   new = "!f() { git fetch && git checkout -b $@ origin/master; }; f"
+
+
+[submodule]
+	fetchJobs = 16
 
 
 [init]
