@@ -33,6 +33,17 @@ bin/bin_pub/setup/update_config.py
 bin/bin_pub/setup/install_golang.py
 ```
 
+### CapsLock -> Escape
+
+Edit `/usr/share/X11/xkb/symbols/pc`, add:
+
+    key <CAPS> { [ Escape ] };
+
+and comment out:
+
+    // key <CAPS> { [ Caps_Lock ] };
+    // modifier_map Lock { Caps_Lock };
+
 
 ## OSX
 
