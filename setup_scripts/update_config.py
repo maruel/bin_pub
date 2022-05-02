@@ -69,6 +69,8 @@ def update_config(files, diff_cmd):
         if isinstance(content, Symlink):
             if not os.path.islink(dst):
                 # Create a symlink.
+                if not os.path.isdir(os.path.dirname(dst)):
+                  os.makedirs(os.path.dirname(dst))
                 os.symlink(content.src, dst)
             continue
         dst_dir = os.path.dirname(dst)
