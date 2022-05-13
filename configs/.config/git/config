@@ -29,7 +29,7 @@
 ; Reduce noise.
 [advice]
   detachedHead = false
-	skippedCherryPicks = false
+  skippedCherryPicks = false
 
 
 ; Requires https://github.com/dandavison/delta to be installed.
@@ -153,11 +153,15 @@
 
 
 [submodule]
-	fetchJobs = 16
+  fetchJobs = 16
 
 
 [init]
   defaultBranch = main
+
+
+[checkout]
+  defaultRemote = origin
 
 
 ; Add user.name and user.email here.
