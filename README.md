@@ -96,13 +96,3 @@ git commit -a -m "Initial commit into my private repo"
 
 - Edit `/etc/login.defs` so `UMASK 027`
 - Disable password based ssh login with: `sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' $ROOT_PATH/etc/ssh/sshd_config`
-
-
-## Enable ssh login via public key authentication with encrypted home directory with ecryptfs
-
-If you don't want to be owned, you probably already set *"PasswordAuthentication
-no"* in your */etc/ssh/sshd_config*. But then ecryptfs encrypted home directory
-can't reach your *.ssh/authorized_keys* unless you were already logged in, which
-is annoying.
-[setup_scripts/setup_ssh_ecryptfs.sh](setup_scripts/setup_ssh_ecryptfs.sh)
-enables this functionality back.
