@@ -96,3 +96,25 @@ git commit -a -m "Initial commit into my private repo"
 
 - Edit `/etc/login.defs` so `UMASK 027`
 - Disable password based ssh login with: `sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' $ROOT_PATH/etc/ssh/sshd_config`
+
+
+## Upgrading debian
+
+It's always a similar dance for upgrading debian derived distros. What I always
+forget is to do it from a tmux session. Often we get prompts during the upgrade.
+
+```
+tmux
+sudo apt update
+sudo apt dist-upgrade
+# Raspbian only:
+sudo rpi-update
+
+sudo vim /etc/apt/sources.list
+# Change current to next one
+
+sudo apt update
+sudo apt dist-upgrade
+sudo apt autoclean
+sudo reboot
+```
