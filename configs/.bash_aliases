@@ -57,6 +57,10 @@ fi
 # cygwin specific because git-prompt can't be used there, it's too slow on the
 # chromium tree.
 if [ "$OS" = "Windows_NT" ]; then
+  # - "\[\e]0;\w\a\]": Set window title to current working directory, with $HOME
+  #   replaced with ~.
+  # - "\[\e[33m]\w\[\e[0m\]": Current directory as brown.
+  # - " \$": Trailing $
   PS1="\[\e]0;\w\a\]\[\e[33m\]\w\[\e[0m\] \$ "
 else
   # Adapt the prompt based on the machine I'm ssh'ed into.
@@ -104,13 +108,21 @@ else
   GIT_PS1_SHOWUNTRACKEDFILES=1
   GIT_PS1_SHOWUPSTREAM="auto"
 
-  # - Enable git prompt
-  # - Set current directory as window title. Requires recent tmux >=2.6 to work
-  #   within tmux. See ./.tmux.conf for my tmux configuration.
-  # - Reset color
-  # - Display non-zero exit code as red
-  # - Current directory with $HOME elided as ~.
-  PROMPT_COMMAND='__git_ps1 "\[\e]0;\W\a\]\[\e[0m\]\$(_V=\$?; if [ \$_V != 0 ]; then echo -e -n \"\\[\\e[31m\\]\$_V\\[\\e[0m\\]\" ; fi)" "\[\e[33m\]\w\[\e[0m\]$_CHAR"'
+  # This is using the form 3b) as described in bin_pub/git-prompt.sh.
+  # - '__git_ps1 "': Enable git prompt
+  # - '\[\e]0;\W\a\]': Set current directory as window title. Requires tmux
+  #   >=2.6 to work. See ./.tmux.conf for my tmux configuration.
+  # - '\[\e[0m\]': Reset color
+  # - '\$(_V=\$?; if [ \$_V != 0 ]; then echo -e -n \"\\[\\e[31m\\]\$_V\\[\\e[0m\\]\" ; fi)':
+  #   Display non-zero exit code as red
+  # - '"\[\e[33m\]\w\[\e[0m\]': Current directory with $HOME elided as ~.
+  # - '$_CHAR': prompt character as selected above.
+  PROMPT_COMMAND='__git_ps1 \
+    "\[\e]0;\W\a\]\[\e[0m\]\$(_V=\$?; if [ \$_V != 0 ]; then echo -e -n \"\\[\\e[31m\\]\$_V\\[\\e[0m\\]\" ; fi)" \
+    "\[\e[33m\]\w\[\e[0m\]$_CHAR"'
+
+  # Fallback:
+  #PS1="\[\e]0;\w\a\]\[\e[33m\]\w\[\e[0m\]$_CHAR"
 fi
 
 
