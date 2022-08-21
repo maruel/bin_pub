@@ -28,7 +28,11 @@ alias .....='cd ../../../..'
 alias s='if tmux has; then tmux -2 attach -d; else tmux -2; fi'
 # 'll' is not on mac and cygwin by default, and the default time format used
 # is an abomination.
-alias ll='ls -la --time-style=long-iso'
+if [ "$UNAME" = "Darwin" ]; then
+  alias ll='ls -la -D %Y-%m-%d:%H:%M:%S'
+else
+  alias ll='ls -la --time-style=long-iso'
+fi
 alias lsd='ll | grep "^d"'
 alias lsf='ll | grep -v "^d"'
 # git diff implementation is much better than default diff.
@@ -177,16 +181,8 @@ fi
 
 # git-completion
 if [ "$UNAME" = "Darwin" ]; then
-  # It's not at the same place on MacOSX.
-  if [ -f /usr/local/git/contrib/completion/git-completion.bash ]; then
-    source /usr/local/git/contrib/completion/git-completion.bash
-  elif [ -f /usr/local/git/current/share/git-core/git-completion.bash ]; then
-    # It moved with 1.8?
-    source /usr/local/git/current/share/git-core/git-completion.bash
-  elif [ -f /usr/share/git-core/git-completion.bash ]; then
-    # OSX with XCode's version
-    source /usr/share/git-core/git-completion.bash
-  fi
+  #fpath=(~/.zsh $fpath)
+  source /usr/local/git/current/share/git-core/git-completion.bash
 elif [ "$OS" = "Windows_NT" ]; then
   if [ -f /etc/bash_completion.d/git ]; then
     # Location for ubuntu and cygwin, but only necessary for cygwin.
