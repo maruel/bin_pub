@@ -53,7 +53,7 @@ def from_sources():
   subprocess.check_call(['git', 'checkout', tag], cwd=goroot)
 
   go14 = os.path.join(home, 'go1.4')
-  if not os.path.isdir(go14):
+  if not os.path.isfile(os.path.join(go14, 'VERSION')):
     from_precompiled(go14)
 
   print('Building.')
@@ -71,8 +71,11 @@ def from_precompiled(goroot):
   uname = os.uname()[4]
   arch = 'amd64'
   if uname.startswith('arm'):
-    # ~70MB, at 1Mbit it takes 12 minutes...
-    arch = 'armv6l'
+    if sys.maxsize > 2**32:
+      arch = 'arm64'
+    else:
+      # ~70MB, at 1Mbit it takes 12 minutes...
+      arch = 'armv6l'
 
   os_name = sys.platform
   if os_name == 'linux2':
@@ -82,11 +85,18 @@ def from_precompiled(goroot):
   # url = 'https://storage.googleapis.com/golang/' + filename
   url = 'https://dl.google.com/go/' + filename
   print('Fetching %s' % url)
-  subprocess.check_call(['wget', url])
-  if not os.path.isdir(goroot):
-    os.mkdir(goroot)
-  subprocess.check_call(['tar', '-C', goroot, '--strip-components=1', '-xzf', filename])
-  os.remove(filename)
+  def reporthook(chunk, size, total):
+    sys.stdout.write('%.1f%%\r' % (100. * float(chunk*size)/float(total)))
+  filename, _ = urllib.request.urlretrieve(url, reporthook=reporthook)
+  sys.stdout.write('\n')
+  try:
+    print('Extracting to %s' % goroot)
+    if not os.path.isdir(goroot):
+      os.mkdir(goroot)
+    subprocess.check_call(
+        ['tar', '-C', goroot, '--strip-components=1', '-xzf', filename])
+  finally:
+    os.remove(filename)
 
 
 def setup_profile(goroot):

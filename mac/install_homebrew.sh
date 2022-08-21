@@ -10,12 +10,26 @@
 
 set -e
 
-cd ~/bin
-mkdir homebrew
-curl -sL https://github.com/mxcl/homebrew/tarball/master | tar xz --strip 1 -C homebrew
+if [ ! -f ~/bin/homebrew/bin/brew ];
+  cd ~/bin
+  mkdir homebrew
+  curl -sL https://github.com/Homebrew/brew/archive/refs/tags/3.5.9.tar.gz | tar xz --strip 1 -C homebrew
+fi
 
-echo 'Then do:'
-echo '  brew update'
-echo '    (and fiddle with XCode)'
-echo '  brew install bash'
-echo '  brew install bash-completion'
+echo 'Updating homebrew'
+~/bin/homebrew/bin/brew update
+
+echo 'Installing recent bash'
+~/bin/homebrew/bin/brew install bash
+
+echo 'Installing bash completion'
+~/bin/homebrew/bin/brew install bash-completion
+
+echo 'Adding bash to allowed shells'
+echo $HOME/bin/homebrew/bin/bash | sudo tee -a /etc/shells
+
+echo 'Changing bash to default shell'
+chsh -s $HOME/bin/homebrew/bin/bash
+
+echo 'Install tmux'
+~/bin/homebrew/bin/brew install tmux
