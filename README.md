@@ -16,9 +16,9 @@ How it looks on Ubuntu:
 
 ![Ubuntu](/screenshots/ubuntu.png)
 
-How it looks on OSX:
+How it looks on macOS:
 
-![OSX](/screenshots/osx.png)
+![macOS](/screenshots/osx.png)
 
 
 ## Ubuntu
@@ -26,11 +26,11 @@ How it looks on OSX:
 For a public workstation without a private *bin*:
 
 ```
-mkdir bin
-git clone --recursive https://github.com/maruel/bin_pub bin/bin_pub
-bin/bin_pub/setup/apt_get.sh
-bin/bin_pub/setup/update_config.py
-bin/bin_pub/setup/install_golang.py
+mkdir ~/bin
+git clone --recursive https://github.com/maruel/bin_pub ~/bin/bin_pub
+~/bin/bin_pub/setup/apt_get.sh
+~/bin/bin_pub/setup/update_config.py
+~/bin/bin_pub/setup/install_golang.py
 ```
 
 ### CapsLock -> Escape
@@ -45,29 +45,27 @@ and comment out:
     // modifier_map Lock { Caps_Lock };
 
 
-## OSX
+## macOS
 
 ```
-mkdir bin
-git clone --recursive https://github.com/maruel/bin_pub bin/bin_pub
-./setup_scripts/install_homebrew.sh
-brew install bash
-sudo vi /etc/shells
+mkdir ~/bin
+git clone --recursive https://github.com/maruel/bin_pub ~/bin/bin_pub
+~/bin/bin_pub/mac/install_homebrew.sh
+~/bin/bin_pub/mac/fix_bash.sh
 ```
 
-* User preferences, right click, Advanced options, paste
-      /Users/<YOUR USERNAME>/bin/homebrew/bin/bash
+- Go in Preferences, Keyboard shortcuts, disable F11 key.
 
 
 ## FAQ
 
 You should use this directory structure:
 
--   *~/bin* containing all your private scripts, configuration files and
-    whatnot.  It can be a git repository but it doesn't needs to be. If it is a
-    git checkout, you can use git submodule to fetch bin_pub automatically.
--   *~/bin/bin_pub* references to this repository, containing public scripts and
-    configuration files.
+- *~/bin* containing all your private scripts, configuration files and
+  whatnot.  It can be a git repository but it doesn't needs to be. If it is a
+  git checkout, you can use git submodule to fetch bin_pub automatically.
+- *~/bin/bin_pub* references to this repository, containing public scripts and
+  configuration files.
 
 Then you can just *git pull computer:bin* from all your workstations to keep
 your workstations all in sync, and using git submodule to fetch public
@@ -77,10 +75,11 @@ github.
 
 ## Initial setup steps
 
+If you want to use this, or a similar flow, here's the recipe:
+
 ```bash
-cd ~
-git init bin
-cd bin
+git init ~/bin
+cd ~/bin
 git submodule add git://github.com/maruel/bin_pub.git bin_pub
 cd bin_pub
 git submodule init
