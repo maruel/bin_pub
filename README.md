@@ -54,7 +54,9 @@ git clone --recursive https://github.com/maruel/bin_pub ~/bin/bin_pub
 ~/bin/bin_pub/mac/fix_bash.sh
 ```
 
-- Go in Preferences, Keyboard shortcuts, disable F11 key.
+- Go in Preferences, Keyboard
+  - Shortcuts, Disable F11 key.
+  - Modifiers, Map CapsLock to ESC.
 
 
 ## FAQ
