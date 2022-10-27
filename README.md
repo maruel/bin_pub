@@ -47,16 +47,7 @@ and comment out:
 
 ## macOS
 
-```
-mkdir ~/bin
-git clone --recursive https://github.com/maruel/bin_pub ~/bin/bin_pub
-~/bin/bin_pub/mac/install_homebrew.sh
-~/bin/bin_pub/mac/fix_bash.sh
-```
-
-- Go in Preferences, Keyboard
-  - Shortcuts, Disable F11 key.
-  - Modifiers, Map CapsLock to ESC.
+See [mac/README.md](mac/README.md)
 
 
 ## FAQ
