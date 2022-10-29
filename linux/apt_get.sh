@@ -41,6 +41,7 @@ sudo apt purge \
   cloud-init \
   cloud-initramfs-copymods \
   cloud-initramfs-dyn-netconf \
+  landscape-common \
   open-vm-tools \
   snapd \
   sosreport \
