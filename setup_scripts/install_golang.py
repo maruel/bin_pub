@@ -56,6 +56,8 @@ def from_sources():
   if not os.path.isfile(os.path.join(go14, 'VERSION')):
     from_precompiled(go14)
 
+  # TODO(maruel): if go version == git tag, don't build!
+  # sudo apt install g++ if missing.
   print('Building.')
   subprocess.check_call(['./make.bash'], cwd=os.path.join(goroot, 'src'))
   return goroot
@@ -123,19 +125,20 @@ def main():
     go = 'go'
     if goroot:
       go = os.path.join(goroot, 'bin', 'go')
-    subprocess.check_call(
-        [go, 'install', '-v',
-      'golang.org/x/tools/cmd/godoc',
-      'golang.org/x/tools/cmd/goimports',
-      'golang.org/x/tools/cmd/stringer',
+    pkgs = [
+      'golang.org/x/tools/cmd/godoc@latest',
+      'golang.org/x/tools/cmd/goimports@latest',
+      #'golang.org/x/tools/cmd/stringer@latest',
       #'github.com/axw/gocov/gocov',
-      'github.com/client9/misspell/cmd/misspell',
-      'github.com/boyter/scc@v2',
-      'github.com/maruel/panicparse/v2/cmd/pp',
-      'github.com/monochromegane/the_platinum_searcher/cmd/pt@v2',
-      'github.com/rjeczalik/bin/cmd/gobin',
+      'github.com/client9/misspell/cmd/misspell@latest',
+      #'github.com/boyter/scc@latest',
+      'github.com/maruel/panicparse/v2/cmd/pp@latest',
+      'github.com/monochromegane/the_platinum_searcher/cmd/pt@latest',
+      #'github.com/rjeczalik/bin/cmd/gobin@latest',
       #'github.com/FiloSottile/gorebuild',
-      ])
+    ]
+    for pkg in pkgs:
+      subprocess.check_call([go, 'install', '-v', pkg])
   else:
     print('Skipping tooling because running as root')
   return 0
