@@ -110,3 +110,12 @@ sudo apt dist-upgrade
 sudo apt autoclean
 sudo reboot
 ```
+
+## pip
+
+To install as user on linux
+
+```
+wget https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py --user
+pip install --user virtualenv
+```
