@@ -148,8 +148,8 @@
   ignoreall = "!cd \"$(git rev-parse --show-cdup)\" && git clean -n -d | cut -c 14- | sed -e \"s/\\/$//\" >> $(git rev-parse --git-dir)/info/exclude"
   ; Rebase against the ancestor
   reroll = !git rebase -i $(git ancestor)
-  ; TODO(maruel): How to not hardcode origin/master?
-  new = "!f() { git fetch && git checkout -b $@ origin/master; }; f"
+  ; TODO(maruel): How to not hardcode origin/main?
+  new = "!f() { git fetch && git checkout -b $@ origin/main; }; f"
 
 
 [submodule]
