@@ -67,7 +67,7 @@ See [mac/README.md](mac/README.md)
 
 ## Windows
 
-See [windows/README.md](windows/README.md)
+See [win/README.md](win/README.md)
 
 
 ## Tmux
