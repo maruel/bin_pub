@@ -1,6 +1,0 @@
-Try this:
-cmd.exe /c c:\cygwin\bin\ash.exe -c "/bin/rebaseall -b 0x50000000 -o 0x80000"
-
-Run this as admin!
-/usr/bin/ssh-host-config --yes --pwd <put random password here>
-net start sshd

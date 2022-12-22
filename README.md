@@ -2,8 +2,12 @@
 
 Use at your own risk but feel free to take what you find useful.
 
+I recommend either taking inspiration from it or forking and mutating as
+desired.
+
 See [LICENSE](https://github.com/maruel/bin_pub/blob/master/LICENSE) for
 licensing information.
+
 
 ## Checkout structure
 
@@ -56,9 +60,15 @@ git clone --recursive https://github.com/maruel/bin_pub ~/bin/bin_pub
 
 See [linux/README.md](linux/README.md)
 
+
 ## macOS
 
 See [mac/README.md](mac/README.md)
+
+
+## Windows
+
+See [windows/README.md](windows/README.md)
 
 
 ## Tmux
