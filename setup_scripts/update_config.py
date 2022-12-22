@@ -8,6 +8,7 @@
 import argparse
 import difflib
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -16,7 +17,59 @@ import tempfile
 BIN_PUB_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BIN_PUB_DIR)
 
-import maruel
+
+def walk(path, allowlist, blocklist=(r'^(.*/|)\.[^/]+/$',), relative=True):
+    """Walks a directory and returns matching files and directories.
+
+    Returned paths are relative to 'path' if relative=True.
+    Directories have a trailing os.sep to ease regexing.
+    """
+    allowlist = [re.compile(x) for x in allowlist]
+    allowlisted = lambda x: any(r.match(x) for r in allowlist)
+    blocklist = [re.compile(x) for x in blocklist]
+    blocklisted = lambda x: any(r.match(x) for r in blocklist)
+    out = []
+    lenpath = len(path)
+    for dirpath, dirnames, filenames in os.walk(path):
+        assert dirpath.startswith(path)
+        if relative:
+            dirpath = dirpath[lenpath + 1:]
+        for index in range(len(dirnames) - 1, -1, -1):
+            d = os.path.join(dirpath, dirnames[index]) + os.sep
+            posix_d = d.replace(os.sep, '/')
+            if blocklisted(posix_d):
+                # This speeds up searching by blacklisting directories that
+                # should not be looked into like .git or .svn.
+                dirnames.pop(index)
+            elif allowlisted(posix_d):
+                out.append(d)
+        for f in filenames:
+            f = os.path.join(dirpath, f)
+            posix_f = f.replace(os.sep, '/')
+            if not blocklisted(posix_f) and allowlisted(posix_f):
+                out.append(f)
+    return sorted(out)
+
+
+def write(filename, content):
+    """Writes a file"""
+    mode = 'wb' if isinstance(content, bytes) else 'wt'
+    with open(filename, 'rt') as f:
+        f.write(content)
+
+
+def read(filename):
+    """Reads a file"""
+    try:
+        try:
+            with open(filename, 'rt') as f:
+                return f.read()
+        except:
+            with open(filename, 'rb') as f:
+                return f.read()
+    except:
+        print('Failed to read %s' % filename, file=sys.stderr)
+        raise
 
 
 class Symlink(object):
@@ -43,7 +96,7 @@ def diff(diff_cmd, dst, basename, content):
         if result:
             return result
         # Look if the source content changed.
-        actual_content = maruel.read(name)
+        actual_content = read(name)
         if actual_content != content:
             # The user modified the source. For now just quit early.
             print('You modified the source')
@@ -82,10 +135,10 @@ def update_config(files, diff_cmd):
                         basename)
                 continue
             print('Copying %s' % basename)
-            maruel.write(dst, content)
+            write(dst, content)
             ok_files.append(basename)
         else:
-            if maruel.read(dst) != content:
+            if read(dst) != content:
                 to_diff.append(basename)
             else:
                 ok_files.append(basename)
@@ -105,9 +158,9 @@ def load_files(config_dir, files):
 
     Appends the content if an entry is already present.
     """
-    blacklist = [r'.*README.md$', r'.*\.swp$']
+    blocklist = [r'.*README.md$', r'.*\.swp$']
     skips = []
-    for basename in maruel.walk(config_dir, [r'.*'], blacklist):
+    for basename in walk(config_dir, [r'.*'], blocklist):
         src = os.path.join(config_dir, basename)
         if any(basename.startswith(s) for s in skips):
             # Inside one of the symlinked directory.
@@ -119,9 +172,9 @@ def load_files(config_dir, files):
                 skips.append(basename)
         else:
             if basename not in files:
-                files[basename] = maruel.read(src)
+                files[basename] = read(src)
             else:
-                files[basename] += maruel.read(src)
+                files[basename] += read(src)
 
 
 def main():

@@ -19,6 +19,8 @@ def get_imports(pkg):
 
 def recurse(pkg, seen, indent):
   print('%s%s' % (' ' * indent, pkg))
+  if pkg == "C":
+    return
   for i in get_imports(pkg):
     if i in seen:
       # Print it but don't recurse.
