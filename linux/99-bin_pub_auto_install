@@ -1,7 +1,7 @@
 # Source: https://github.com/maruel/bin_pub
 #
 # Install with:
-#   sudo cp 99-maruel /etc/apt/apt.conf.d/
+#   sudo cp 99-bin_pub_auto_install /etc/apt/apt.conf.d/
 
 # Enable /etc/cron.daily/apt.
 APT::Periodic::Enable "1";

@@ -5,8 +5,7 @@ Use at your own risk but feel free to take what you find useful.
 I recommend either taking inspiration from it or forking and mutating as
 desired.
 
-See [LICENSE](https://github.com/maruel/bin_pub/blob/master/LICENSE) for
-licensing information.
+See [LICENSE](LICENSE) for licensing information.
 
 
 ## Checkout structure
