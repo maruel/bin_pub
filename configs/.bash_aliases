@@ -38,7 +38,7 @@ alias lsf='ll | grep -v "^d"'
 # git diff implementation is much better than default diff.
 alias diff="git diff --no-index --no-ext-diff --no-prefix"
 # Create with:
-#   $HOME/bin/bin_pub/setup_scripts/get_pip.sh
+#   wget https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py --user
 #   pip install --user virtualenv
 #   mkdir -p $HOME/src/venv
 #   virtualenv $HOME/src/venv
