@@ -54,7 +54,7 @@ def walk(path, allowlist, blocklist=(r'^(.*/|)\.[^/]+/$',), relative=True):
 def write(filename, content):
     """Writes a file"""
     mode = 'wb' if isinstance(content, bytes) else 'wt'
-    with open(filename, 'rt') as f:
+    with open(filename, mode) as f:
         f.write(content)
 
 
