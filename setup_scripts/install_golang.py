@@ -28,12 +28,8 @@ def _check_output(*args, **kwargs):
   return subprocess.check_output(*args, **kwargs)
 
 
-def from_sources():
+def from_sources(goroot):
   """Installing from sources."""
-  home = os.path.expanduser('~')
-  goroot = os.environ.get('GOROOT')
-  if not goroot:
-    goroot = os.path.join(home, 'src-oth', 'golang')
   print('Installing Go in %s' % goroot)
   if os.path.isdir(goroot):
     subprocess.check_call(['git', 'fetch', '--all'], cwd=goroot)
@@ -52,15 +48,10 @@ def from_sources():
   print('Using %s' % tag)
   subprocess.check_call(['git', 'checkout', tag], cwd=goroot)
 
-  go14 = os.path.join(home, 'go1.4')
-  if not os.path.isfile(os.path.join(go14, 'VERSION')):
-    from_precompiled(go14)
-
   # TODO(maruel): if go version == git tag, don't build!
   # sudo apt install g++ if missing.
   print('Building.')
   subprocess.check_call(['./make.bash'], cwd=os.path.join(goroot, 'src'))
-  return goroot
 
 
 def from_precompiled(goroot):
@@ -110,17 +101,34 @@ def setup_profile(goroot):
 
 def main():
   parser = argparse.ArgumentParser(description=sys.modules[__name__].__doc__)
-  parser.add_argument('--system', action='store_true')
-  parser.add_argument('--skip', action='store_true', help='Skip updating Golang')
+  parser.add_argument(
+      '--type', choices=('system', 'bootstrap', 'compiled', 'skip'),
+      default='compiled' if os.geteuid() else 'system',
+      help='Install in /usr/local/go, in ~/go1.4, ~/src/golang or skip')
+  parser.add_argument('--bootstrap', action='store_true')
+  parser.add_argument(
+      '--skip', action='store_true',
+      help='Skip updating Golang; only install packages')
   args = parser.parse_args()
-  if not args.skip:
-    if args.system:
+
+  if args.type != 'skip':
+    if args.type == 'system':
       goroot = '/usr/local/go'
       from_precompiled(goroot)
       setup_profile(goroot)
     else:
-      goroot = from_sources()
-  if os.geteuid() != 0:
+      go14 = os.path.join(os.path.expanduser("~"), "go1.4")
+      if args.type == 'bootstrap' or not os.path.isfile(os.path.join(go14, "VERSION")):
+        from_precompiled(go14)
+      if args.type == 'compiled':
+        goroot = (
+            os.environ.get('GOROOT') or
+            os.path.join(os.path.expanduser('~'), 'src-oth', 'golang'))
+        from_sources(goroot)
+
+  if not os.geteuid():
+    print('Skipping tooling because running as root')
+  elif args.type != 'bootstrap':
     # Start getting useful projects right away, if not running as root.
     go = 'go'
     if goroot:
@@ -139,8 +147,6 @@ def main():
     ]
     for pkg in pkgs:
       subprocess.check_call([go, 'install', '-v', pkg])
-  else:
-    print('Skipping tooling because running as root')
   return 0
 
 
