@@ -150,6 +150,9 @@
   reroll = !git rebase -i $(git ancestor)
   ; TODO(maruel): How to not hardcode origin/main?
   new = "!f() { git fetch && git checkout -b $@ origin/main; }; f"
+  ; Create a CL. Requires Commit-Id: footer script.
+  ; TODO(maruel): Use git for-each-ref --format='%(refname:short)' "$(git symbolic-ref -q HEAD)"
+  gerrit = push origin HEAD:refs/for/main
 
 
 [submodule]
