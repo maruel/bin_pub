@@ -34,13 +34,13 @@ def main(args):
   if not args:
     args = ['.']
   if len(args) != 1:
-    print >> sys.stderr, 'Only one package at a time'
+    print('Only one package at a time', file=sys.stderr)
     return 1
   pkg = args[0]
   if pkg == '.':
     pkg = run(['go', 'list', '-f', '{{.ImportPath}}', pkg])
   if pkg.startswith('./'):
-    print >> sys.stderr, './ format is not yet supported'
+    print('./ format is not yet supported', file=sys.stderr)
     return 1
   recurse(pkg, set(), 0)
   return 0
