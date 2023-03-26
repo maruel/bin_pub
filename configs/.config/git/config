@@ -153,6 +153,8 @@
   ; Create a CL. Requires Commit-Id: footer script.
   ; TODO(maruel): Use git for-each-ref --format='%(refname:short)' "$(git symbolic-ref -q HEAD)"
   gerrit = push origin HEAD:refs/for/main
+  ; Create a CL and trigger the label Commit-Queue.
+  gerritcq = push origin HEAD:refs/for/main%l=Commit-Queue+1
 
 
 [submodule]
