@@ -60,7 +60,7 @@ def from_precompiled(goroot):
   if os.path.isdir(goroot):
     shutil.rmtree(goroot)
   version = urllib.request.urlopen(
-      'https://golang.org/VERSION?m=text').read().decode('utf-8')
+      'https://go.dev/VERSION?m=text').read().decode('utf-8').split('\n', 2)[0]
   uname = os.uname()[4]
   arch = 'amd64'
   if uname.startswith('arm'):
