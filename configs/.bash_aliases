@@ -190,14 +190,9 @@ elif [ "$OS" = "Windows_NT" ]; then
   fi
 fi
 
-# Enhanced ssh-agent.
-# sudo apt-get install keychain
-if which keychain &>/dev/null; then
-  # This call costs one second.
-  # TODO(maruel): Figure out a way to skip it when unnecessary.
-  keychain --quiet -Q --inherit any identity
-  [[ -f $HOME/.keychain/$HOSTNAME-sh ]] && source $HOME/.keychain/$HOSTNAME-sh
-  [[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]] && source $HOME/.keychain/$HOSTNAME-sh-gpg
+# systemd based ssh-agent.
+if [ -z "${SSH_AUTH_SOCK+xxx}" ]; then
+  export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-agent.socket
 fi
 
 
