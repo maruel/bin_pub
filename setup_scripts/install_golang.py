@@ -10,6 +10,7 @@ import subprocess
 import tarfile
 import sys
 import urllib.request
+import zipfile
 
 
 def _semver(v):
@@ -51,7 +52,8 @@ def from_sources(goroot):
   # TODO(maruel): if go version == git tag, don't build!
   # sudo apt install g++ if missing.
   print('Building.')
-  subprocess.check_call(['./make.bash'], cwd=os.path.join(goroot, 'src'))
+  cmd = ['make.bat'] if sys.platform == 'win32' else ['./make.bash']
+  subprocess.check_call(cmd, cwd=os.path.join(goroot, 'src'))
 
 
 def from_precompiled(goroot):
@@ -61,19 +63,23 @@ def from_precompiled(goroot):
     shutil.rmtree(goroot)
   version = urllib.request.urlopen(
       'https://go.dev/VERSION?m=text').read().decode('utf-8').split('\n', 2)[0]
-  uname = os.uname()[4]
   arch = 'amd64'
-  if uname.startswith('arm'):
-    if sys.maxsize > 2**32:
-      arch = 'arm64'
-    else:
-      # ~70MB, at 1Mbit it takes 12 minutes...
-      arch = 'armv6l'
+  if sys.platform != 'win32':
+    uname = os.uname()[4]
+    if uname.startswith('arm'):
+      if sys.maxsize > 2**32:
+        arch = 'arm64'
+      else:
+        # ~70MB, at 1Mbit it takes 12 minutes...
+        arch = 'armv6l'
 
   os_name = sys.platform
   if os_name == 'linux2':
     os_name = 'linux'
-  filename = version + '.' + os_name + '-' + arch + '.tar.gz'
+  elif os_name == 'win32':
+    os_name = 'windows'
+  ext = '.zip' if sys.platform == 'win32' else '.tar.gz'
+  filename = version + '.' + os_name + '-' + arch + ext
   # Used to be:
   # url = 'https://storage.googleapis.com/golang/' + filename
   url = 'https://dl.google.com/go/' + filename
@@ -86,24 +92,41 @@ def from_precompiled(goroot):
     print('Extracting to %s' % goroot)
     if not os.path.isdir(goroot):
       os.mkdir(goroot)
-    subprocess.check_call(
-        ['tar', '-C', goroot, '--strip-components=1', '-xzf', filename])
+    # We have to skip the go/ prefix.
+    if sys.platform == 'win32':
+      with zipfile.ZipFile(filename) as z:
+        for i in z.infolist():
+          if i.is_dir():
+            continue
+          assert i.filename.startswith('go/'), i.filename
+          i.filename = i.filename[3:]
+          z.extract(i, goroot)
+    else:
+      subprocess.check_call(
+          ['tar', '-C', goroot, '--strip-components=1', '-xzf', filename])
   finally:
     os.remove(filename)
 
 
 def setup_profile(goroot):
   """Sets up the global profilet to include system wide Go."""
-  with open('/etc/profile.d/golang.sh', 'wb') as f:
-    f.write('export PATH="$PATH:%s/bin"\n' % goroot)
-  os.chmod('/etc/profile.d/golang.sh', 0o555)
+  if sys.platform == 'win32':
+    # TODO(maruel): And go/bin
+    print('Run: setx PATH "%PATH%;' + goroot + '"')
+  else:
+    with open('/etc/profile.d/golang.sh', 'wb') as f:
+      f.write('export PATH="$PATH:%s/bin"\n' % goroot)
+    os.chmod('/etc/profile.d/golang.sh', 0o555)
 
 
 def main():
+  is_root = False
+  if sys.platform != 'win32':
+    is_root = not bool(os.geteuid())
   parser = argparse.ArgumentParser(description=sys.modules[__name__].__doc__)
   parser.add_argument(
       '--type', choices=('system', 'bootstrap', 'compiled', 'skip'),
-      default='compiled' if os.geteuid() else 'system',
+      default='compiled' if not is_root else 'system',
       help='Install in /usr/local/go, in ~/go1.4, ~/src/golang or skip')
   parser.add_argument('--bootstrap', action='store_true')
   parser.add_argument(
@@ -125,8 +148,12 @@ def main():
             os.environ.get('GOROOT') or
             os.path.join(os.path.expanduser('~'), 'src-oth', 'golang'))
         from_sources(goroot)
+  else:
+    goroot = (
+        os.environ.get('GOROOT') or
+        os.path.join(os.path.expanduser('~'), 'src-oth', 'golang'))
 
-  if not os.geteuid():
+  if is_root:
     print('Skipping tooling because running as root')
   elif args.type != 'bootstrap':
     # Start getting useful projects right away, if not running as root.
