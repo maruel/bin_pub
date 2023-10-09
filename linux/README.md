@@ -49,3 +49,49 @@ sudo reboot
 ```
 
 In practice it's been hit-or-miss, especially over ssh.
+
+
+## Host-VM network access when VM uses macvtap
+
+If a VM under KVM uses macvtap networking, the host cannot access the VM over
+the network. The trick is to create an isolated network.
+
+### Defining the isolated network
+
+```
+cat > isolated.xml <<EOF
+<network>
+  <name>isolated</name>
+  <ip address="192.168.254.1" netmask="255.255.255.0">
+    <dhcp>
+      <range start="192.168.254.2" end="192.168.254.254"/>
+    </dhcp>
+  </ip>
+</network>
+EOF
+
+virsh net-define isolated.xml
+rm isolated.xml
+virsh net-autostart isolated
+virsh net-start isolated
+```
+
+### Updating the VM network
+
+```
+virsh edit <name_of_guest>
+```
+
+Add under `<devices>` close to the network:
+
+```
+<interface type="network">
+  <source network='isolated'/>
+  <model type='virtio'/>
+</interface>
+```
+
+Restart the guest.
+
+Run `ip addr show` to get the isolated IP. Host will be accessible as
+`192.168.254.1.`.
