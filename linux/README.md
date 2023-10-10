@@ -51,6 +51,22 @@ sudo reboot
 In practice it's been hit-or-miss, especially over ssh.
 
 
+## Windows on KVM
+
+- Get Windows 11 ISO from
+  https://www.microsoft.com/software-download/windows11
+- Get virtio-win from
+  https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/
+- VM configuration:
+  - Load Windows ISO as first CD-ROM.
+  - Load virtio ISO as second CD-ROM.
+  - Install TPM v2.0 Type Emulated CRB / version 2.0 before booting.
+  - Disable network during installation will simplify your life w.r.t. creating a
+    local account.
+- After installation, remove the two CD-ROM and reenable network, then run Windows
+  Update 2~3 times.
+
+
 ## Host-VM network access when VM uses macvtap
 
 If a VM under KVM uses macvtap networking, the host cannot access the VM over
