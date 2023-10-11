@@ -3,7 +3,12 @@
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
 
+import os
+import sys
+
 P = '/sys/class/power_supply/BAT0/'
+if not os.path.isdir(P):
+  sys.exit(1)
 
 # Battery voltage. Impacted by charging.
 with open(P+ 'voltage_now', 'r') as f:
