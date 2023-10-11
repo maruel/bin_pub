@@ -9,11 +9,13 @@
 set -eu
 
 # These are occasionally useful:
+#   gnome-software
 #   gparted
 #   libvirt
 #   net-tools
 #   ntpdate
 #   qemu-kvm
+#   ubuntu-desktop-minimal
 #   virt-manager
 #   vlc
 sudo apt install \
@@ -28,15 +30,17 @@ sudo apt install \
   wireless-tools
 
 # Desktop:
-# avahi-daemon
-# evolution-data-server
-# indicator-messages
+#   avahi-daemon
+#   evolution-data-server
+#   indicator-messages
 sudo apt purge \
   apport \
   evince \
   whoopsie
 
 # Ubuntu Server 20.04:
+#   snapd
+#   ubuntu-advantage-tools
 sudo apt purge \
   cloud-guest-utils \
   cloud-init \
@@ -44,9 +48,7 @@ sudo apt purge \
   cloud-initramfs-dyn-netconf \
   landscape-common \
   open-vm-tools \
-  snapd \
   sosreport \
-  ubuntu-advantage-tools
 
 # On Ubuntu Server:
 # sudo timedatectl set-timezone America/Toronto
