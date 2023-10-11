@@ -11,18 +11,19 @@ set -eu
 # These are occasionally useful:
 #   gparted
 #   libvirt
+#   net-tools
+#   ntpdate
 #   qemu-kvm
 #   virt-manager
 #   vlc
 sudo apt install \
   git \
   ifstat \
-  net-tools \
-  ntpdate \
   python3 \
   smartmontools \
   sysstat \
   tmux \
+  unattended-upgrades \
   vim \
   wireless-tools
 
@@ -50,4 +51,4 @@ sudo apt purge \
 # On Ubuntu Server:
 # sudo timedatectl set-timezone America/Toronto
 
-sudo apt autoremove -y
+sudo apt autoremove
