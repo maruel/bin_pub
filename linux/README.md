@@ -111,3 +111,29 @@ Restart the guest.
 
 Run `ip addr show` to get the isolated IP. Host will be accessible as
 `192.168.254.1.`.
+
+
+## Build cpython
+
+e.g. if contributing a change to Home Assistant...
+
+```
+sudo apt-get install build-essential gdb lcov pkg-config \
+    libbz2-dev libffi-dev libgdbm-dev libgdbm-compat-dev liblzma-dev \
+    libncurses5-dev libreadline6-dev libsqlite3-dev libssl-dev \
+    lzma lzma-dev tk-dev uuid-dev zlib1g-dev
+git clone https://github.com/python/cpython
+cd cpython
+git checkout $(git tag -l --sort=v:refname | grep -v '0[a-z]\+[0-9]\+$' | tail -1)
+./configure --enable-optimizations --with-lto
+make -s -j
+ln -s python python3
+cd ..
+mkdir venv
+cd venv
+../cpython/python3 -m venv .
+source bin/activate
+python3 --version
+```
+
+More info at https://devguide.python.org/getting-started/setup-building/
