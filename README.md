@@ -90,9 +90,13 @@ complete. Thanks Apple.
 
 ## pip
 
-To install as user on POSIX:
+To install as user on POSIX, then activate virtualenv:
 
 ```
-wget https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py --user
-pip install --user virtualenv
+wget https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py --user && rm get-pip.py
+PATH=$PATH:$HOME/.local/bin
+pip3 install --user virtualenv
+virtual env .
 ```
+
+PATH will be fixed on next login.
