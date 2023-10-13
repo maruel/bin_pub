@@ -4,6 +4,7 @@
 # LICENSE file.
 
 import argparse
+import ctypes
 import os
 import shutil
 import subprocess
@@ -50,10 +51,22 @@ def from_sources(goroot):
   subprocess.check_call(['git', 'checkout', tag], cwd=goroot)
 
   # TODO(maruel): if go version == git tag, don't build!
-  # sudo apt install g++ if missing.
   print('Building.')
-  cmd = ['make.bat'] if sys.platform == 'win32' else ['./make.bash']
-  subprocess.check_call(cmd, cwd=os.path.join(goroot, 'src'))
+  env = os.environ.copy()
+  if sys.platform == 'win32':
+    # GOROOT_BOOTSTRAP may be set to C:\\Program Files\\Go if Go was installed
+    # with the MSI package. We want to use the version we control.
+    env['GOROOT_BOOTSTRAP'] = os.path.expanduser('~\\go1.4')
+    print(env['GOROOT_BOOTSTRAP'])
+    cmd = ['cmd.exe', '/c', 'make.bat']
+  else:
+    # sudo apt install g++ if missing.
+    cmd = ['./make.bash']
+  try:
+    subprocess.check_call(cmd, cwd=os.path.join(goroot, 'src'), env=env)
+  except (OSError, subprocess.CalledProcessError) as e:
+    print('Failed to run', cmd, e)
+    sys.exit(1)
 
 
 def from_precompiled(goroot):
@@ -74,11 +87,12 @@ def from_precompiled(goroot):
         arch = 'armv6l'
 
   os_name = sys.platform
+  ext = '.tar.gz'
   if os_name == 'linux2':
     os_name = 'linux'
   elif os_name == 'win32':
     os_name = 'windows'
-  ext = '.zip' if sys.platform == 'win32' else '.tar.gz'
+    ext = '.zip'
   filename = version + '.' + os_name + '-' + arch + ext
   # Used to be:
   # url = 'https://storage.googleapis.com/golang/' + filename
@@ -108,15 +122,70 @@ def from_precompiled(goroot):
     os.remove(filename)
 
 
-def setup_profile(goroot):
-  """Sets up the global profilet to include system wide Go."""
+def setup_user_profile(goroot):
+  """Sets up the user profile to include our local Go."""
   if sys.platform == 'win32':
-    # TODO(maruel): And go/bin
-    print('Run: setx PATH "%PATH%;' + goroot + '"')
+    append_path_windows(os.path.join(goroot, 'bin'), user=True)
+    append_path_windows(os.path.expanduser('~\\go\\bin'), user=True)
+    broadcast_windows_settings()
+  else:
+    # This is done by .bash_aliases
+    pass
+
+
+def setup_system_profile(goroot):
+  """Sets up the global profile to include system wide Go."""
+  if sys.platform == 'win32':
+    append_path_windows(os.path.join(goroot, 'bin'), user=False)
+    append_path_windows(os.path.expanduser('~\\go\\bin'), user=False)
+    broadcast_windows_settings()
   else:
     with open('/etc/profile.d/golang.sh', 'wb') as f:
       f.write('export PATH="$PATH:%s/bin"\n' % goroot)
     os.chmod('/etc/profile.d/golang.sh', 0o555)
+
+
+def append_path_windows(directory, user):
+  """Append a path to %PATH% if not already present."""
+  import winreg
+  if user:
+    reg_key = winreg.OpenKey(
+        winreg.HKEY_CURRENT_USER, 'Environment', 0,
+        winreg.KEY_QUERY_VALUE|winreg.KEY_SET_VALUE)
+  else:
+    reg_key = winreg.OpenKey(
+        winreg.HKEY_LOCAL_MACHINE,
+        'SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment',
+        0, winreg.KEY_QUERY_VALUE|winreg.KEY_SET_VALUE)
+  with reg_key:
+    val, t = winreg.QueryValueEx(reg_key, 'PATH')
+    if t != winreg.REG_EXPAND_SZ:
+      print('Unexpected PATH registry type')
+      sys.exit(1)
+    if directory.lower() in [p for p in val.lower().split(';')]:
+      return
+    val = val.rstrip(';') + ';' + directory
+    winreg.SetValueEx(reg_key, 'PATH', 0, winreg.REG_EXPAND_SZ, val)
+
+
+def broadcast_windows_settings():
+  """Tells all apps that environment variables were updated.
+
+  Call SendMessageTimeout directly to send broadcast to all windows
+  without depending on win32con/win32gui.
+  """
+  from ctypes import wintypes
+  SendMessageTimeout = ctypes.windll.user32.SendMessageTimeoutW
+  UINT = wintypes.UINT
+  SendMessageTimeout.argtypes = (
+    wintypes.HWND, UINT, wintypes.WPARAM, ctypes.c_wchar_p, UINT, UINT,
+    wintypes.LPDWORD)
+  SendMessageTimeout.restype = wintypes.LPARAM
+  HWND_BROADCAST = 0xFFFF
+  WM_SETTINGCHANGE = 0x1A
+  SMTO_ABORTIFHUNG = 0x2
+  SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, 0, 'Environment',
+      SMTO_ABORTIFHUNG, 5000, None)
 
 
 def main():
@@ -136,9 +205,13 @@ def main():
 
   if args.type != 'skip':
     if args.type == 'system':
+      if sys.platform == 'win32':
+        print('Not yet supported')
+        # 'C:\\Program Files\\Go'
+        return 1
       goroot = '/usr/local/go'
       from_precompiled(goroot)
-      setup_profile(goroot)
+      setup_system_profile(goroot)
     else:
       go14 = os.path.join(os.path.expanduser("~"), "go1.4")
       if args.type == 'bootstrap' or not os.path.isfile(os.path.join(go14, "VERSION")):
@@ -148,6 +221,7 @@ def main():
             os.environ.get('GOROOT') or
             os.path.join(os.path.expanduser('~'), 'src-oth', 'golang'))
         from_sources(goroot)
+        setup_user_profile(goroot)
   else:
     goroot = (
         os.environ.get('GOROOT') or
