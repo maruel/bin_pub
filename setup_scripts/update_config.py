@@ -124,7 +124,13 @@ def update_config(files, diff_cmd):
                 # Create a symlink.
                 if not os.path.isdir(os.path.dirname(dst)):
                   os.makedirs(os.path.dirname(dst))
-                os.symlink(content.src, dst)
+                try:
+                  os.symlink(content.src, dst)
+                except OSError:
+                  if sys.platform == 'win32':
+                    print('Visit https://blogs.windows.com/windowsdeveloper/2016/12/02/symlinks-windows-10/')
+                    print('to enable Developer mode to enable symlink support')
+                    sys.exit(1)
             continue
         dst_dir = os.path.dirname(dst)
         if not os.path.isdir(dst_dir):
@@ -192,6 +198,8 @@ def main():
       load_files(os.path.join(BIN_PUB_DIR, '..', 'configs'), files)
 
     cmd = ['vim', '-d']
+    if sys.platform == 'win32':
+        cmd = ['C:\\Program Files\\Git\\usr\\bin\\vim.exe', '-d']
     if args.u:
         cmd = ['diff', '-u']
     if args.dry_run:
