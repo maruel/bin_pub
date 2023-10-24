@@ -9,6 +9,10 @@
 set -eu
 
 # These are occasionally useful:
+#   gnome-shell-extension-manager / https://extensions.gnome.org/
+#     gnome-extensions install (then enable)
+#       emoji-selector
+#       tiling-assistant
 #   gnome-software
 #   gparted
 #   libvirt
@@ -17,7 +21,7 @@ set -eu
 #   qemu-kvm
 #   ubuntu-desktop-minimal
 #   virt-manager
-#   vlc
+#   vlc - now as snap
 sudo apt install \
   git \
   ifstat \
