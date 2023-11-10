@@ -85,10 +85,12 @@ def diff(diff_cmd, dst, basename, content):
     print(
         'Diffing %-16s  new: %5d bytes  current: %5d bytes' % (
             basename, len(content), old_size))
+    if isinstance(content, str):
+        content = content.encode('utf-8')
     handle, name = tempfile.mkstemp()
     try:
         try:
-            os.write(handle, content.encode('utf-8'))
+            os.write(handle, content)
         finally:
             os.close(handle)
         result = subprocess.call(
@@ -97,6 +99,9 @@ def diff(diff_cmd, dst, basename, content):
             return result
         # Look if the source content changed.
         actual_content = read(name)
+        if isinstance(actual_content, bytes):
+            actual_content = actual_content.decode('utf-8')
+        content = content.decode('utf-8')
         if actual_content != content:
             # The user modified the source. For now just quit early.
             print('You modified the source')

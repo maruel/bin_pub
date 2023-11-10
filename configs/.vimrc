@@ -49,7 +49,7 @@ highlight Normal guifg=White guibg=Black
 
 " Show trailing spaces and tabs as red dots.
 set list
-set listchars=tab:\·\·,trail:\·,extends:»,precedes:«
+"set listchars=tab:\·\·,trail:\·,extends:»,precedes:«
 highlight SpecialKey ctermfg=Red
 
 " Make 'gw' wrap at 80 columns.
