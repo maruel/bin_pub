@@ -1,0 +1,17 @@
+{
+    "bottom_shell_layers": "0",
+    "from": "User",
+    "gap_infill_speed": "175",
+    "inherits": "0.12mm Fine @BBL X1C",
+    "inner_wall_speed": "175",
+    "internal_solid_infill_speed": "175",
+    "is_custom_defined": "0",
+    "name": "0.12mm PLA transparent",
+    "outer_wall_speed": "100",
+    "print_settings_id": "0.12mm PLA transparent",
+    "sparse_infill_density": "100%",
+    "sparse_infill_pattern": "zig-zag",
+    "sparse_infill_speed": "200",
+    "top_shell_layers": "0",
+    "version": "1.7.0.29"
+}

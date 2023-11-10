@@ -15,7 +15,6 @@ import sys
 import tempfile
 
 BIN_PUB_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, BIN_PUB_DIR)
 
 
 def walk(path, allowlist, blocklist=(r'^(.*/|)\.[^/]+/$',), relative=True):
@@ -188,6 +187,26 @@ def load_files(config_dir, files):
                 files[basename] += read(src)
 
 
+def process_os_specific_paths(files):
+    """Mutate the files read in an OS specific manner.
+    
+    It's a bit silly to have read the files in the first place but it's fast
+    enough that it doesn't matter for now.
+    """
+    if sys.platform != 'linux2':
+        # Skip systemd on non-linux.
+        for f in sorted(files):
+            if 'systemd' in f:
+                del files[f]
+    # Handle paths that are in AppData\Roaming on Windows and .config on posix.
+    for f in sorted(files):
+        if f.startswith('Roaming'):
+            if sys.platform == 'win32':
+                files['AppData\\' + f] = files.pop(f)
+            else:
+                files['.config' + f[len('Roaming')]] = files.pop(f)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', action='store_true', help='Unified diff')
@@ -201,6 +220,8 @@ def main():
     # Look for ~/bin/bin_pub pattern.
     if os.path.basename(os.path.dirname(BIN_PUB_DIR)) == 'bin':
       load_files(os.path.join(BIN_PUB_DIR, '..', 'configs'), files)
+
+    process_os_specific_paths(files)
 
     cmd = ['vim', '-d']
     if sys.platform == 'win32':
