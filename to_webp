@@ -1,0 +1,21 @@
+#!/bin/bash
+# Copyright 2023 Marc-Antoine Ruel. All Rights Reserved. Use of this
+# source code is governed by a BSD-style license that can be found in the
+# LICENSE file.
+
+# Rescale a video to a 15fps half-size WEBP.
+# Usage:
+#  to_webp in.mp4 out.webp
+
+set -eu
+
+IN="$1"
+shift
+FPS=15
+SCALE="scale=iw/2:ih/2"
+
+echo "Generating WEBP"
+ffmpeg -hide_banner -loglevel error -i "$IN" \
+    -r $FPS \
+    -vf "$SCALE" \
+    "$@"
