@@ -1,0 +1,31 @@
+#!/bin/bash
+# Copyright 2023 Marc-Antoine Ruel. All Rights Reserved. Use of this
+# source code is governed by a BSD-style license that can be found in the
+# LICENSE file.
+
+# Rescale a video to a 15fps half-size GIF.
+# Usage:
+#  to_gif in.mp4 out.gif
+
+set -eu
+
+IN="$1"
+shift
+FPS=15
+SCALE="scale=iw/2:ih/2"
+
+echo "Generating palette"
+ffmpeg -hide_banner -loglevel error -y -i "$IN" \
+    -r $FPS \
+    -vf "$SCALE" \
+    -vf palettegen \
+    palette.png
+
+echo "Generating GIF"
+ffmpeg -hide_banner -loglevel error -i "$IN" \
+    -i palette.png \
+    -r $FPS \
+    -lavfi "paletteuse,$SCALE" \
+    "$@"
+
+rm palette.png
