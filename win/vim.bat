@@ -1,1 +1,1 @@
-@"C:\Program Files (x86)\Git\share\vim\vim73\vim" %*
+@"C:\Program Files\Git\usr\bin\vim.exe" %*
