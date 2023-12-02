@@ -1,1 +1,1 @@
-@"C:\Program Files (x86)\Git\bin\diff" %*
+@"C:\Program Files\Git\usr\bin\vimdiff.exe" %*
