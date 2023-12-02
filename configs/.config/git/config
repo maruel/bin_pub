@@ -10,13 +10,14 @@
 
 ; Make it work reasonably well on Windows. The auto-crlf breaks the file's hash,
 ; which can break things if you hash the file content outside of git, like for
-; releases.
+; releases. Symlinks should be used nowadays.
 [core]
   autocrlf = false
   deltaBaseCacheLimit = 1G
   askpass = 
   precomposeunicode = true
   commitGraph = true
+  symlinks = true
   ; Requires https://github.com/dandavison/delta to be installed.
   ;pager = delta
 
