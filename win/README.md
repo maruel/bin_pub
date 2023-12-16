@@ -7,10 +7,15 @@
 5. Install git: `winget install --id Git.Git -e --source winget`
     1. This install make use of git's ssh client. Use `start-ssh-agent` to start the agent.
 6. In Powershell as admin to unblock normal (non-git) ssh:
-    1. `Get-Service -Name ssh-agent | Set-Service -StartupType Automatic`
-    2. `Start-Service ssh-agent`
-7. `git clone --recurse git@github.com:maruel/bin`
-8. Get VSCode https://code.visualstudio.com/download User Installer.
+    1. ```
+       Get-Service -Name ssh-agent | Set-Service -StartupType Automatic
+       Start-Service ssh-agent
+       ```
+7. ```
+   git config --global http.postBuffer 536870912
+   git clone --recurse git@github.com:maruel/bin
+   ```
+8. Get VSCode https://code.visualstudio.com/download User Installer or install via the Microsoft Store.
     1. Install python, git, go extensions by opening a file.
     1. Settings, EOL
 9. `python3 bin\bin_pub\setup_scripts\update_config.py`
@@ -23,20 +28,24 @@
     - `PYTHONUTF8=1` until [python3.15](https://docs.python.org/3/library/os.html#utf8-mode)
 12. Enable DEP: Right-click PC, Advanced system settings, Performance Settings, Data execution prevention, enable for all programs.
 13. Windows Explorer
-    1. View, Compact
-    1. View, More, File extension
+    1. View, Show, Compact
+    1. View, Show, File extension
     1. 3 dots, Options, View
-        1. Expand up to current folder
-        1. Show full directory name
+        1. Check "Expand up to open folder"
+        1. Check "Display the full path in the title bar"
+        1. Select "Show hideen files, folders and drives"
+        1. Uncheck "Use check boxes to select items"
+        1. Uncheck "Show Network"
 14. Disk
     1. Ensure bitlocker is enabled
     1. Reduce primary partition size
     1. Do not forget to close the disk manager and windows explorer.
     1. Settings, System, Storage, Disk and Volumes, [Create a dev drive](https://learn.microsoft.com/en-us/windows/dev-drive/), use unused space. Use letter `S:`
-15. `mkdir s:\venv`
-16. `cd /d s:\venv`
-17. `python3 -m venv .`
-18. `s:\venv\Scripts\activate`
+17. ```
+    pip3 install -U pip
+    python3 -m venv s:\venv
+    s:\venv\Scripts\activate
+    ```
 
 
 ## Chromium
