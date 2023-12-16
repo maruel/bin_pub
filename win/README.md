@@ -45,6 +45,7 @@
     pip3 install -U pip
     python3 -m venv s:\venv
     s:\venv\Scripts\activate
+    s:\venv\Scripts\python.exe -m pip install -U pip
     ```
 
 
