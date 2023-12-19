@@ -49,6 +49,8 @@ highlight Normal guifg=White guibg=Black
 
 " Show trailing spaces and tabs as red dots.
 set list
+scriptencoding utf-8
+set encoding=utf-8
 set listchars=eol:\ ,tab:\·\·,trail:\·,extends:»,precedes:«
 highlight SpecialKey ctermfg=Red
 
