@@ -137,3 +137,16 @@ python3 --version
 ```
 
 More info at https://devguide.python.org/getting-started/setup-building/
+
+## Resize LVM encrypted partition.
+
+```
+# To fix the GPT partition and extend it. It uses cryptsetup resize underneat.
+gparted
+# To resize the LVM physical volume.
+sudo pvresize /dev/mapper/vda4_crypt
+# To resize the LVM logical volume.
+sudo lvresize -l +100%FREE /dev/mapper/vgubuntu-root
+# To resize the ext4 file system.
+sudo resize2fs /dev/mapper/vgubuntu-root
+```
