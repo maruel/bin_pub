@@ -58,3 +58,7 @@ sudo apt purge \
 # sudo timedatectl set-timezone America/Toronto
 
 sudo apt autoremove
+
+echo "Silence Ubuntu Pro spam"
+sudo systemctl mask apt-news.service
+sudo systemctl mask esm-cache.service
