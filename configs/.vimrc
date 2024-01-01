@@ -211,6 +211,9 @@ set updatecount=50
 " Disable annoying dummy vim-go file.
 let g:go_template_autocreate = 0
 
+" Fix yaml to not indent comments.
+autocmd BufEnter *.yaml,*.yml :set indentkeys-=0#
+
 
 """" UI
 
