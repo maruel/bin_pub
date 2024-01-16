@@ -10,7 +10,7 @@
 
 set -e
 
-if [ ! -f ~/bin/homebrew/bin/brew ];
+if [ ! -f ~/bin/homebrew/bin/brew ]; then
   cd ~/bin
   mkdir homebrew
   curl -sL https://github.com/Homebrew/brew/archive/refs/tags/3.5.9.tar.gz | tar xz --strip 1 -C homebrew
