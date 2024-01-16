@@ -182,7 +182,7 @@ fi
 # git-completion
 if [ "$UNAME" = "Darwin" ]; then
   #fpath=(~/.zsh $fpath)
-  source /usr/local/git/current/share/git-core/git-completion.bash
+  source /Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash
 elif [ "$OS" = "Windows_NT" ]; then
   if [ -f /etc/bash_completion.d/git ]; then
     # Location for ubuntu and cygwin, but only necessary for cygwin.
