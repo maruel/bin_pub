@@ -11,10 +11,15 @@ set -eu
 
 IN="$1"
 shift
-FPS=15
-SCALE="scale=iw/2:ih/2"
 
-echo "Generating WEBP"
+if [ -z "${FPS-}" ];then
+  FPS=15
+fi
+if [ -z "${SCALE-}" ];then
+  SCALE="scale=iw/2:ih/2"
+fi
+
+echo "Generating WEBP fps=${FPS}, scale=${SCALE}"
 ffmpeg -hide_banner -loglevel error -i "$IN" \
     -r $FPS \
     -vf "$SCALE" \
