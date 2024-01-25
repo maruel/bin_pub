@@ -100,3 +100,14 @@ virtual env .
 ```
 
 PATH will be fixed on next login.
+
+
+## git
+
+If working in a large git repository (Chromium's src.git, kernel.git, etc), run
+the following to make it bearable:
+
+```
+git config --local --add bash.showDirtyState false
+git config --local --add bash.showUntrackedFiles false
+```
