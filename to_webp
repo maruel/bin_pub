@@ -5,12 +5,13 @@
 
 # Rescale a video to a 15fps half-size WEBP.
 # Usage:
-#  to_webp in.mp4 out.webp
+#  to_webp in.mp4
 
 set -eu
 
 IN="$1"
 shift
+OUT="${IN%.*}.webp"
 
 if [ -z "${FPS-}" ];then
   FPS=15
@@ -23,4 +24,4 @@ echo "Generating WEBP fps=${FPS}, scale=${SCALE}"
 ffmpeg -hide_banner -loglevel error -i "$IN" \
     -r $FPS \
     -vf "$SCALE" \
-    "$@"
+    "$@" "$OUT"

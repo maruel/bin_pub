@@ -5,12 +5,15 @@
 
 # Rescale a video to a 15fps half-size GIF.
 # Usage:
-#  to_gif in.mp4 out.gif
+#  to_gif in.mp4
+#
+#  for i in *.mp4; do to_gif $i; done
 
 set -eu
 
 IN="$1"
 shift
+OUT="${IN%.*}.gif"
 
 if [ -z "${FPS-}" ];then
   FPS=15
@@ -31,6 +34,6 @@ ffmpeg -hide_banner -loglevel error -i "$IN" \
     -i palette.png \
     -r $FPS \
     -lavfi "paletteuse,$SCALE" \
-    "$@"
+    "$@" "$OUT"
 
 rm palette.png
