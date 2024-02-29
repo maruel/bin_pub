@@ -20,6 +20,7 @@ if [ -z "${FPS-}" ];then
 fi
 if [ -z "${SCALE-}" ];then
   SCALE="scale=iw/2:ih/2"
+  # SCALE="scale=2*iw/3:2*ih/3"
 fi
 
 echo "Generating palette"
