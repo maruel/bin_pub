@@ -193,7 +193,7 @@ def process_os_specific_paths(files):
     It's a bit silly to have read the files in the first place but it's fast
     enough that it doesn't matter for now.
     """
-    if sys.platform != 'linux2':
+    if sys.platform != 'linux':
         # Skip systemd on non-linux.
         for f in sorted(files):
             if 'systemd' in f:
@@ -218,8 +218,9 @@ def main():
     load_files(os.path.join(BIN_PUB_DIR, 'configs'), files)
 
     # Look for ~/bin/bin_pub pattern.
-    if os.path.basename(os.path.dirname(BIN_PUB_DIR)) == 'bin':
-      load_files(os.path.join(BIN_PUB_DIR, '..', 'configs'), files)
+    parent = os.path.dirname(BIN_PUB_DIR)
+    if os.path.basename(parent) == 'bin':
+      load_files(os.path.join(parent, 'configs'), files)
 
     process_os_specific_paths(files)
 
