@@ -192,7 +192,7 @@ fi
 
 
 # ssh-agent
-if [ -f .config/systemd/user/ssh-agent.service ]; then
+if [ -f ~/.config/systemd/user/ssh-agent.service ]; then
   # systemd based ssh-agent. Enable with:
   #   systemctl --user enable ssh-agent
   #   systemctl --user start ssh-agent
