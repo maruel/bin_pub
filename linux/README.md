@@ -13,10 +13,45 @@ sudo update-initramfs -u
 ```
 
 
-## CapsLock -> Escape
+## Keyboard mapping
 
-Nowadays, it's in the settings both on Gnome and KDE.
+- CapsLock -> Escape:
+    - `sudo add-apt-repository universe && sudo apt install gnome-tweak-tool && gnome-tweaks`
+    - Clavier et souris, Nowadays, it's in the settings both on Gnome and KDE.
+- Move monitor: Shift-WinKey-{Left,Right}
+- Maximize/Restore: WinKey-{Up,Down}
+- Split left/right: WinKey-{Left,Right}
+- Disable Fenêtre:
+    - Masquer la fenêtre,
+    - Redimensionner la fenêtre
+- Disable:
+    - Déplacer la fenêtre d'un espace de travail vers la {droite,gauche}
+    - Déplacer la fenêtre vers le dernier espace de travail
+    - Déplacer la fenêtre vers l'espace de travail 1
+    - Déplacer la fenêtre vers l'espace de travail {droite,gauche}
 
+
+## Window
+
+- Disable edge tiling: `gsettings get org.gnome.mutter edge-tiling`
+```
+gnome-extensions install https://github.com/Leleat/Tiling-Assistant
+gnome-extensions install https://github.com/maoschanz/emoji-selector-for-gnome
+
+$ gnome-extensions list
+tiling-assistant@leleat-on-github
+emoji-selector@maestroschan.fr
+ding@rastersoft.com
+ubuntu-appindicators@ubuntu.com
+ubuntu-dock@ubuntu.com
+```
+
+`gnome-extensions prefs https://github.com/Leleat/Tiling-Assistant`
+
+- Keybindings
+    - Toggle maximimization Alt+=
+    - Tile to top: Alt-dead circumflex
+    - tile to bottom: Alt+dead cedilla
 
 ## Security
 
