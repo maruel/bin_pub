@@ -68,6 +68,9 @@ if [ "$OS" = "Windows_NT" ]; then
   PS1="\[\e]0;\w\a\]\[\e[33m\]\w\[\e[0m\] \$ "
 else
   # Adapt the prompt based on the machine I'm ssh'ed into.
+  #_CHAR="💻"
+  #_CHAR="☢ "
+  #_CHAR="☁ "
   if [ "$UNAME" = "Darwin" ]; then
     # macOS
     _CHAR=""
@@ -77,15 +80,6 @@ else
   elif [ "$HOSTNAME" = "quick" ]; then
     # Personal workstation:
     _CHAR="🐟"
-  elif [[ $HOSTNAME == *laptop* ]]; then
-    # Laptop:
-    _CHAR="💻"
-  elif [[ $HOSTNAME == *p920* ]]; then
-    # Workstation:
-    _CHAR="☢ "
-  elif grep -q GOOGLE /etc/lsb-release 2>/dev/null; then
-    # VM in the cloud
-    _CHAR="☁ "
   else
     # Default:
     _CHAR="$ "
