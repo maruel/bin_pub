@@ -115,6 +115,17 @@ else
   #   Display non-zero exit code as red
   # - '"\[\e[33m\]\w\[\e[0m\]': Current directory with $HOME elided as ~.
   # - '$_CHAR': prompt character as selected above.
+  function __my_ps1 {
+    if [[ -z $(git config prompt.ignore) ]]; then
+      __git_ps1 \
+        "\[\e]0;\W\a\]\[\e[0m\]\$(_V=\$?; if [ \$_V != 0 ]; then echo -e -n \"\\[\\e[31m\\]\$_V\\[\\e[0m\\]\" ; fi)" \
+        "\[\e[33m\]\w\[\e[0m\]$_CHAR"
+    else
+      echo "\[\e]0;\W\a\]\[\e[0m\]\$(_V=\$?; if [ \$_V != 0 ]; then echo -e -n \"\\[\\e[31m\\]\$_V\\[\\e[0m\\]\" ; fi)" \
+        "\[\e[33m\]\w\[\e[0m\]$_CHAR"
+    fi
+  }
+  PROMPT_COMMAND=__my_ps1
   PROMPT_COMMAND='__git_ps1 \
     "\[\e]0;\W\a\]\[\e[0m\]\$(_V=\$?; if [ \$_V != 0 ]; then echo -e -n \"\\[\\e[31m\\]\$_V\\[\\e[0m\\]\" ; fi)" \
     "\[\e[33m\]\w\[\e[0m\]$_CHAR"'
@@ -144,8 +155,6 @@ if [ "$UNAME" = "Darwin" ]; then
     fi
     export SHELL="$HOME/bin/homebrew/bin/bash"
   fi
-  # Python local pip.
-  add_to_PATH "$HOME/Library/Python/2.7/bin"
 fi
 
 
@@ -195,6 +204,18 @@ if [ -z "${SSH_AUTH_SOCK+xxx}" ]; then
     #   systemctl --user enable ssh-agent
     #   systemctl --user start ssh-agent
     export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-agent.socket
+  elif [ -d /private/tmp/com.apple.launchd.* ]; then
+    # macOS
+    POSSIBLE_SOCKETS=(/private/tmp/com.apple.launchd.*/Listeners)
+    if [[ ${#POSSIBLE_SOCKETS[@]} -gt 1 ]]; then
+      echo "Found multiple possible ssh-agent sockets; you should probably investigate this." >&2
+    fi
+    for POSSIBLE_SOCKET in "${POSSIBLE_SOCKETS[@]}"; do
+      if [[ -e "$POSSIBLE_SOCKET" ]]; then
+        export SSH_AUTH_SOCK="$POSSIBLE_SOCKET"
+        break
+      fi
+    done
   elif which keychain &> /dev/null; then
     # sudo apt-get install keychain
     # This call costs one second.
