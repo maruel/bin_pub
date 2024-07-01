@@ -104,10 +104,20 @@ PATH will be fixed on next login.
 
 ## git
 
+### Large repos
+
 If working in a large git repository (Chromium's src.git, kernel.git, etc), run
 the following to make it bearable:
 
 ```
 git config --local --add bash.showDirtyState false
 git config --local --add bash.showUntrackedFiles false
+```
+
+### Hard resetting author
+
+This resets the author without changing the dates.
+
+```
+git -c rebase.instructionFormat='%s%nexec GIT_COMMITTER_DATE="%cD" GIT_AUTHOR_DATE="%aD" git commit --amend --no-edit --reset-author' rebase -f --root
 ```
