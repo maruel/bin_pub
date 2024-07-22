@@ -204,7 +204,7 @@ if [ -z "${SSH_AUTH_SOCK+xxx}" ]; then
     #   systemctl --user enable ssh-agent
     #   systemctl --user start ssh-agent
     export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-agent.socket
-  elif [ "uname" = "Darwin" ]; then
+  elif [ "$UNAME" = "Darwin" ]; then
     # macOS
     POSSIBLE_SOCKETS=(/private/tmp/com.apple.launchd.*/Listeners)
     if [[ ${#POSSIBLE_SOCKETS[@]} -gt 1 ]]; then
