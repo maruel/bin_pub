@@ -20,21 +20,15 @@ if [ -z "${FPS-}" ];then
 fi
 if [ -z "${SCALE-}" ];then
   SCALE="scale=iw/2:ih/2"
-  # SCALE="scale=2*iw/3:2*ih/3"
+  # 2/3rd: SCALE="scale=2*iw/3:2*ih/3"
+  # Original: SCALE="scale=iw:-1"
 fi
 
-echo "Generating palette"
-ffmpeg -hide_banner -loglevel error -y -i "$IN" \
-    -r $FPS \
-    -vf "$SCALE" \
-    -vf palettegen \
-    palette.png
+# Reduce the palette to 32 colors:
+#   palettegen=max_colors=32:reserve_transparent=0
+# Do not use dithering for higher compression:
+#   paletteuse=dither=none
+VF="fps=$FPS,$SCALE:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse"
 
-echo "Generating GIF fps=${FPS}, scale=${SCALE}"
-ffmpeg -hide_banner -loglevel error -i "$IN" \
-    -i palette.png \
-    -r $FPS \
-    -lavfi "paletteuse,$SCALE" \
-    "$@" "$OUT"
-
-rm palette.png
+echo "Generating $OUT"
+ffmpeg -hide_banner -loglevel error -i "$IN" -vf "$VF" "$@" "$OUT"
