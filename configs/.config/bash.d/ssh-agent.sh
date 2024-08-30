@@ -7,7 +7,7 @@
 # ssh-agent
 if [ -z "${SSH_AUTH_SOCK+xxx}" ]; then
   # If not inherited from the environment.
-  if [ -S "${XDG_RUNTIME_DIR+xxx}/ssh-agent.socket" ]; then
+  if [ ! -z ${XDG_RUNTIME_DIR+x} ] && [ -S "${XDG_RUNTIME_DIR}/ssh-agent.socket" ]; then
     # Automatically leverage systemd based ssh-agent in
     # https://github.com/maruel/bin_pub/blob/main/configs/.config/systemd/user/ssh-agent.service.
     # Enable with:
