@@ -14,7 +14,6 @@ if [ "$OS" = "Windows_NT" ]; then
   PS1="\[\e]0;\w\a\]\[\e[33m\]\w\[\e[0m\] \$ "
 else
   # Adapt the prompt based on the machine I'm ssh'ed into.
-  #_CHAR="💻"
   #_CHAR="☁ "
   if [ "$UNAME" = "Darwin" ]; then
     # macOS
@@ -28,6 +27,9 @@ else
   elif [ "$HOSTNAME" = "web-nuc" ]; then
     # Personal server:
     _CHAR="☢ "
+  elif [ "$HOSTNAME" = "penguin" ]; then
+    # ChromeOS
+    _CHAR="💻"
   else
     # Default:
     _CHAR="$ "
