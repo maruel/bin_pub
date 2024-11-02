@@ -12,3 +12,5 @@ export EDITOR=vim
 export HISTCONTROL=ignoredups
 export PYTHONDONTWRITEBYTECODE=x
 
+# https://virtualenvwrapper.readthedocs.io/
+export WORKON_HOME=$HOME/.cache/virtualenvwrapper
