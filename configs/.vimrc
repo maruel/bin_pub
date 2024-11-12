@@ -269,6 +269,9 @@ set wildmode=list:longest,full
 " netRW: Open files in a split window
 let g:netrw_browse_split = 1
 
+" Trim all EOL whitespace
+command Trim %s/ \+$//g
+
 
 """" HISTORY
 
