@@ -13,4 +13,9 @@ if [ -f $HOME/.local/bin/virtualenvwrapper.sh ]; then
   export WORKON_HOME=$HOME/.cache/virtualenvwrapper
   # Usage:
   #   mkvirtualenv <name>
+elif [ -f $HOME/bin/homebrew/bin/virtualenvwrapper.sh ]; then
+  source $HOME/bin/homebrew/bin/virtualenvwrapper.sh
+  export WORKON_HOME=$HOME/.cache/virtualenvwrapper
+  # Usage:
+  #   mkvirtualenv <name>
 fi
