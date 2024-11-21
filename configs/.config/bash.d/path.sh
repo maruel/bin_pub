@@ -9,6 +9,11 @@ add_to_PATH "$HOME/bin"
 add_to_PATH "$HOME/bin/bin_pub"
 add_to_PATH "$HOME/.local/bin"
 
+
+# Installed through ./linux/get_nvim.sh
+add_to_PATH "$HOME/bin/bin_pub/nvim/bin"
+
+
 if [ "$UNAME" = "Darwin" ]; then
   # Homebrew, the best package manager ever.
   add_to_PATH "$HOME/bin/homebrew/bin"

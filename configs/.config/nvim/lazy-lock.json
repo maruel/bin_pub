@@ -1,0 +1,12 @@
+{
+  "avante.nvim": { "branch": "main", "commit": "341ecd207348841403ee4c2473864ef5c74ab710" },
+  "copilot.lua": { "branch": "master", "commit": "f8d8d872bb319f640d5177dad5fbf01f7a16d7d0" },
+  "dressing.nvim": { "branch": "master", "commit": "fc78a3ca96f4db9f8893bb7e2fd9823e0780451b" },
+  "img-clip.nvim": { "branch": "main", "commit": "28a32d811d69042f4fa5c3d5fa35571df2bc1623" },
+  "lazy.nvim": { "branch": "main", "commit": "56ead98e05bb37a4ec28930a54d836d033cf00f2" },
+  "nui.nvim": { "branch": "main", "commit": "b58e2bfda5cea347c9d58b7f11cf3012c7b3953f" },
+  "nvim-treesitter": { "branch": "master", "commit": "cd2acc803b9e2f9377fb31fbeb993f6e363466f5" },
+  "nvim-web-devicons": { "branch": "master", "commit": "e87554285f581047b1bf236794b0eb812b444b87" },
+  "plenary.nvim": { "branch": "master", "commit": "2d9b06177a975543726ce5c73fca176cedbffe9d" },
+  "render-markdown.nvim": { "branch": "main", "commit": "d6a82d70765aa238b7ea48d257a1d57a92501423" }
+}
