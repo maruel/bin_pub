@@ -16,6 +16,7 @@ require("config.lazy")
 local gitsigns = require('gitsigns')
 
 -- Key bindings.
+vim.api.nvim_set_keymap('n', '<F3>', ':NvimTreeFindFileToggle<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<F4>', gitsigns.blame, {})
 vim.api.nvim_set_keymap('n', '<F5>', ':GoCoverage<CR>', { noremap = true, silent = true })
 -- gd = GoToDef
