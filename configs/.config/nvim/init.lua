@@ -10,6 +10,9 @@ vim.g.maplocalleader = "\\"
 
 -- Load all plugins.
 require("config.lazy")
+require('avante').setup()
+require('gitsigns').setup()
+require('go').setup()
 
 
 -- References to plugins to setup key bindings.
