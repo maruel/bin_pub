@@ -11,8 +11,7 @@ vim.g.maplocalleader = "\\"
 -- Load all plugins.
 require("config.lazy")
 require('avante').setup()
-require('gitsigns').setup()
-require('go').setup()
+require('lspconfig').gopls.setup({})
 
 
 -- References to plugins to setup key bindings.
@@ -32,4 +31,14 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     vim.lsp.buf.code_action { context = { only = { 'source.organizeImports' } }, apply = true }
     vim.lsp.buf.code_action { context = { only = { 'source.fixAll' } }, apply = true }
   end,
+})
+
+
+local format_sync_grp = vim.api.nvim_create_augroup("goimports", {})
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.go",
+  callback = function()
+   require('go.format').goimports()
+  end,
+  group = format_sync_grp,
 })
