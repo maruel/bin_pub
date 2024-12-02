@@ -18,6 +18,9 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Setup lazy.nvim
 require("lazy").setup({
+  -- Not sure about this; they complain that many plugin author do not use git
+  -- tag properly.
+  version = "*",
   spec = {
     {import = "plugins"},
   },
@@ -25,5 +28,9 @@ require("lazy").setup({
   -- colorscheme that will be used when installing plugins.
   install = { colorscheme = { "habamax" } },
   -- automatically check for plugin updates
-  checker = { enabled = true },
+  checker = {
+    enabled = true,
+    -- Once a week.
+    frequency = 604800,
+  },
 })

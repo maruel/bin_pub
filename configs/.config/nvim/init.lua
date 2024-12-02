@@ -18,10 +18,16 @@ require('lspconfig').gopls.setup({})
 local gitsigns = require('gitsigns')
 
 -- Key bindings.
-vim.api.nvim_set_keymap('n', '<F3>', ':NvimTreeFindFileToggle<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<F4>', gitsigns.blame, {})
-vim.api.nvim_set_keymap('n', '<F5>', ':GoCoverage<CR>', { noremap = true, silent = true })
+vim.keymap.set({'n', 'v'}, '<F3>', ':NvimTreeFindFileToggle<CR>', {noremap = true, silent = true})
+vim.keymap.set('i', '<F3>', '<Esc>:NvimTreeFindFileToggle<CR>', {noremap = true, silent = true})
+vim.keymap.set({'n', 'v', 'i'}, '<F4>', gitsigns.blame, {noremap = true, silent = true})
+vim.keymap.set({'n', 'v'}, '<F5>', ':GoCoverage<CR>', {noremap = true, silent = true})
+vim.keymap.set('i', '<F5>', '<Esc>:GoCoverage<CR>', {noremap = true, silent = true})
 vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end)
+vim.keymap.set({'n', 'v'}, '<F9>', ':bp<CR>', {noremap = true, silent = true})
+vim.keymap.set('i', '<F9>', '<Esc>:bp<CR>', {noremap = true, silent = true})
+vim.keymap.set({'n', 'v'}, '<F10>', ':bn<CR>', {noremap = true, silent = true})
+vim.keymap.set('i', '<F10>', '<Esc>:bn<CR>', {noremap = true, silent = true})
 
 
 -- Auto format on save.
@@ -41,4 +47,13 @@ vim.api.nvim_create_autocmd("BufWritePre", {
    require('go.format').goimports()
   end,
   group = format_sync_grp,
+})
+
+vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
+  pattern = {"*.go"},
+  callback = function(ev)
+    vim.opt.tabstop = 2
+    vim.opt.shiftwidth = 2
+    vim.opt.smarttab = true
+  end
 })
