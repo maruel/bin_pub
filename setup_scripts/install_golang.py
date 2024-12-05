@@ -126,7 +126,8 @@ def setup_user_profile(goroot):
   """Sets up the user profile to include our local Go."""
   if sys.platform == 'win32':
     append_path_windows(os.path.join(goroot, 'bin'), user=True)
-    append_path_windows(os.path.expanduser('~\\go\\bin'), user=True)
+    gopathbin = os.path.join(os.environ.get("GOPATH", os.path.expanduser('~\\go')), "bin")
+    append_path_windows(gopathbin, user=True)
     broadcast_windows_settings()
   else:
     # This is done by .bash_aliases
@@ -137,7 +138,8 @@ def setup_system_profile(goroot):
   """Sets up the global profile to include system wide Go."""
   if sys.platform == 'win32':
     append_path_windows(os.path.join(goroot, 'bin'), user=False)
-    append_path_windows(os.path.expanduser('~\\go\\bin'), user=False)
+    gopathbin = os.path.join(os.environ.get("GOPATH", os.path.expanduser('~\\go')), "bin")
+    append_path_windows(gopathbin, user=False)
     broadcast_windows_settings()
   else:
     with open('/etc/profile.d/golang.sh', 'wb') as f:
@@ -196,7 +198,7 @@ def main():
   parser.add_argument(
       '--type', choices=('system', 'bootstrap', 'compiled', 'skip'),
       default='compiled' if not is_root else 'system',
-      help='Install in /usr/local/go, in ~/go1.4, ~/src/golang or skip')
+      help='Install in /usr/local/go, in ~/go1.4, ~/src-oth/golang or skip')
   parser.add_argument('--bootstrap', action='store_true')
   parser.add_argument(
       '--skip', action='store_true',
@@ -207,7 +209,6 @@ def main():
     if args.type == 'system':
       if sys.platform == 'win32':
         print('Not yet supported')
-        # 'C:\\Program Files\\Go'
         return 1
       goroot = '/usr/local/go'
       from_precompiled(goroot)
@@ -217,15 +218,21 @@ def main():
       if args.type == 'bootstrap' or not os.path.isfile(os.path.join(go14, "VERSION")):
         from_precompiled(go14)
       if args.type == 'compiled':
-        goroot = (
-            os.environ.get('GOROOT') or
-            os.path.join(os.path.expanduser('~'), 'src-oth', 'golang'))
+        if sys.platform == 'win32' and os.path.exists('s:\\'):
+            goroot = 's:\\src-oth\\golang'
+        else:
+          goroot = (
+              os.environ.get('GOROOT') or
+              os.path.join(os.path.expanduser('~'), 'src-oth', 'golang'))
         from_sources(goroot)
         setup_user_profile(goroot)
   else:
-    goroot = (
-        os.environ.get('GOROOT') or
-        os.path.join(os.path.expanduser('~'), 'src-oth', 'golang'))
+    if sys.platform == 'win32' and os.path.exists('s:\\'):
+        goroot = 's:\\src-oth\\golang'
+    else:
+      goroot = (
+          os.environ.get('GOROOT') or
+          os.path.join(os.path.expanduser('~'), 'src-oth', 'golang'))
 
   if is_root:
     print('Skipping tooling because running as root')
