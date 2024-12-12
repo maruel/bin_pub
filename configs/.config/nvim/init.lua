@@ -74,3 +74,15 @@ vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
     vim.opt.shiftwidth = 2
   end
 })
+
+
+-- Save cursor position
+vim.api.nvim_create_augroup("RestoreCursorPosition", {clear = true})
+vim.api.nvim_create_autocmd("BufReadPost", {
+    group = "RestoreCursorPosition",
+    callback = function()
+        if vim.fn.line("'\"") > 1 and vim.fn.line("'\"") <= vim.fn.line("$") then
+            vim.cmd('normal! g`"')
+        end
+    end
+})
