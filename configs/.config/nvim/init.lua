@@ -26,10 +26,18 @@ lspconfig.sourcekit.setup({
 		},
 	},
 })
-
-
--- References to plugins to setup key bindings.
 local gitsigns = require('gitsigns')
+local telescope = require('telescope')
+telescope.setup({
+	defaults = {
+		layout_config = {
+			width = 0.95,
+			height = 0.95,
+		},
+	},
+})
+local telescope_builtin = require('telescope.builtin')
+
 
 -- Key bindings.
 -- F-keys
@@ -45,6 +53,8 @@ vim.keymap.set('i', '<F10>', '<Esc>:bn<CR>', {noremap = true, silent = true})
 -- Others
 vim.keymap.set('n', 'K', vim.lsp.buf.hover, {noremap = true, silent = true})
 vim.keymap.set("n", "gd", vim.lsp.buf.definition, {noremap = true, silent = true})
+vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, { desc = 'Telescope find files' })
+vim.keymap.set('n', '<leader>fg', telescope_builtin.live_grep, { desc = 'Telescope live grep' })
 
 
 -- Auto format on save.
