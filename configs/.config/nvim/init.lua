@@ -37,6 +37,12 @@ telescope.setup({
 	},
 })
 local telescope_builtin = require('telescope.builtin')
+-- https://parilia.dev/a/neovim/oil/
+require('oil').setup {
+  view_options = {
+    show_hidden = true,
+  },
+}
 
 
 -- Key bindings.
@@ -55,6 +61,7 @@ vim.keymap.set('n', 'K', vim.lsp.buf.hover, {noremap = true, silent = true})
 vim.keymap.set("n", "gd", vim.lsp.buf.definition, {noremap = true, silent = true})
 vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, { desc = 'Telescope find files' })
 vim.keymap.set('n', '<leader>fg', telescope_builtin.live_grep, { desc = 'Telescope live grep' })
+vim.keymap.set('n', '<leader>e', ':Oil --float<CR>')
 
 
 -- Auto format on save.
