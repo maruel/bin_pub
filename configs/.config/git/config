@@ -81,6 +81,7 @@
 [branch]
   autosetupmerge = always
   autosetuprebase = always
+  sort = -committerdate
 [pull]
   rebase = true
 
