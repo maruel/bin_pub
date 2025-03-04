@@ -185,3 +185,7 @@ sudo lvresize -l +100%FREE /dev/mapper/vgubuntu-root
 # To resize the ext4 file system.
 sudo resize2fs /dev/mapper/vgubuntu-root
 ```
+
+## ChromeOS
+
+Visit `chrome://flags#crostini-gpu-support` and enable accelerated OpenGL.
