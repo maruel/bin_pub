@@ -14,6 +14,10 @@ add_to_PATH "$HOME/.local/bin"
 add_to_PATH "$HOME/bin/bin_pub/nvim/bin"
 
 
+# Installed through ./linux/get_nodejs.sh
+add_to_PATH "$HOME/bin/bin_pub/nodejs/bin"
+
+
 if [ "$UNAME" = "Darwin" ]; then
   # Homebrew, the best package manager ever.
   add_to_PATH "$HOME/bin/homebrew/bin"

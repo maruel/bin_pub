@@ -14,7 +14,7 @@ vim.opt.mouse = ''
 
 -- Load all plugins.
 require("config.lazy")
-require('avante').setup()
+-- require('avante').setup()
 local lspconfig = require('lspconfig')
 lspconfig.gopls.setup({})
 lspconfig.sourcekit.setup({
