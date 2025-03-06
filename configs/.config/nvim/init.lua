@@ -23,6 +23,11 @@ vim.cmd("colorscheme default")
 
 -- Load all plugins.
 require("config.lazy")
+require("mason").setup()
+require("mason-lspconfig").setup({
+	ensure_installed = {},
+	automatic_installation = true,
+})
 -- require('avante').setup()
 -- When we get an error on save like:
 --   [LSP] Format request failed, no matching language servers.
@@ -30,6 +35,7 @@ require("config.lazy")
 -- We need to check https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md and configure the language server.
 local lspconfig = require('lspconfig')
 lspconfig.gopls.setup({})
+-- lspconfig.grammarly.setup({})
 -- sudo apt-get install ninja-build
 -- git clone https://github.com/LuaLS/lua-language-server && cd lua-language-server && ./make.sh
 -- Add to PATH.
@@ -41,6 +47,7 @@ lspconfig.lua_ls.setup({
 		},
 	},
 })
+lspconfig.marksman.setup({})
 -- npm i -g pyright
 lspconfig.pyright.setup({})
 lspconfig.sourcekit.setup({
