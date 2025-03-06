@@ -17,3 +17,7 @@ mkdir -p nodejs
 curl -sSL -o nodejs/nodejs.tar.xz https://nodejs.org/dist/latest/$NODEJS_VERSION
 tar -C nodejs --strip-components=1 -xJf nodejs/nodejs.tar.xz
 rm nodejs/nodejs.tar.xz
+
+echo "Don't forget to install pyright for neovim python language support:"
+echo "  npm i -g pyright"
+

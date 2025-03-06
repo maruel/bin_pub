@@ -54,11 +54,12 @@ set encoding=utf-8
 set listchars=eol:\ ,tab:\·\·,trail:\·,extends:»,precedes:«
 highlight SpecialKey ctermfg=Red
 
-" Make 'gw' wrap at 80 columns.
-set textwidth=80
+" Make 'gw' wrap at 110 columns.
+set textwidth=110
 " Use a subtle highlight at 80 columns.
-set colorcolumn=80
-highlight ColorColumn ctermbg=Black guibg=DarkGray
+" PROBLEM: fucks up copying.
+"set colorcolumn=80
+"highlight ColorColumn ctermbg=Black guibg=DarkGray
 
 " Syntax highlighting for the primary groups. These only take effect when
 " 'syntax on' is used.
