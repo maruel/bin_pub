@@ -34,7 +34,23 @@ require("mason-lspconfig").setup({
 --   method textDocument/codeAction is not supported by any of the servers registered for the current buffer
 -- We need to check https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md and configure the language server.
 local lspconfig = require('lspconfig')
-lspconfig.gopls.setup({})
+lspconfig.gopls.setup({
+	on_attach = function(client, bufnr)
+		if vim.bo[bufnr].filetype == "gomod" then
+			-- As of 2025-03, it's unusable.
+			client.stop()
+		end
+	end,
+	settings = {
+		gopls = {
+			analyses = {
+				unusedparams = true,
+			},
+			staticcheck = true,
+			gofumpt = true,
+		},
+	},
+})
 -- lspconfig.grammarly.setup({})
 -- sudo apt-get install ninja-build
 -- git clone https://github.com/LuaLS/lua-language-server && cd lua-language-server && ./make.sh
@@ -59,6 +75,7 @@ lspconfig.sourcekit.setup({
 		},
 	},
 })
+
 local gitsigns = require('gitsigns')
 local telescope = require('telescope')
 telescope.setup({
