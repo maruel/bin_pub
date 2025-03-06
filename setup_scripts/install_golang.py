@@ -205,6 +205,7 @@ def main():
       help='Skip updating Golang; only install packages')
   args = parser.parse_args()
 
+  goroot = ""
   if args.type != 'skip':
     if args.type == 'system':
       if sys.platform == 'win32':
@@ -250,8 +251,7 @@ def main():
       #'github.com/boyter/scc@latest',
       'github.com/maruel/panicparse/v2/cmd/pp@latest',
       'github.com/monochromegane/the_platinum_searcher/cmd/pt@latest',
-      #'github.com/rjeczalik/bin/cmd/gobin@latest',
-      #'github.com/FiloSottile/gorebuild',
+      'github.com/yolo-pkgs/gore@latest',
     ]
     for pkg in pkgs:
       subprocess.check_call([go, 'install', '-v', pkg])
