@@ -25,26 +25,12 @@ lspconfig.gopls.setup({})
 -- git clone https://github.com/LuaLS/lua-language-server && cd lua-language-server && ./make.sh
 -- Add to PATH.
 lspconfig.lua_ls.setup({
-	on_init = function(client)
-		-- Blindly copied from https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#lua_ls
-		if client.workspace_folders then
-			local path = client.workspace_folders[1].name
-			if path ~= vim.fn.stdpath('config') and (vim.loop.fs_stat(path .. '/.luarc.json') or vim.loop.fs_stat(path .. '/.luarc.jsonc')) then
-				return
-			end
-		end
-		client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
-			runtime = {
-				version = 'LuaJIT'
-			},
-			workspace = {
-				checkThirdParty = false,
-				library = {
-					vim.env.VIMRUNTIME
-				}
-			}
-		})
-	end,
+	settings = {
+		Lua = {
+			runtime = { version = 'LuaJIT', },
+			workspace = { library = vim.api.nvim_get_runtime_file("", true), },
+		},
+	},
 })
 -- npm i -g pyright
 lspconfig.pyright.setup({})
@@ -69,11 +55,11 @@ telescope.setup({
 })
 local telescope_builtin = require('telescope.builtin')
 -- https://parilia.dev/a/neovim/oil/
-require('oil').setup {
+require('oil').setup({
 	view_options = {
 		show_hidden = true,
 	},
-}
+})
 
 
 -- Key bindings.

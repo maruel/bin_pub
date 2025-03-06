@@ -18,8 +18,12 @@ add_to_PATH "$HOME/bin/bin_pub/nvim/bin"
 add_to_PATH "$HOME/bin/bin_pub/nodejs/bin"
 
 
+# For LUA LSP.
+add_to_PATH "$HOME/src-oth/lua-language-server/bin"
+
+
 if [ "$UNAME" = "Darwin" ]; then
-  # Homebrew, the best package manager ever.
+  # Homebrew, the best package manager ever. /s
   add_to_PATH "$HOME/bin/homebrew/bin"
   if [ -e "$HOME/bin/homebrew/bin/bash" ]; then
     if ! grep -q -s "^$HOME/bin/homebrew/bin/bash$" /etc/shells; then
