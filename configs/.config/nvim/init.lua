@@ -10,7 +10,16 @@ vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.smarttab = true
 vim.opt.mouse = ''
-
+-- Need some testing...
+vim.o.termguicolors = true
+vim.o.background = "dark"
+vim.api.nvim_create_autocmd("ColorScheme", {
+	pattern = "*",
+	callback = function()
+		vim.cmd("highlight Normal guifg=#FFFFFF ctermfg=231")
+	end,
+})
+vim.cmd("colorscheme default")
 
 -- Load all plugins.
 require("config.lazy")
