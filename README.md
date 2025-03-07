@@ -123,3 +123,21 @@ This resets the author without changing the dates.
 ```
 git -c rebase.instructionFormat='%s%nexec GIT_COMMITTER_DATE="%cD" GIT_AUTHOR_DATE="%aD" git commit --amend --no-edit --reset-author' rebase -f --root
 ```
+
+## nvim
+
+Config from [config/.config/nvim/init.vim](config/.config/nvim/init.vim):
+
+| Key | Description |
+| --- | ----------- |
+| F3 | Toggle NvimTree |
+| F4 | Git blame |
+| F5 | Go coverage |
+| F9 | Previous buffer |
+| F10 | Next buffer |
+| <leader>ff | Telescope find files |
+| <leader>fg | Telescope live grep |
+| <leader>e | Open Oil terminal |
+| <C-J> | Accept copilot suggestion |
+| K | Show hover |
+| gd | Go to definition |

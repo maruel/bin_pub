@@ -13,7 +13,7 @@ cd ..
 rm -rf nvim
 mkdir -p nvim
 
-curl -L -o nvim/nvim.tar.gz https://github.com/neovim/neovim/releases/latest/download/nvim-macos-arm64.tar.gz
+curl -sSL -o nvim/nvim.tar.gz https://github.com/neovim/neovim/releases/latest/download/nvim-macos-arm64.tar.gz
 tar -C nvim --strip-components=1 -xzf nvim/nvim.tar.gz
 rm nvim/nvim.tar.gz
 

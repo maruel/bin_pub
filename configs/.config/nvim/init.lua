@@ -20,13 +20,22 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 	end,
 })
 vim.cmd("colorscheme default")
+-- Disable the annoying left shift.
+vim.opt.signcolumn = 'yes'
+
 
 -- Load all plugins.
 require("config.lazy")
 require("mason").setup()
+-- Auto-install favorite language servers.
 require("mason-lspconfig").setup({
-	ensure_installed = {},
+	ensure_installed = { "pyright", "gopls", "lua_ls", "marksman" },
 	automatic_installation = true,
+	handlers = {
+		function(server_name)
+			require('lspconfig')[server_name].setup({})
+		end,
+	},
 })
 -- require('avante').setup()
 -- When we get an error on save like:
@@ -43,18 +52,13 @@ lspconfig.gopls.setup({
 	end,
 	settings = {
 		gopls = {
-			analyses = {
-				unusedparams = true,
-			},
+			analyses = { unusedparams = true, },
 			staticcheck = true,
 			gofumpt = true,
 		},
 	},
 })
 -- lspconfig.grammarly.setup({})
--- sudo apt-get install ninja-build
--- git clone https://github.com/LuaLS/lua-language-server && cd lua-language-server && ./make.sh
--- Add to PATH.
 lspconfig.lua_ls.setup({
 	settings = {
 		Lua = {
@@ -64,7 +68,6 @@ lspconfig.lua_ls.setup({
 	},
 })
 lspconfig.marksman.setup({})
--- npm i -g pyright
 lspconfig.pyright.setup({})
 lspconfig.sourcekit.setup({
 	capabilities = {
@@ -107,8 +110,6 @@ vim.keymap.set('i', '<F9>', '<Esc>:bp<CR>', { noremap = true, silent = true })
 vim.keymap.set({ 'n', 'v' }, '<F10>', ':bn<CR>', { noremap = true, silent = true })
 vim.keymap.set('i', '<F10>', '<Esc>:bn<CR>', { noremap = true, silent = true })
 -- Others
-vim.keymap.set('n', 'K', vim.lsp.buf.hover, { noremap = true, silent = true })
-vim.keymap.set("n", "gd", vim.lsp.buf.definition, { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, { desc = 'Telescope find files' })
 vim.keymap.set('n', '<leader>fg', telescope_builtin.live_grep, { desc = 'Telescope live grep' })
 vim.keymap.set('n', '<leader>e', ':Oil --float<CR>')
@@ -156,4 +157,26 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 			vim.cmd('normal! g`"')
 		end
 	end
+})
+
+
+-- From https://lsp-zero.netlify.app/docs/getting-started.html
+-- That's smart.
+-- This is where you enable features that only work
+-- if there is a language server active in the file
+vim.api.nvim_create_autocmd('LspAttach', {
+	desc = 'LSP actions',
+	callback = function(event)
+		local opts = { buffer = event.buf, noremap = true, silent = true }
+		vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+		vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+		-- vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
+		-- vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
+		-- vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
+		-- vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+		-- vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+		-- vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+		-- vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
+		-- vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+	end,
 })

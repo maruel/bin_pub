@@ -7,7 +7,7 @@ set -eu
 cd "$(dirname $0)"
 cd ..
 
-NODEJS_VERSION="$(curl -sS https://nodejs.org/dist/latest/ | grep -oP 'node-[^"]+-linux-x64\.tar\.xz' | head -n 1)"
+NODEJS_VERSION="$(curl -sS https://nodejs.org/dist/latest/ | grep -oE 'node-[^"]+-darwin-arm64\.tar\.xz' | head -n 1)"
 echo "Downloading $NODEJS_VERSION"
 
 # Always start over from scratch.
