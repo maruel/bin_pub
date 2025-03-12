@@ -31,6 +31,8 @@ if [ "$UNAME" = "Darwin" ]; then
     fi
     export SHELL="$HOME/bin/homebrew/bin/bash"
   fi
+  # Add python3 and the rest to PATH.
+  add_to_PATH "$HOME/bin/homebrew/opt/python@3/libexec/bin"
 fi
 
 
