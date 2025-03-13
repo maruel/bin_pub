@@ -20,7 +20,10 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 	end,
 })
 vim.cmd("colorscheme default")
--- Disable the annoying left shift.
+-- Disable the annoying left shift. But it makes copying annoying.
+-- :set scl=no
+-- :set scl=yes
+-- :set scl=auto
 vim.opt.signcolumn = 'yes'
 
 
