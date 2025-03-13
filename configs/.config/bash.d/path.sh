@@ -10,11 +10,15 @@ add_to_PATH "$HOME/bin/bin_pub"
 add_to_PATH "$HOME/.local/bin"
 
 
-# Installed through ./linux/get_nvim.sh
+# Installed through bin_pub/linux/get_nvim.sh or bin_pub/mac/get_nvim.sh
 add_to_PATH "$HOME/bin/bin_pub/nvim/bin"
+if which nvim > /dev/null; then
+  alias vi=nvim
+  alias vim=nvim
+fi
 
 
-# Installed through ./linux/get_nodejs.sh
+# Installed through bin_pub/linux/get_nodejs.sh or bin_pub/mac/get_nodejs.sh
 add_to_PATH "$HOME/bin/bin_pub/nodejs/bin"
 
 
