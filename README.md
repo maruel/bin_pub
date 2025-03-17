@@ -141,3 +141,8 @@ Config from [config/.config/nvim/init.vim](config/.config/nvim/init.vim):
 | <C-J> | Accept copilot suggestion |
 | K | Show hover |
 | gd | Go to definition |
+
+Useful commands:
+
+- :Copilot status
+- :checkhealth lsp
