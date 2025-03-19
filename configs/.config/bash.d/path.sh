@@ -47,5 +47,6 @@ export GOTRACEBACK=all
 
 
 # Rust.
+# curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 add_to_PATH "$HOME/sdk/bin"
 add_to_PATH "$HOME/.cargo/bin"
