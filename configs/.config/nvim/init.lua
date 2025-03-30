@@ -20,11 +20,6 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 	end,
 })
 vim.cmd("colorscheme default")
--- Disable the annoying left shift. But it makes copying annoying.
--- :set scl=no
--- :set scl=yes
--- :set scl=auto
-vim.opt.signcolumn = 'yes'
 
 
 -- Load all plugins.
@@ -123,28 +118,20 @@ vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
 })
 vim.g.copilot_no_tab_map = true
 
--- Auto format on save.
-vim.api.nvim_create_autocmd("BufWritePre", {
-	callback = function(args)
-		vim.lsp.buf.format()
-		vim.lsp.buf.code_action { context = { only = { 'source.organizeImports' } }, apply = true }
-		vim.lsp.buf.code_action { context = { only = { 'source.fixAll' } }, apply = true }
-	end,
-})
 
 
 -- Go specific.
-local format_sync_grp = vim.api.nvim_create_augroup("goimports", {})
-vim.api.nvim_create_autocmd("BufWritePre", {
-	pattern = "*.go",
-	callback = function()
-		require('go.format').goimports()
-	end,
-	group = format_sync_grp,
-})
+-- local format_sync_grp = vim.api.nvim_create_augroup("goimports", {})
+-- vim.api.nvim_create_autocmd("BufWritePre", {
+-- 	pattern = "*.go",
+-- 	callback = function()
+-- 		require('go.format').goimports()
+-- 	end,
+-- 	group = format_sync_grp,
+-- })
 vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
 	pattern = { "*.go" },
-	callback = function(ev)
+	callback = function()
 		vim.opt.tabstop = 2
 		vim.opt.shiftwidth = 2
 	end
@@ -163,10 +150,19 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 })
 
 
--- From https://lsp-zero.netlify.app/docs/getting-started.html
--- That's smart.
+-- Function to check if there are any LSP clients that can format
+local function has_formatter(bufnr)
+	for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr or 0 })) do
+		if client.server_capabilities.documentFormattingProvider then
+			return true
+		end
+	end
+	return false
+end
+
+
 -- This is where you enable features that only work
--- if there is a language server active in the file
+-- if there is a language server active in the file.
 vim.api.nvim_create_autocmd('LspAttach', {
 	desc = 'LSP actions',
 	callback = function(event)
@@ -181,5 +177,38 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		-- vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
 		-- vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
 		-- vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+		-- Auto format on save.
+		vim.api.nvim_create_autocmd("BufWritePre", {
+			callback = function()
+				if has_formatter(0) then
+					vim.lsp.buf.format({ async = false })
+					-- if vim.lsp.buf.code_action then
+					-- 	vim.lsp.buf.code_action { context = { diagnostics = {}, only = { 'source.organizeImports' } }, apply = true, triggerKind = 2 }
+					-- 	vim.lsp.buf.code_action { context = { diagnostics = {}, only = { 'source.fixAll' } }, apply = true, triggerKind = 2 }
+					-- end
+				end
+			end,
+		})
+	end,
+})
+
+
+-- Disable the annoying left shift. But it makes copying annoying.
+-- :set scl=no
+-- :set scl=yes
+-- :set scl=auto
+vim.opt.signcolumn = 'yes'
+vim.api.nvim_create_autocmd("InsertEnter", {
+	callback = function()
+		if vim.o.paste then
+			vim.opt.signcolumn = "no"
+		end
+	end,
+})
+vim.api.nvim_create_autocmd("InsertLeave", {
+	callback = function()
+		if vim.o.paste then
+			vim.opt.signcolumn = "yes"
+		end
 	end,
 })
