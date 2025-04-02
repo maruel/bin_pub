@@ -9,6 +9,9 @@ vim.g.maplocalleader = "\\"
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.smarttab = true
+vim.o.foldenable = true
+vim.o.foldmethod = 'indent'
+vim.o.foldlevelstart = 99
 vim.opt.mouse = ''
 -- Need some testing...
 vim.o.termguicolors = true
