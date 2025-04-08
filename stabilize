@@ -1,0 +1,23 @@
+#!/bin/bash
+# Copyright 2025 Marc-Antoine Ruel. All Rights Reserved. Use of this
+# source code is governed by a BSD-style license that can be found in the
+# LICENSE file.
+
+# Stabilizes video
+# Usage:
+#  stabilize in.mp4
+
+set -eu
+
+IN="$1"
+shift
+OUT="${IN%.*}_stable.${IN##*.}"
+
+if [ -f transforms.trf ]; then
+	rm transforms.trf
+fi
+
+echo "Generating $OUT"
+ffmpeg -hide_banner -loglevel error -i "$IN" -vf vidstabdetect -f null -
+ffmpeg -hide_banner -loglevel error -i "$IN" -vf vidstabtransform "$OUT"
+rm transforms.trf

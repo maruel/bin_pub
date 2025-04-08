@@ -24,11 +24,15 @@ if [ -z "${SCALE-}" ];then
   # Original: SCALE="scale=iw:-1"
 fi
 
+CROP=""
+# Crop to 4:3 centered:
+#CROP="crop=ih/3*4,"
+
 # Reduce the palette to 32 colors:
 #   palettegen=max_colors=32:reserve_transparent=0
 # Do not use dithering for higher compression:
 #   paletteuse=dither=none
-VF="fps=$FPS,$SCALE:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse"
+VF="fps=$FPS,$CROP$SCALE:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse"
 
 echo "Generating $OUT"
 ffmpeg -hide_banner -loglevel error -i "$IN" -vf "$VF" "$@" "$OUT"
