@@ -4,7 +4,9 @@ return {
 	opts = {
 		strategies = {
 			chat = {
-				adapter = "anthropic",
+				adapter = "copilot",
+				-- adapter = "ollama",
+				-- adapter = "anthropic",
 				tools = {
 					["mcp"] = {
 						-- calling it in a function would prevent mcphub from being loaded before it's needed
@@ -14,7 +16,9 @@ return {
 				},
 			},
 			inline = {
-				adapter = "anthropic",
+				adapter = "copilot",
+				-- adapter = "ollama",
+				-- adapter = "anthropic",
 			},
 		}
 	},
@@ -22,4 +26,6 @@ return {
 		"nvim-lua/plenary.nvim",
 		"nvim-treesitter/nvim-treesitter",
 	},
+	-- Figure out why this is needed:
+	-- :TSInstall yaml
 }

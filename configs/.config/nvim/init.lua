@@ -69,6 +69,7 @@ lspconfig.sourcekit.setup({
 	},
 })
 
+
 -- TODO:
 -- Decide between telescope, nvim-tree and oil. I don't need all 3.
 
@@ -78,25 +79,35 @@ local telescope_builtin = require('telescope.builtin')
 
 
 -- Key bindings.
+-- https://neovim.io/doc/user/lua.html#_lua-module:-vim.keymap
+-- https://neovim.io/doc/user/intro.html#keycodes
 -- F-keys
-vim.keymap.set({ 'n', 'v' }, '<F3>', ':NvimTreeFindFileToggle<CR>', { noremap = true, silent = true })
-vim.keymap.set('i', '<F3>', '<Esc>:NvimTreeFindFileToggle<CR>', { noremap = true, silent = true })
-vim.keymap.set({ 'n', 'v', 'i' }, '<F4>', gitsigns.blame, { noremap = true, silent = true })
-vim.keymap.set({ 'n', 'v' }, '<F5>', ':GoCoverage<CR>', { noremap = true, silent = true })
-vim.keymap.set('i', '<F5>', '<Esc>:GoCoverage<CR>', { noremap = true, silent = true })
-vim.keymap.set({ 'n', 'v' }, '<F9>', ':bp<CR>', { noremap = true, silent = true })
-vim.keymap.set('i', '<F9>', '<Esc>:bp<CR>', { noremap = true, silent = true })
-vim.keymap.set({ 'n', 'v' }, '<F10>', ':bn<CR>', { noremap = true, silent = true })
-vim.keymap.set('i', '<F10>', '<Esc>:bn<CR>', { noremap = true, silent = true })
+vim.keymap.set({ 'n', 'v' }, '<F3>', '<Cmd>NvimTreeFindFileToggle<CR>')
+vim.keymap.set('i', '<F3>', '<Cmd>NvimTreeFindFileToggle<CR>')
+vim.keymap.set({ 'n', 'v', 'i' }, '<F4>', gitsigns.blame)
+vim.keymap.set({ 'n', 'v' }, '<F5>', '<Cmd>GoCoverage<CR>')
+vim.keymap.set('i', '<F5>', '<Cmd>GoCoverage<CR>')
+vim.keymap.set({ 'n', 'v' }, '<F9>', '<Cmd>bp<CR>')
+vim.keymap.set('i', '<F9>', '<Cmd>bp<CR>')
+vim.keymap.set({ 'n', 'v' }, '<F10>', '<Cmd>bn<CR>')
+vim.keymap.set('i', '<F10>', '<Cmd>bn<CR>')
 -- Others
 vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, { desc = 'Telescope find files' })
 vim.keymap.set('n', '<leader>fg', telescope_builtin.live_grep, { desc = 'Telescope live grep' })
-vim.keymap.set('n', '<leader>e', ':Oil --float<CR>')
-
-vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
-	expr = true,
-	replace_keycodes = false
-})
+vim.keymap.set('n', '<leader>e', '<Cmd>Oil --float<CR>')
+-- if copilot:
+-- vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
+-- 	expr = true,
+-- 	replace_keycodes = false
+-- })
+--
+-- ga = accept change
+-- gr = reject change
+vim.keymap.set({ "n", "v" }, "<leader>s", "<Cmd>CodeCompanionActions<CR>")
+vim.keymap.set({ "n", "v" }, "<leader>a", "<Cmd>CodeCompanionChat Toggle<CR>")
+vim.keymap.set("v", "ga", "<Cmd>CodeCompanionChat Add<CR>")
+-- Expand 'cc' into 'CodeCompanion' in the command line
+vim.cmd([[cab cc CodeCompanion]])
 
 
 -- Go specific.
