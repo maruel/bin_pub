@@ -1,4 +1,7 @@
--- https://github.com/github/copilot.vim
+-- https://github.com/github/copilot.vim sucks
+--
+https://github.com/github/copilot.vim
 return {
-	"github/copilot.vim"
+	"zbirenbaum/copilot.lua"
+	-- "github/copilot.vim"
 }
