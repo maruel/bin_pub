@@ -96,10 +96,10 @@ vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, { desc = 'Telesc
 vim.keymap.set('n', '<leader>fg', telescope_builtin.live_grep, { desc = 'Telescope live grep' })
 vim.keymap.set('n', '<leader>e', '<Cmd>Oil --float<CR>')
 -- if copilot:
--- vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
--- 	expr = true,
--- 	replace_keycodes = false
--- })
+vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
+	expr = true,
+	replace_keycodes = false
+})
 --
 -- ga = accept change
 -- gr = reject change
