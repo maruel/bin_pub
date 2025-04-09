@@ -1,8 +1,7 @@
--- https://github.com/ray-x/go.nvim#lazynvim
+-- https://github.com/williamboman/mason.nvim
+-- Package manager, used for LSP servers via mason-lspconfig.
 return {
-	"williamboman/mason-lspconfig.nvim",
-	dependencies = { -- optional packages
-		"neovim/nvim-lspconfig",
-		"williamboman/mason.nvim",
-	}
+	"williamboman/mason.nvim",
+	config = true,
+	opts = {},
 }

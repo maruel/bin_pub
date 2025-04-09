@@ -2,9 +2,14 @@
 return {
 	"yetone/avante.nvim",
 	-- TODO: decide later.
+	enabled = false,
 	lazy = true,
 	event = "VeryLazy",
 	version = false,
+	init = function()
+		-- See https://github.com/yetone/avante.nvim
+		vim.opt.laststatus = 3
+	end,
 	opts = {
 		suggestion = {
 			debounce = 600,

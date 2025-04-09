@@ -23,23 +23,11 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 	end,
 })
 vim.cmd("colorscheme default")
--- See https://github.com/yetone/avante.nvim
-vim.opt.laststatus = 3
 
 
 -- Load all plugins.
+-- Documentation: https://lazy.folke.io/spec
 require("config.lazy")
-require("mason").setup()
--- Auto-install favorite language servers.
-require("mason-lspconfig").setup({
-	ensure_installed = { "pyright", "gopls", "lua_ls", "marksman" },
-	automatic_installation = true,
-	handlers = {
-		function(server_name)
-			require('lspconfig')[server_name].setup({})
-		end,
-	},
-})
 -- When we get an error on save like:
 --   [LSP] Format request failed, no matching language servers.
 --   method textDocument/codeAction is not supported by any of the servers registered for the current buffer
@@ -81,23 +69,12 @@ lspconfig.sourcekit.setup({
 	},
 })
 
+-- TODO:
+-- Decide between telescope, nvim-tree and oil. I don't need all 3.
+
+
 local gitsigns = require('gitsigns')
-local telescope = require('telescope')
-telescope.setup({
-	defaults = {
-		layout_config = {
-			width = 0.95,
-			height = 0.95,
-		},
-	},
-})
 local telescope_builtin = require('telescope.builtin')
--- https://parilia.dev/a/neovim/oil/
-require('oil').setup({
-	view_options = {
-		show_hidden = true,
-	},
-})
 
 
 -- Key bindings.
@@ -120,8 +97,6 @@ vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
 	expr = true,
 	replace_keycodes = false
 })
-vim.g.copilot_no_tab_map = true
-
 
 
 -- Go specific.
