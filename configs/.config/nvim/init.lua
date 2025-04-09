@@ -23,6 +23,8 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 	end,
 })
 vim.cmd("colorscheme default")
+-- See https://github.com/yetone/avante.nvim
+vim.opt.laststatus = 3
 
 
 -- Load all plugins.
@@ -38,7 +40,6 @@ require("mason-lspconfig").setup({
 		end,
 	},
 })
--- require('avante').setup()
 -- When we get an error on save like:
 --   [LSP] Format request failed, no matching language servers.
 --   method textDocument/codeAction is not supported by any of the servers registered for the current buffer
@@ -97,7 +98,6 @@ require('oil').setup({
 		show_hidden = true,
 	},
 })
-require("copilot").setup({})
 
 
 -- Key bindings.
