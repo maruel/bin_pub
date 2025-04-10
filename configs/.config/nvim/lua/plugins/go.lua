@@ -10,6 +10,7 @@ return {
 	config = true,
 	opts = {},
 	event = { "CmdlineEnter" },
-	ft = { "go", 'gomod' },
+	-- it's annoying when processing 'gomod'
+	ft = { "go" },
 	build = ':lua require("go.install").update_all_sync()' -- if you need to install/update all binaries
 }
