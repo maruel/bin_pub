@@ -2,6 +2,7 @@
 -- File manager.
 return {
 	'stevearc/oil.nvim',
+	enabled = false,
 	opts = {
 		view_options = {
 			show_hidden = true,

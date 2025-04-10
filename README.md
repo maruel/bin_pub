@@ -128,19 +128,24 @@ git -c rebase.instructionFormat='%s%nexec GIT_COMMITTER_DATE="%cD" GIT_AUTHOR_DA
 
 Config from [config/.config/nvim/init.vim](config/.config/nvim/init.vim):
 
-| Key | Description |
-| --- | ----------- |
-| F3 | Toggle NvimTree |
-| F4 | Git blame |
-| F5 | Go coverage |
-| F9 | Previous buffer |
-| F10 | Next buffer |
-| <leader>ff | Telescope find files |
-| <leader>fg | Telescope live grep |
-| <leader>e | Open Oil terminal |
-| <C-J> | Accept copilot suggestion |
-| K | Show hover |
-| gd | Go to definition |
+| Key          | Description |
+| ------------ | ----------- |
+| `F4`         | Git blame |
+| `F5`         | Go coverage |
+| `F7`         | Toggle paste |
+| `F8`         | Toggle word wrap |
+| `F9`         | Previous buffer |
+| `F10`        | Next buffer |
+| `<leader>ff` | [Telescope](https://github.com/nvim-telescope/telescope.nvim) find files |
+| `<C-h>`      | Toggle hiden files |
+| `<leader>fg` | [Telescope](https://github.com/nvim-telescope/telescope.nvim) live grep |
+| `<leader>fb` | [Telescope file browser](https://github.com/nvim-telescope/telescope-file-browser.nvim) |
+| `<C-j>`      | Accept [Copilot](https://github.com/github/copilot.vim) suggestion |
+| `<leader>a`  | [CodeCompanion chat](https://codecompanion.olimorris.dev/configuration/chat-buffer.html) |
+| `<C-s>`      | Send CodeCompanion chat |
+| `<leader>s`  | [CodeCompanion action palette](https://codecompanion.olimorris.dev/configuration/action-palette.html) |
+| `K`          | Show hover |
+| `gd`         | Go to definition |
 
 Useful commands:
 
