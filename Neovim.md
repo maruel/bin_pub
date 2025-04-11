@@ -95,13 +95,6 @@ See default keymappings:
 - `ga` to accept the suggestion, `gr` to reject it
 
 
-## Useful commands
-
-- `:Copilot status`
-- `:checkhealth codecompanion`
-- `:checkhealth lsp`
-
-
 ## Configuration
 
 - Copilot
@@ -110,3 +103,10 @@ See default keymappings:
 - CodeCompanion
   - Set environment variable with API keys
 - Install [Go toolchain](https://go.dev)
+
+
+### Health chekcs
+
+- `:Copilot status`
+- `:checkhealth codecompanion`
+- `:checkhealth lsp`
