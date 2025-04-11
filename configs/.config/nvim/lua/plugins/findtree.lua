@@ -1,12 +1,12 @@
 -- https://github.com/nvim-tree/nvim-tree.lua
 return {
-	"nvim-tree/nvim-tree.lua",
+	'nvim-tree/nvim-tree.lua',
 	enabled = false,
-	version = "*",
+	version = '*',
 	lazy = false,
 	config = true,
 	opts = {},
 	dependencies = {
-		"nvim-tree/nvim-web-devicons",
+		'nvim-tree/nvim-web-devicons',
 	},
 }

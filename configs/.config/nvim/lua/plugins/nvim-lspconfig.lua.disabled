@@ -12,7 +12,7 @@ return {
 		servers = {
 			gopls = {
 				on_attach = function(client, bufnr)
-					if vim.bo[bufnr].filetype == "gomod" then
+					if vim.bo[bufnr].filetype == 'gomod' then
 						-- As of 2025-03, it's unusable.
 						client.stop()
 					end
@@ -30,7 +30,7 @@ return {
 				settings = {
 					Lua = {
 						runtime = { version = 'LuaJIT', },
-						workspace = { library = vim.api.nvim_get_runtime_file("", true), },
+						workspace = { library = vim.api.nvim_get_runtime_file('', true), },
 					},
 				},
 			},

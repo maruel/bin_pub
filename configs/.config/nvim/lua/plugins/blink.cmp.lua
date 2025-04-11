@@ -16,10 +16,10 @@ return {
 		sources = {
 			default = { 'lsp', 'path', 'snippets', 'buffer' },
 			per_filetype = {
-				codecompanion = { "codecompanion" },
+				codecompanion = { 'codecompanion' },
 			},
 		},
-		fuzzy = { implementation = "prefer_rust_with_warning" },
+		fuzzy = { implementation = 'prefer_rust_with_warning' },
 	},
 	dependencies = { 'rafamadriz/friendly-snippets' },
 }

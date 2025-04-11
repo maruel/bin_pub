@@ -126,7 +126,9 @@ git -c rebase.instructionFormat='%s%nexec GIT_COMMITTER_DATE="%cD" GIT_AUTHOR_DA
 
 ## nvim
 
-Config from [config/.config/nvim/init.vim](config/.config/nvim/init.vim):
+Config:
+- [config/.config/nvim/init.vim](config/.config/nvim/init.vim)
+- [config/.config/nvim/lua/plugins/](config/.config/nvim/lua/plugins/) (some are disabled)
 
 | Key          | Description |
 | ------------ | ----------- |
@@ -139,11 +141,14 @@ Config from [config/.config/nvim/init.vim](config/.config/nvim/init.vim):
 | `<leader>ff` | [Telescope](https://github.com/nvim-telescope/telescope.nvim) find files |
 | `<C-h>`      | Toggle hiden files |
 | `<leader>fg` | [Telescope](https://github.com/nvim-telescope/telescope.nvim) live grep |
+| `<C-q>`      | Send to quickfix list and open list |
 | `<leader>fb` | [Telescope file browser](https://github.com/nvim-telescope/telescope-file-browser.nvim) |
 | `<C-j>`      | Accept [Copilot](https://github.com/github/copilot.vim) suggestion |
 | `<leader>a`  | [CodeCompanion chat](https://codecompanion.olimorris.dev/configuration/chat-buffer.html) |
 | `<C-s>`      | Send CodeCompanion chat |
 | `<leader>s`  | [CodeCompanion action palette](https://codecompanion.olimorris.dev/configuration/action-palette.html) |
+| `gg`         | Go to top of file [(default)](https://neovim.io/doc/user/motion.html#gg) |
+| `G`          | Go to end of file [(default)](https://neovim.io/doc/user/motion.html#G) |
 | `gd`         | LSP: Go to definition |
 | `grn`        | LSP: rename current symbol [(global default)](https://neovim.io/doc/user/lsp.html#_global-defaults) |
 | `grr`        | LSP: list current symbol references [(global default)](https://neovim.io/doc/user/lsp.html#_global-defaults) |
@@ -151,6 +156,8 @@ Config from [config/.config/nvim/init.vim](config/.config/nvim/init.vim):
 | `gq`         | Format current selection [(buffer default)](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) |
 | `gw`         | Word wrap (or unwrap) current selection [(buffer default)](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) |
 | `K`          | Show hover [(buffer default)](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) |
+
+See keymappings at https://github.com/nvim-telescope/telescope.nvim/blob/master/lua/telescope/mappings.lua
 
 Useful commands:
 

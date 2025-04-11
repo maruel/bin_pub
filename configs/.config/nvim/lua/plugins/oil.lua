@@ -9,7 +9,7 @@ return {
 		},
 	},
 	dependencies = {
-		{ "echasnovski/mini.icons", opts = {} },
-		-- { "nvim-tree/nvim-web-devicons" },
+		'echasnovski/mini.icons',
+		-- 'nvim-tree/nvim-web-devicons',
 	},
 }
