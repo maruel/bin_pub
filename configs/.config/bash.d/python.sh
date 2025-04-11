@@ -9,13 +9,16 @@ export PYTHONDONTWRITEBYTECODE=x
 # pip install virtualenvwrapper
 # https://virtualenvwrapper.readthedocs.io/
 if [ -f $HOME/.local/bin/virtualenvwrapper.sh ]; then
+  export WORKON_HOME=$HOME/.cache/virtualenvwrapper
   source $HOME/.local/bin/virtualenvwrapper.sh
-  export WORKON_HOME=$HOME/.cache/virtualenvwrapper
   # Usage:
   #   mkvirtualenv <name>
-elif [ -f $HOME/bin/homebrew/bin/virtualenvwrapper.sh ]; then
-  source $HOME/bin/homebrew/bin/virtualenvwrapper.sh
-  export WORKON_HOME=$HOME/.cache/virtualenvwrapper
-  # Usage:
-  #   mkvirtualenv <name>
+# Fix eventually.
+#elif [ -f $HOME/bin/homebrew/bin/virtualenvwrapper.sh ]; then
+#  export WORKON_HOME=$HOME/.cache/virtualenvwrapper
+#  export VIRTUALENVWRAPPER_PYTHON=$HOME/bin/homebrew/bin/python3
+#  export VIRTUALENVWRAPPER_VIRTUALENV=$HOME/bin/homebrew/bin/virtualenv
+#  source $HOME/bin/homebrew/bin/virtualenvwrapper.sh
+#  # Usage:
+#  #   mkvirtualenv <name>
 fi
