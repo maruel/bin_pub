@@ -127,8 +127,8 @@ git -c rebase.instructionFormat='%s%nexec GIT_COMMITTER_DATE="%cD" GIT_AUTHOR_DA
 ## nvim
 
 Config:
-- [config/.config/nvim/init.vim](config/.config/nvim/init.vim)
-- [config/.config/nvim/lua/plugins/](config/.config/nvim/lua/plugins/) (some are disabled)
+- [configs/.config/nvim/init.vim](configs/.config/nvim/init.vim)
+- [configs/.config/nvim/lua/plugins/](configs/.config/nvim/lua/plugins/) (some are disabled)
 
 | Key          | Description |
 | ------------ | ----------- |
