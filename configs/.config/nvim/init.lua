@@ -61,10 +61,14 @@ vim.cmd('highlight netrwDir   ctermfg=Cyan')
 -- Load all plugins.
 -- Documentation: https://lazy.folke.io/spec
 require('config.lazy')
+
+
 -- When we get an error on save like:
 --   [LSP] Format request failed, no matching language servers.
 --   method textDocument/codeAction is not supported by any of the servers registered for the current buffer
 -- We need to check https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md and configure the language server.
+-- This will change soon: https://github.com/neovim/nvim-lspconfig/issues/3494
+-- TODO: Revisit after 2025-06.
 local lspconfig = require('lspconfig')
 lspconfig.gopls.setup({
 	on_attach = function(client, bufnr)
@@ -101,6 +105,7 @@ lspconfig.sourcekit.setup({
 		},
 	},
 })
+lspconfig.yamlls.setup({})
 
 
 -- Check if there are any LSP clients that can format.
