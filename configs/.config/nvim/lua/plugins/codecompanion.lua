@@ -26,6 +26,5 @@ return {
 		'nvim-lua/plenary.nvim',
 		'nvim-treesitter/nvim-treesitter',
 	},
-	-- Figure out why this is needed:
-	-- :TSInstall yaml
+	build = ':TSInstall yaml',
 }
