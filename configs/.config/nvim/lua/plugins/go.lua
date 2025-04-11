@@ -8,7 +8,15 @@ return {
 		'nvim-treesitter/nvim-treesitter',
 	},
 	config = true,
-	opts = {},
+	opts = {
+		lsp_cfg = false,
+		lsp_document_formatting = false,
+		lsp_keymaps = false,
+		lsp_codelens = false,
+		lsp_inlay_hints = {
+			enable = false,
+		},
+	},
 	event = { 'CmdlineEnter' },
 	ft = { 'go' },
 	-- Install go tools as needed.
