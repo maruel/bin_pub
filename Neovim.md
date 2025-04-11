@@ -28,18 +28,20 @@
 | `F5`         | [init.lua](configs/.config/nvim/init.lua) | Go coverage |
 | `F7`         | [init.lua](configs/.config/nvim/init.lua) | Toggle paste |
 | `F8`         | [init.lua](configs/.config/nvim/init.lua) | Toggle word wrap |
-| `F9`, `C-h`  | [init.lua](configs/.config/nvim/init.lua) | Previous buffer |
-| `F10`, `C-l` | [init.lua](configs/.config/nvim/init.lua) | Next buffer |
+| `F9`         | [init.lua](configs/.config/nvim/init.lua) | Previous buffer |
+| `F10`        | [init.lua](configs/.config/nvim/init.lua) | Next buffer |
+| `<C-h>`      | [init.lua](configs/.config/nvim/init.lua) | Previous buffer |
+| `<C-l>`      | [init.lua](configs/.config/nvim/init.lua) | Next buffer |
 | `<leader>df` | [init.lua](configs/.config/nvim/init.lua) | Delete current file |
 | `<leader>ff` | [init.lua](configs/.config/nvim/init.lua) | [Telescope](https://github.com/nvim-telescope/telescope.nvim) find files |
-| `<C-h>`      | [Telescope file browser](https://github.com/nvim-telescope/telescope-file-browser.nvim#mappings)  | Toggle hiden files |
+| ↪ `<C-h>`    | [Telescope file browser](https://github.com/nvim-telescope/telescope-file-browser.nvim#mappings)  | Toggle hiden files |
 | `<leader>fg` | [init.lua](configs/.config/nvim/init.lua)                                                         | [Telescope](https://github.com/nvim-telescope/telescope.nvim) live grep |
-| `<C-q>`      | [Telescope](https://github.com/nvim-telescope/telescope.nvim?tab=readme-ov-file#default-mappings) | Send to quickfix list and open list |
+| ↪ `<C-q>`    | [Telescope](https://github.com/nvim-telescope/telescope.nvim?tab=readme-ov-file#default-mappings) | Send to quickfix list and open list |
 | `<leader>fb` | [init.lua](configs/.config/nvim/init.lua) | [Telescope file browser](https://github.com/nvim-telescope/telescope-file-browser.nvim) |
 | `<C-j>`      | [init.lua](configs/.config/nvim/init.lua) | Accept [Copilot](https://github.com/github/copilot.vim) suggestion |
 | `<leader>a`  | [init.lua](configs/.config/nvim/init.lua) | [CodeCompanion chat](https://codecompanion.olimorris.dev/configuration/chat-buffer.html) |
-| `<C-s>`      | [CodeCompanion default](https://codecompanion.olimorris.dev/configuration/chat-buffer.html#keymaps) | Send CodeCompanion chat |
-| `<C-c>`      | [CodeCompanion default](https://codecompanion.olimorris.dev/configuration/chat-buffer.html#keymaps) | Close CodeCompanion chat |
+| ↪ `<C-s>`    | [CodeCompanion default](https://codecompanion.olimorris.dev/configuration/chat-buffer.html#keymaps) | Send CodeCompanion chat |
+| ↪ `<C-c>`    | [CodeCompanion default](https://codecompanion.olimorris.dev/configuration/chat-buffer.html#keymaps) | Close CodeCompanion chat |
 | `<leader>s`  | [init.lua](configs/.config/nvim/init.lua)                                           | [CodeCompanion action palette](https://codecompanion.olimorris.dev/configuration/action-palette.html) |
 | `b`          | [neovim motion default](https://neovim.io/doc/user/motion.html#b)                   | Previous word |
 | `B`          | [neovim motion default](https://neovim.io/doc/user/motion.html#B)                   | Previous words |
@@ -51,6 +53,7 @@
 | `]]`         | [neovim motion default](https://neovim.io/doc/user/motion.html#%5D%5D)              | Next section |
 | `gg`         | [neovim motion default](https://neovim.io/doc/user/motion.html#gg)                  | Go to top of file |
 | `G`          | [neovim motion default](https://neovim.io/doc/user/motion.html#G)                   | Go to end of file |
+| `za`         | [neovim fold default](https://neovim.io/doc/user/fold.html#za)                      | Toggle fold |
 | `gd`         | [init.lua](configs/.config/nvim/init.lua)                                           | LSP: Go to definition |
 | `grn`        | [neovim LSP global default](https://neovim.io/doc/user/lsp.html#_global-defaults)   | LSP: Rename current symbol |
 | `grr`        | [neovim LSP global default](https://neovim.io/doc/user/lsp.html#_global-defaults)   | LSP: List current symbol references |
@@ -61,6 +64,7 @@
 
 See default keymappings:
 
+- https://neovim.io/doc/user/fold.html
 - https://neovim.io/doc/user/motion.html
 - https://neovim.io/doc/user/various.html
 - https://github.com/nvim-telescope/telescope.nvim#default-mappings
