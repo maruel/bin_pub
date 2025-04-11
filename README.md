@@ -134,8 +134,8 @@ Config from [config/.config/nvim/init.vim](config/.config/nvim/init.vim):
 | `F5`         | Go coverage |
 | `F7`         | Toggle paste |
 | `F8`         | Toggle word wrap |
-| `F9`         | Previous buffer |
-| `F10`        | Next buffer |
+| `F9`, `C-h`  | Previous buffer |
+| `F10`, `C-l` | Next buffer |
 | `<leader>ff` | [Telescope](https://github.com/nvim-telescope/telescope.nvim) find files |
 | `<C-h>`      | Toggle hiden files |
 | `<leader>fg` | [Telescope](https://github.com/nvim-telescope/telescope.nvim) live grep |
@@ -144,8 +144,13 @@ Config from [config/.config/nvim/init.vim](config/.config/nvim/init.vim):
 | `<leader>a`  | [CodeCompanion chat](https://codecompanion.olimorris.dev/configuration/chat-buffer.html) |
 | `<C-s>`      | Send CodeCompanion chat |
 | `<leader>s`  | [CodeCompanion action palette](https://codecompanion.olimorris.dev/configuration/action-palette.html) |
-| `K`          | Show hover |
-| `gd`         | Go to definition |
+| `gd`         | LSP: Go to definition |
+| `grn`        | LSP: rename current symbol [(global default)](https://neovim.io/doc/user/lsp.html#_global-defaults) |
+| `grr`        | LSP: list current symbol references [(global default)](https://neovim.io/doc/user/lsp.html#_global-defaults) |
+| `gO`         | LSP: list all symbols in current file [(global default)](https://neovim.io/doc/user/lsp.html#_global-defaults) |
+| `gq`         | Format current selection [(buffer default)](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) |
+| `gw`         | Word wrap (or unwrap) current selection [(buffer default)](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) |
+| `K`          | Show hover [(buffer default)](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) |
 
 Useful commands:
 

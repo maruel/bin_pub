@@ -103,33 +103,38 @@ lspconfig.sourcekit.setup({
 })
 
 
--- TODO:
--- Decide between telescope, nvim-tree and oil. I don't need all 3.
-
-
-local gitsigns = require('gitsigns')
+-- Function to check if there are any LSP clients that can format
+local function has_formatter(bufnr)
+	for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr or 0 })) do
+		if client.server_capabilities.documentFormattingProvider then
+			return true
+		end
+	end
+	return false
+end
 
 
 -- Key bindings.
 -- https://neovim.io/doc/user/lua.html#_lua-module:-vim.keymap
 -- https://neovim.io/doc/user/intro.html#keycodes
 -- F-keys
-vim.keymap.set({ 'n', 'v', 'i' }, '<F4>', "<Cmd>Gitsigns blame<CR>")
-vim.keymap.set({ 'i', 'n', 'v' }, '<F5>', '<Cmd>GoCoverage<CR>')
+vim.keymap.set({ 'i', 'n', 'v' }, '<F4>', "<Cmd>Gitsigns blame<CR>")
+vim.keymap.set({ 'i', 'n', 'v' }, '<F5>', '<Cmd>GoCoverage<CR>') -- TODO: move to Go specific.
 vim.keymap.set({ 'i', 'n', 'v' }, '<F7>', '<Cmd>set paste!<CR>')
 vim.keymap.set({ 'i', 'n', 'v' }, '<F8>', '<Cmd>set wrap!<CR>')
 vim.keymap.set({ 'i', 'n', 'v' }, '<F9>', '<Cmd>bp<CR>')
 vim.keymap.set({ 'i', 'n', 'v' }, '<F10>', '<Cmd>bn<CR>')
+vim.keymap.set({ 'i', 'n', 'v' }, '<C-h>', '<Cmd>bp<CR>')
+vim.keymap.set({ 'i', 'n', 'v' }, '<C-l>', '<Cmd>bn<CR>')
 -- Files
 vim.keymap.set('n', '<leader>ff', "<Cmd>Telescope find_files<CR>", { desc = 'Telescope find files' })
 vim.keymap.set('n', '<leader>fg', "<Cmd>Telescope live_grep<CR>", { desc = 'Telescope live grep' })
 vim.keymap.set("n", "<leader>fb", "<Cmd>Telescope file_browser path=%:p:h select_buffer=true<CR>")
--- if copilot:
+-- AI
 vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
 	expr = true,
 	replace_keycodes = false
 })
---
 -- ga = accept change
 -- gr = reject change
 vim.keymap.set({ "n", "v" }, "<leader>s", "<Cmd>CodeCompanionActions<CR>")
@@ -137,17 +142,35 @@ vim.keymap.set({ "n", "v" }, "<leader>a", "<Cmd>CodeCompanionChat Toggle<CR>")
 vim.keymap.set("v", "ga", "<Cmd>CodeCompanionChat Add<CR>")
 -- Expand 'cc' into 'CodeCompanion' in the command line
 vim.cmd([[cab cc CodeCompanion]])
+-- Enable features that only work if there is a language server active in the file.
+vim.api.nvim_create_autocmd('LspAttach', {
+	desc = 'LSP actions',
+	callback = function(event)
+		local opts = { buffer = event.buf }
+		vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+		-- Auto format on save.
+		vim.api.nvim_create_autocmd("BufWritePre", {
+			callback = function()
+				if has_formatter(0) then
+					-- TODO: Generalize.
+					if vim.bo.filetype == "go" then
+						require('go.format').goimports()
+					else
+						vim.lsp.buf.format({ async = false })
+					end
+					-- if vim.lsp.buf.code_action then
+					-- 	vim.lsp.buf.code_action { context = { diagnostics = {}, only = { 'source.organizeImports' } }, apply = true, triggerKind = 2 }
+					-- 	vim.lsp.buf.code_action { context = { diagnostics = {}, only = { 'source.fixAll' } }, apply = true, triggerKind = 2 }
+					-- end
+				end
+			end,
+		})
+	end,
+})
 
 
 -- Go specific.
-local format_sync_grp = vim.api.nvim_create_augroup("goimports", {})
-vim.api.nvim_create_autocmd("BufWritePre", {
-	pattern = "*.go",
-	callback = function()
-		require('go.format').goimports()
-	end,
-	group = format_sync_grp,
-})
+-- TODO: move to ftplugin/go.lua
 vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
 	pattern = { "*.go" },
 	callback = function()
@@ -166,49 +189,6 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 			vim.cmd('normal! g`"')
 		end
 	end
-})
-
-
--- Function to check if there are any LSP clients that can format
-local function has_formatter(bufnr)
-	for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr or 0 })) do
-		if client.server_capabilities.documentFormattingProvider then
-			return true
-		end
-	end
-	return false
-end
-
-
--- This is where you enable features that only work
--- if there is a language server active in the file.
-vim.api.nvim_create_autocmd('LspAttach', {
-	desc = 'LSP actions',
-	callback = function(event)
-		local opts = { buffer = event.buf, noremap = true, silent = true }
-		vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-		vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-		-- vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
-		-- vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
-		-- vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
-		-- vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
-		-- vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-		vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-		vim.keymap.set({ 'n', 'x' }, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
-		-- vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
-		-- Auto format on save.
-		vim.api.nvim_create_autocmd("BufWritePre", {
-			callback = function()
-				if has_formatter(0) then
-					vim.lsp.buf.format({ async = false })
-					-- if vim.lsp.buf.code_action then
-					-- 	vim.lsp.buf.code_action { context = { diagnostics = {}, only = { 'source.organizeImports' } }, apply = true, triggerKind = 2 }
-					-- 	vim.lsp.buf.code_action { context = { diagnostics = {}, only = { 'source.fixAll' } }, apply = true, triggerKind = 2 }
-					-- end
-				end
-			end,
-		})
-	end,
 })
 
 
