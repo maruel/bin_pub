@@ -77,7 +77,7 @@ lspconfig.gopls.setup({
 		gopls = {
 			analyses = { unusedparams = true, },
 			staticcheck = true,
-			gofumpt = true,
+			gofumpt = false,
 		},
 	},
 })
@@ -164,18 +164,14 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
 		-- Auto format on save.
 		vim.api.nvim_create_autocmd('BufWritePre', {
+			group = vim.api.nvim_create_augroup("save-lock", { clear = true }),
 			callback = function()
 				if has_formatter(0) then
-					-- TODO: Generalize.
 					if vim.bo.filetype == 'go' then
-						require('go.format').goimports()
+						vim.lsp.buf.code_action { context = { diagnostics = {}, only = { 'source.organizeImports' } }, apply = true, triggerKind = 2 }
 					else
 						vim.lsp.buf.format({ async = false })
 					end
-					-- if vim.lsp.buf.code_action then
-					-- 	vim.lsp.buf.code_action { context = { diagnostics = {}, only = { 'source.organizeImports' } }, apply = true, triggerKind = 2 }
-					-- 	vim.lsp.buf.code_action { context = { diagnostics = {}, only = { 'source.fixAll' } }, apply = true, triggerKind = 2 }
-					-- end
 				end
 			end,
 		})
