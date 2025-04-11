@@ -179,17 +179,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
 })
 
 
--- Go specific.
--- TODO: move to ftplugin/go.lua
-vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
-	pattern = { '*.go' },
-	callback = function()
-		vim.opt.tabstop = 2
-		vim.opt.shiftwidth = 2
-	end
-})
-
-
 -- Save cursor position
 vim.api.nvim_create_augroup('RestoreCursorPosition', { clear = true })
 vim.api.nvim_create_autocmd('BufReadPost', {
