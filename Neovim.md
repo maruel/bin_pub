@@ -7,8 +7,9 @@
 - _I just want an editor that works_. How hard can that be?
 - I almost always use nvim inside tmux
   - I configured tmux to support [256 colors](configs/.tmux.conf).
-  - I don't use tmux windows.
-- I don't use neovim windows much.
+  - I don't use [tmux panes](https://github.com/tmux/tmux/wiki/Getting-Started#sessions-windows-and-panes) at
+    all.
+- I don't use [neovim windows](https://neovim.io/doc/user/windows.html) much.
 - I don't mind quitting and restarting nvim often. I require nvim startup time to be unnoticeable.
 - I'm fine with doing git operations in a separate tmux pane.
 
@@ -21,33 +22,42 @@
 
 ## Keybindings
 
-| Key          | Description |
-| ------------ | ----------- |
-| `F4`         | Git blame |
-| `F5`         | Go coverage |
-| `F7`         | Toggle paste |
-| `F8`         | Toggle word wrap |
-| `F9`, `C-h`  | Previous buffer |
-| `F10`, `C-l` | Next buffer |
-| `<leader>df` | Delete current file |
-| `<leader>ff` | [Telescope](https://github.com/nvim-telescope/telescope.nvim) find files |
-| `<C-h>`      | Toggle hiden files |
-| `<leader>fg` | [Telescope](https://github.com/nvim-telescope/telescope.nvim) live grep |
-| `<C-q>`      | Send to quickfix list and open list |
-| `<leader>fb` | [Telescope file browser](https://github.com/nvim-telescope/telescope-file-browser.nvim) |
-| `<C-j>`      | Accept [Copilot](https://github.com/github/copilot.vim) suggestion |
-| `<leader>a`  | [CodeCompanion chat](https://codecompanion.olimorris.dev/configuration/chat-buffer.html) |
-| `<C-s>`      | Send CodeCompanion chat |
-| `<leader>s`  | [CodeCompanion action palette](https://codecompanion.olimorris.dev/configuration/action-palette.html) |
-| `gg`         | Go to top of file [(default)](https://neovim.io/doc/user/motion.html#gg) |
-| `G`          | Go to end of file [(default)](https://neovim.io/doc/user/motion.html#G) |
-| `gd`         | LSP: Go to definition |
-| `grn`        | LSP: rename current symbol [(global default)](https://neovim.io/doc/user/lsp.html#_global-defaults) |
-| `grr`        | LSP: list current symbol references [(global default)](https://neovim.io/doc/user/lsp.html#_global-defaults) |
-| `gO`         | LSP: list all symbols in current file [(global default)](https://neovim.io/doc/user/lsp.html#_global-defaults) |
-| `gq`         | Format current selection [(buffer default)](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) |
-| `gw`         | Word wrap (or unwrap) current selection [(buffer default)](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) |
-| `K`          | Show hover [(buffer default)](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) |
+| Key          | Source                               | Description |
+| ------------ | ------------------------------------ | ----------- |
+| `F4`         | [init.lua](configs/.config/init.lua) | Git blame |
+| `F5`         | [init.lua](configs/.config/init.lua) | Go coverage |
+| `F7`         | [init.lua](configs/.config/init.lua) | Toggle paste |
+| `F8`         | [init.lua](configs/.config/init.lua) | Toggle word wrap |
+| `F9`, `C-h`  | [init.lua](configs/.config/init.lua) | Previous buffer |
+| `F10`, `C-l` | [init.lua](configs/.config/init.lua) | Next buffer |
+| `<leader>df` | [init.lua](configs/.config/init.lua) | Delete current file |
+| `<leader>ff` | [init.lua](configs/.config/init.lua) | [Telescope](https://github.com/nvim-telescope/telescope.nvim) find files |
+| `<C-h>`      | [Telescope file browser](https://github.com/nvim-telescope/telescope-file-browser.nvim#mappings)  | Toggle hiden files |
+| `<leader>fg` | [init.lua](configs/.config/init.lua)                                                              | [Telescope](https://github.com/nvim-telescope/telescope.nvim) live grep |
+| `<C-q>`      | [Telescope](https://github.com/nvim-telescope/telescope.nvim?tab=readme-ov-file#default-mappings) | Send to quickfix list and open list |
+| `<leader>fb` | [init.lua](configs/.config/init.lua) | [Telescope file browser](https://github.com/nvim-telescope/telescope-file-browser.nvim) |
+| `<C-j>`      | [init.lua](configs/.config/init.lua) | Accept [Copilot](https://github.com/github/copilot.vim) suggestion |
+| `<leader>a`  | [init.lua](configs/.config/init.lua) | [CodeCompanion chat](https://codecompanion.olimorris.dev/configuration/chat-buffer.html) |
+| `<C-s>`      | [CodeCompanion default](https://codecompanion.olimorris.dev/configuration/chat-buffer.html#keymaps) | Send CodeCompanion chat |
+| `<C-c>`      | [CodeCompanion default](https://codecompanion.olimorris.dev/configuration/chat-buffer.html#keymaps) | Close CodeCompanion chat |
+| `<leader>s`  | [init.lua](configs/.config/init.lua)                                                | [CodeCompanion action palette](https://codecompanion.olimorris.dev/configuration/action-palette.html) |
+| `b`          | [neovim motion default](https://neovim.io/doc/user/motion.html#b)                   | Previous word |
+| `B`          | [neovim motion default](https://neovim.io/doc/user/motion.html#B)                   | Previous words |
+| `w`          | [neovim motion default](https://neovim.io/doc/user/motion.html#w)                   | Next word |
+| `W`          | [neovim motion default](https://neovim.io/doc/user/motion.html#W)                   | Next words |
+| `e`          | [neovim motion default](https://neovim.io/doc/user/motion.html#e)                   | End of word |
+| `E`          | [neovim motion default](https://neovim.io/doc/user/motion.html#E)                   | End of words |
+| `[[`         | [neovim motion default](https://neovim.io/doc/user/motion.html#%5B%5B)              | Previous section |
+| `]]`         | [neovim motion default](https://neovim.io/doc/user/motion.html#%5D%5D)              | Next section |
+| `gg`         | [neovim motion default](https://neovim.io/doc/user/motion.html#gg)                  | Go to top of file |
+| `G`          | [neovim motion default](https://neovim.io/doc/user/motion.html#G)                   | Go to end of file |
+| `gd`         | [init.lua](configs/.config/init.lua)                                                | LSP: Go to definition |
+| `grn`        | [neovim LSP global default](https://neovim.io/doc/user/lsp.html#_global-defaults)   | LSP: Rename current symbol |
+| `grr`        | [neovim LSP global default](https://neovim.io/doc/user/lsp.html#_global-defaults)   | LSP: List current symbol references |
+| `gO`         | [neovim LSP global default](https://neovim.io/doc/user/lsp.html#_global-defaults)   | LSP: List all symbols in current file |
+| `gq`         | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | Format current selection |
+| `gw`         | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | Word wrap (or unwrap) current selection |
+| `K`          | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | Show hover |
 
 Inline edit:
 - `V` to select a code block
