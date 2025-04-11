@@ -58,9 +58,9 @@
 | `grn`        | [neovim LSP global default](https://neovim.io/doc/user/lsp.html#_global-defaults)   | LSP: Rename current symbol |
 | `grr`        | [neovim LSP global default](https://neovim.io/doc/user/lsp.html#_global-defaults)   | LSP: List current symbol references |
 | `gO`         | [neovim LSP global default](https://neovim.io/doc/user/lsp.html#_global-defaults)   | LSP: List all symbols in current file |
-| `gq`         | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | Format current selection |
-| `gw`         | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | Word wrap (or unwrap) current selection |
-| `K`          | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | Show hover |
+| `gq`         | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | LSP: Format current selection |
+| `gw`         | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | LSP: Word wrap (or unwrap) current selection |
+| `K`          | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | LSP: Show hover information |
 
 See default keymappings:
 
@@ -106,7 +106,7 @@ See default keymappings:
 
 - Copilot
   - Require nodejs
-  - `Copilot setup`
+  - `:Copilot setup`
 - CodeCompanion
   - Set environment variable with API keys
-- Go requires Go toolchain
+- Install [Go toolchain](https://go.dev)
