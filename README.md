@@ -158,6 +158,11 @@ Config:
 | `gw`         | Word wrap (or unwrap) current selection [(buffer default)](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) |
 | `K`          | Show hover [(buffer default)](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) |
 
+Inline edit:
+- `V` to select a code block
+- `:cc <question>` to ask a question to the LLM to edit the code
+- `ga` to accept the suggestion, `gr` to reject it
+
 See additional default keymappings at:
 - https://github.com/nvim-telescope/telescope.nvim?tab=readme-ov-file#default-mappings
 - https://github.com/nvim-telescope/telescope-file-browser.nvim?tab=readme-ov-file#mappings

@@ -124,10 +124,14 @@ end
 
 
 -- Key bindings.
+-- Difficult to use:
+-- - Shift, Ctrl or Alt F-keys
+-- - Ctrl-numbers
 -- https://neovim.io/doc/user/lua.html#_lua-module:-vim.keymap
 -- https://neovim.io/doc/user/intro.html#keycodes
 -- F-keys
 vim.keymap.set({ 'i', 'n', 'v' }, '<F4>', '<Cmd>Gitsigns blame<CR>')
+--vim.keymap.set({ 'i', 'n', 'v' }, '<C-4>', '<Cmd>Gitsigns toggle_current_line_blame<CR>')
 vim.keymap.set({ 'i', 'n', 'v' }, '<F5>', '<Cmd>GoCoverage<CR>') -- TODO: move to Go specific.
 vim.keymap.set({ 'i', 'n', 'v' }, '<F7>', '<Cmd>set paste!<CR>')
 vim.keymap.set({ 'i', 'n', 'v' }, '<F8>', '<Cmd>set wrap!<CR>')
