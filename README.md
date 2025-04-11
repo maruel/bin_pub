@@ -138,6 +138,7 @@ Config:
 | `F8`         | Toggle word wrap |
 | `F9`, `C-h`  | Previous buffer |
 | `F10`, `C-l` | Next buffer |
+| `<leader>df` | Delete current file |
 | `<leader>ff` | [Telescope](https://github.com/nvim-telescope/telescope.nvim) find files |
 | `<C-h>`      | Toggle hiden files |
 | `<leader>fg` | [Telescope](https://github.com/nvim-telescope/telescope.nvim) live grep |
@@ -157,9 +158,12 @@ Config:
 | `gw`         | Word wrap (or unwrap) current selection [(buffer default)](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) |
 | `K`          | Show hover [(buffer default)](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) |
 
-See keymappings at https://github.com/nvim-telescope/telescope.nvim/blob/master/lua/telescope/mappings.lua
+See additional default keymappings at:
+- https://github.com/nvim-telescope/telescope.nvim?tab=readme-ov-file#default-mappings
+- https://github.com/nvim-telescope/telescope-file-browser.nvim?tab=readme-ov-file#mappings
 
 Useful commands:
 
-- :Copilot status
-- :checkhealth lsp
+- `:Copilot status`
+- `:checkhealth codecompanion`
+- `:checkhealth lsp`

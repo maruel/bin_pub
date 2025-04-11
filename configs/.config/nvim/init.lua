@@ -103,7 +103,7 @@ lspconfig.sourcekit.setup({
 })
 
 
--- Function to check if there are any LSP clients that can format
+-- Check if there are any LSP clients that can format.
 local function has_formatter(bufnr)
 	for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr or 0 })) do
 		if client.server_capabilities.documentFormattingProvider then
@@ -111,6 +111,15 @@ local function has_formatter(bufnr)
 		end
 	end
 	return false
+end
+
+
+-- Delete the current file.
+local function confirm_and_delete_buffer()
+	if vim.fn.confirm("Delete buffer and file?", "&Yes\n&No", 2) == 1 then
+		os.remove(vim.fn.expand "%")
+		vim.api.nvim_buf_delete(0, { force = true })
+	end
 end
 
 
@@ -130,6 +139,7 @@ vim.keymap.set({ 'i', 'n', 'v' }, '<C-l>', '<Cmd>bn<CR>')
 vim.keymap.set({ 'n', 'v' }, '<leader>ff', '<Cmd>Telescope find_files<CR>', { desc = 'Telescope find files' })
 vim.keymap.set({ 'n', 'v' }, '<leader>fg', '<Cmd>Telescope live_grep<CR>', { desc = 'Telescope live grep' })
 vim.keymap.set({ 'n', 'v' }, '<leader>fb', '<Cmd>Telescope file_browser path=%:p:h select_buffer=true<CR>')
+vim.keymap.set('n', '<leader>df', confirm_and_delete_buffer)
 -- AI
 vim.keymap.set('i', '<C-J>', "copilot#Accept('\\<CR>')", {
 	expr = true,
