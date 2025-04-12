@@ -169,24 +169,29 @@ vim.keymap.set({ 'n', 'v' }, 'U', '<Cmd>redo<CR>')
 -- Expand 'cc' into 'CodeCompanion' in the command line
 vim.cmd([[cab cc CodeCompanion]])
 -- Enable features that only work if there is a language server active in the file.
+-- See https://neovim.io/doc/user/lsp.html#lsp-attach
 vim.api.nvim_create_autocmd('LspAttach', {
-	desc = 'LSP actions',
-	callback = function(event)
-		local opts = { buffer = event.buf }
-		vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-		-- Auto format on save.
-		vim.api.nvim_create_autocmd('BufWritePre', {
-			group = vim.api.nvim_create_augroup("save-lock", { clear = true }),
-			callback = function()
-				if has_formatter(0) then
+	group = vim.api.nvim_create_augroup('my.lsp', {}),
+	callback = function(args)
+		vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = args.buf })
+		-- Auto format on save if supported.
+		-- TODO: I think I understand, there's multiple LSPs connecting!
+		local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
+		if not client:supports_method('textDocument/willSaveWaitUntil')
+			and client:supports_method('textDocument/formatting') then
+			vim.api.nvim_create_autocmd('BufWritePre', {
+				group = vim.api.nvim_create_augroup("my.lsp", { clear = false }),
+				buffer = args.buf,
+				callback = function()
 					if vim.bo.filetype == 'go' then
-						vim.lsp.buf.code_action { context = { diagnostics = {}, only = { 'source.organizeImports' } }, apply = true, triggerKind = 2 }
+						-- vim.lsp.buf.code_action { context = { diagnostics = {}, only = { 'source.organizeImports' } }, apply = true, triggerKind = 2 }
+						vim.lsp.buf.format({ bufnr = args.buf, id = client.id, timeout_ms = 1000 })
 					else
-						vim.lsp.buf.format({ async = false })
+						vim.lsp.buf.format({ bufnr = args.buf, id = client.id, timeout_ms = 1000 })
 					end
-				end
-			end,
-		})
+				end,
+			})
+		end
 	end,
 })
 

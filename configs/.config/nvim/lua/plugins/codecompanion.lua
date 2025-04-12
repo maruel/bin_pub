@@ -16,6 +16,7 @@ return {
 				},
 				start_in_insert_mode = true,
 			},
+			-- TODO: figure out to make it work without copilot plugin.
 			inline = {
 				adapter = 'cerebras',
 			},
