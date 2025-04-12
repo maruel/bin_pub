@@ -163,6 +163,7 @@ vim.keymap.set({ 'n', 'v' }, '<leader>s', '<Cmd>CodeCompanionActions<CR>')
 vim.keymap.set({ 'n', 'v' }, '<leader>a', '<Cmd>CodeCompanionChat Toggle<CR>')
 vim.keymap.set('v', 'ga', '<Cmd>CodeCompanionChat Add<CR>')
 vim.keymap.set({ 'i', 'n', 'v' }, '<C-f>', '<Cmd>Namu symbols<CR>', { desc = 'Jump to LSP symbol' })
+vim.keymap.set({ 'n', 'v' }, 'U', '<Cmd>redo<CR>')
 
 
 -- Expand 'cc' into 'CodeCompanion' in the command line

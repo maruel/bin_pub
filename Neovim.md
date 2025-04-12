@@ -18,9 +18,9 @@
 
 ## Config files
 
-- [configs/.config/nvim/init.lua](configs/.config/nvim/init.lua)
-- [configs/.config/nvim/ftplugin](configs/.config/nvim/ftplugin)
-- [configs/.config/nvim/lua/plugins/](configs/.config/nvim/lua/plugins/)
+- Global config: [configs/.config/nvim/init.lua](configs/.config/nvim/init.lua)
+- Language specific: [configs/.config/nvim/ftplugin/](configs/.config/nvim/ftplugin/)
+- Plugins: [configs/.config/nvim/lua/plugins/](configs/.config/nvim/lua/plugins/)
 
 
 ## Keybindings
@@ -67,6 +67,7 @@
 | `K`              | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | LSP: Show hover information |
 | `<C-x>`, `<C-o>` | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | LSP: Auto complete |
 | `u`              | [neovim undo default](https://neovim.io/doc/user/undo.html#u)                       | Undo |
+| `U`              | [init.lua](configs/.config/nvim/init.lua)                                           | Redo |
 
 
 ### Default keymappings references
@@ -112,10 +113,10 @@ Still flaky, doesn't help with unit tests in Go, since they are in a separate fi
 
 ### Find and replace
 
-- `:s/foo/bar/g` is the GOAT.
-  - `:s/ \+$//g` removes all trailing spaces.
-  - `:s/\r//g` converts Windows line endings to Unix line endings.
-- Works with `V` too.
+- `V`, select a text block
+- `:s/foo/bar/g`
+  - `gg`, `V`, `G`, `:s/ \+$//g` removes all trailing spaces.
+  - `gg`, `V`, `G`, `:s/\r//g` converts Windows line endings to Unix line endings.
 
 
 ## Configuration
@@ -140,6 +141,7 @@ Still flaky, doesn't help with unit tests in Go, since they are in a separate fi
 ## Wish list
 
 - [ ] Cursor-like whole repo refactoring.
+- [ ] RAG based on LSP, e.g. [Davidyz/VectorCode](https://github.com/Davidyz/VectorCode).
 - [ ] Go imports to work all the time (it got flaky, I don't know why).
 - [ ] Multi-cursor support
   ([example](https://github.com/olimorris/dotfiles/blob/main/.config/nvim/lua/config/keymaps.lua)).
