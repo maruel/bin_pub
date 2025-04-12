@@ -222,3 +222,11 @@ vim.api.nvim_create_autocmd('InsertLeave', {
 		end
 	end,
 })
+
+-- Disable sign column in diff mode.
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "diff" },
+	callback = function()
+		vim.opt_local.signcolumn = "no"
+	end,
+})

@@ -47,3 +47,5 @@ else
   alias ls='ls -F --color=tty'
 fi
 
+# Neovim doesn't provide a vimdiff binary, alias it.
+alias vimdiff='nvim -d'

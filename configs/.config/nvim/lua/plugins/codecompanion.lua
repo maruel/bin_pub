@@ -4,11 +4,8 @@ return {
 	opts = {
 		strategies = {
 			chat = {
+				-- Options: 'anthropic', 'cerebras', 'copilot', 'groq', 'ollama'
 				adapter = 'cerebras',
-				-- adapter = 'groq',
-				-- adapter = 'copilot',
-				-- adapter = 'ollama',
-				-- adapter = 'anthropic',
 				tools = {
 					['mcp'] = {
 						-- Calling it in a function prevent mcphub from being loaded before it's needed since
@@ -20,9 +17,7 @@ return {
 				start_in_insert_mode = true,
 			},
 			inline = {
-				adapter = 'copilot',
-				-- adapter = 'ollama',
-				-- adapter = 'anthropic',
+				adapter = 'cerebras',
 			},
 		},
 		adapters = {
