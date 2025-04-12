@@ -9,7 +9,6 @@ import argparse
 import difflib
 import os
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -224,7 +223,7 @@ def main():
 
     process_os_specific_paths(files)
 
-    cmd = ['vim', '-d']
+    cmd = ['nvim', '-d']
     if sys.platform == 'win32':
         cmd = ['C:\\Program Files\\Git\\usr\\bin\\vim.exe', '-d']
     if args.u:
