@@ -141,7 +141,8 @@ Still flaky, doesn't help with unit tests in Go, since they are in a separate fi
 ## Wish list
 
 - [ ] Cursor-like whole repo refactoring.
-- [ ] RAG based on LSP, e.g. [Davidyz/VectorCode](https://github.com/Davidyz/VectorCode).
+    - [ ] MCP based tooling, e.g. [ravitemer/mcphub.nvim](https://github.com/ravitemer/mcphub.nvim).
+    - [ ] RAG based on LSP, e.g. [Davidyz/VectorCode](https://github.com/Davidyz/VectorCode).
 - [ ] Go imports to work all the time (it got flaky, I don't know why).
 - [ ] Multi-cursor support
   ([example](https://github.com/olimorris/dotfiles/blob/main/.config/nvim/lua/config/keymaps.lua)).
