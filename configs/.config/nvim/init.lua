@@ -69,6 +69,7 @@ require('config.lazy')
 -- We need to check https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md and configure the language server.
 -- This will change soon: https://github.com/neovim/nvim-lspconfig/issues/3494
 -- TODO: Revisit after 2025-06.
+-- vim.lsp.set_log_level("debug")
 local lspconfig = require('lspconfig')
 lspconfig.gopls.setup({
 	on_attach = function(client, bufnr)
@@ -81,7 +82,7 @@ lspconfig.gopls.setup({
 		gopls = {
 			analyses = { unusedparams = true, },
 			staticcheck = true,
-			gofumpt = false,
+			gofumpt = true,
 		},
 	},
 })

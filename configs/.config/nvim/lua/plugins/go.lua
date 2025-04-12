@@ -2,11 +2,6 @@
 -- Lots of go specific functionality.
 return {
 	'ray-x/go.nvim',
-	dependencies = {
-		'ray-x/guihua.lua',
-		'neovim/nvim-lspconfig',
-		'nvim-treesitter/nvim-treesitter',
-	},
 	config = true,
 	opts = {
 		lsp_cfg = false,
@@ -16,6 +11,11 @@ return {
 		lsp_inlay_hints = {
 			enable = false,
 		},
+	},
+	dependencies = {
+		'ray-x/guihua.lua',
+		'neovim/nvim-lspconfig',
+		'nvim-treesitter/nvim-treesitter',
 	},
 	event = { 'CmdlineEnter' },
 	ft = { 'go' },
