@@ -72,9 +72,8 @@ See [win/README.md](win/README.md)
 
 ## Tmux
 
-My .tmux.conf includes a call to print_load, which prints the 1s CPU load every
-5 seconds, including MB/s and IO/s for disks, and on linux additionally network
-KB/s.
+My .tmux.conf includes a call to [print_stats](print_stats), which prints the 1s CPU load every 5 seconds,
+including MB/s and IO/s for disks, and on linux additionally network KB/s.
 
 How it looks on Ubuntu:
 

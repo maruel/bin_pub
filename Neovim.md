@@ -41,6 +41,7 @@
 | `<leader>fg`     | [init.lua](configs/.config/nvim/init.lua)                                                         | [Telescope](https://github.com/nvim-telescope/telescope.nvim) live grep |
 | ↪ `<C-q>`        | [Telescope](https://github.com/nvim-telescope/telescope.nvim?tab=readme-ov-file#default-mappings) | Send to quickfix list and open list |
 | `<leader>fb`     | [init.lua](configs/.config/nvim/init.lua) | [Telescope file browser](https://github.com/nvim-telescope/telescope-file-browser.nvim) |
+| `<C-f>`          | [init.lua](configs/.config/nvim/init.lua) | [Namu](https://github.com/bassamsdata/namu.nvim) Go to symbol fuzy search |
 | `<C-j>`          | [init.lua](configs/.config/nvim/init.lua) | Accept [Copilot](https://github.com/github/copilot.vim) suggestion |
 | `<leader>a`      | [init.lua](configs/.config/nvim/init.lua) | [CodeCompanion chat](https://codecompanion.olimorris.dev/configuration/chat-buffer.html) |
 | ↪ `<C-s>`        | [CodeCompanion default](https://codecompanion.olimorris.dev/configuration/chat-buffer.html#keymaps) | Send CodeCompanion chat |
@@ -65,12 +66,15 @@
 | `gw`             | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | LSP: Word wrap (or unwrap) current selection |
 | `K`              | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | LSP: Show hover information |
 | `<C-x>`, `<C-o>` | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | LSP: Auto complete |
+| `u`              | [neovim undo default](https://neovim.io/doc/user/undo.html#u)                       | Undo |
 
-See default keymappings:
+
+### Default keymappings references
 
 - https://neovim.io/doc/user/fold.html
 - https://neovim.io/doc/user/insert.html
 - https://neovim.io/doc/user/motion.html
+- https://neovim.io/doc/user/undo.html
 - https://neovim.io/doc/user/various.html
 - https://github.com/nvim-telescope/telescope.nvim#default-mappings
 - https://github.com/nvim-telescope/telescope-file-browser.nvim#mappings
@@ -106,10 +110,20 @@ See default keymappings:
 Still flaky, doesn't help with unit tests in Go, since they are in a separate file.
 
 
+### Find and replace
+
+- `:s/foo/bar/g` is the GOAT.
+  - `:s/ \+$//g` removes all trailing spaces.
+  - `:s/\r//g` converts Windows line endings to Unix line endings.
+- Works with `V` too.
+
+
 ## Configuration
 
+- Install: [linux/get_nvim.sh](linux/get_nvim.sh), [mac/get_nvim.sh](mac/get_nvim.sh) or
+  [Windows](https://github.com/neovim/neovim/blob/master/INSTALL.md)
 - Copilot
-  - Require nodejs
+  - Require nodejs: [linux/get_nodejs.sh](linux/get_nodejs.sh), [mac/get_nodejs.sh](mac/get_nodejs.sh)
   - `:Copilot setup`
 - CodeCompanion
   - Set environment variable with API keys
@@ -121,3 +135,12 @@ Still flaky, doesn't help with unit tests in Go, since they are in a separate fi
 - `:Copilot status`
 - `:checkhealth codecompanion`
 - `:checkhealth lsp`
+
+
+## Wish list
+
+- [ ] Cursor-like whole repo refactoring.
+- [ ] Go imports to work all the time (it got flaky, I don't know why).
+- [ ] Multi-cursor support
+  ([example](https://github.com/olimorris/dotfiles/blob/main/.config/nvim/lua/config/keymaps.lua)).
+- [ ] Learn how to use quickfix effectively, e.g. [kevinhwang91/nvim-bqf](https://github.com/kevinhwang91/nvim-bqf).

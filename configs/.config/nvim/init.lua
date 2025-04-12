@@ -19,11 +19,11 @@ vim.opt.textwidth = 110
 -- PROBLEM: breaks copying with the termina.
 -- PROBLEM: ColorColumn is ignored.
 -- vim.opt.colorcolumn = '80'
-
--- https://neovim.io/doc/user/lua.html#vim.o
-vim.o.foldenable = true
-vim.o.foldmethod = 'indent'
-vim.o.foldlevelstart = 99
+vim.opt.undofile = true
+vim.opt.undolevels = 1000
+vim.opt.foldenable = true
+vim.opt.foldmethod = 'indent'
+vim.opt.foldlevelstart = 99
 
 -- Need some testing...
 -- vim.o.termguicolors = true
@@ -61,6 +61,8 @@ vim.cmd('highlight netrwDir   ctermfg=Cyan')
 -- Load all plugins.
 -- Documentation: https://lazy.folke.io/spec
 require('config.lazy')
+-- TODO: Make this automatic.
+require("plugins.custom.spinner"):init()
 
 
 -- When we get an error on save like:
@@ -160,6 +162,9 @@ vim.keymap.set('i', '<C-J>', "copilot#Accept('\\<CR>')", {
 vim.keymap.set({ 'n', 'v' }, '<leader>s', '<Cmd>CodeCompanionActions<CR>')
 vim.keymap.set({ 'n', 'v' }, '<leader>a', '<Cmd>CodeCompanionChat Toggle<CR>')
 vim.keymap.set('v', 'ga', '<Cmd>CodeCompanionChat Add<CR>')
+vim.keymap.set({ 'i', 'n', 'v' }, '<C-f>', '<Cmd>Namu symbols<CR>', { desc = 'Jump to LSP symbol' })
+
+
 -- Expand 'cc' into 'CodeCompanion' in the command line
 vim.cmd([[cab cc CodeCompanion]])
 -- Enable features that only work if there is a language server active in the file.
