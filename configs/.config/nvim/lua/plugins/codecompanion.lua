@@ -4,7 +4,9 @@ return {
 	opts = {
 		strategies = {
 			chat = {
-				adapter = 'copilot',
+				adapter = 'cerebras',
+				-- adapter = 'groq',
+				-- adapter = 'copilot',
 				-- adapter = 'ollama',
 				-- adapter = 'anthropic',
 				tools = {
@@ -22,7 +24,42 @@ return {
 				-- adapter = 'ollama',
 				-- adapter = 'anthropic',
 			},
-		}
+		},
+		adapters = {
+			cerebras = function()
+				return require("codecompanion.adapters").extend("openai_compatible", {
+					env = {
+						url = "https://api.cerebras.ai",
+						api_key = vim.env.CEREBRAS_API_KEY,
+					},
+					schema = {
+						model = {
+							default = function(self)
+								-- https://cloud.cerebras.ai/
+								return "llama-4-scout-17b-16e-instruct"
+							end,
+						},
+					},
+				})
+			end,
+			groq = function()
+				return require("codecompanion.adapters").extend("openai_compatible", {
+					env = {
+						url = "https://api.groq.com/openai",
+						api_key = vim.env.GROQ_API_KEY,
+					},
+					schema = {
+						model = {
+							default = function(self)
+								-- See https://console.groq.com/settings/models
+								return "qwen-2.5-coder-32b"
+								-- return "qwen-qwq-32b"
+							end,
+						},
+					},
+				})
+			end,
+		},
 	},
 	dependencies = {
 		'nvim-lua/plenary.nvim',
