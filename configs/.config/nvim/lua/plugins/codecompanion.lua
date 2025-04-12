@@ -14,6 +14,7 @@ return {
 						description = 'Call tools and resources from the MCP Servers',
 					},
 				},
+				start_in_insert_mode = true,
 			},
 			inline = {
 				adapter = 'copilot',

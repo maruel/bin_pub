@@ -2,21 +2,24 @@
 
 ## Context and Preferences
 
+- _I just want an editor that works_. How hard can that be?
+- I don't have infinite memory, so I can only memorize so many keybindings.
 - I often ssh from Windows/macOS/Linux/ChromeOS into a Linux/macOS server, or use it locally. The
   configuration has to work everywhere.
-- _I just want an editor that works_. How hard can that be?
 - I almost always use nvim inside tmux
   - I configured tmux to support [256 colors](configs/.tmux.conf).
   - I don't use [tmux panes](https://github.com/tmux/tmux/wiki/Getting-Started#sessions-windows-and-panes) at
     all.
 - I don't use [neovim windows](https://neovim.io/doc/user/windows.html) much.
-- I don't mind quitting and restarting nvim often. I require nvim startup time to be unnoticeable.
+- I don't mind quitting and restarting nvim often.
+  - I require nvim startup time to be unnoticeable.
 - I'm fine with doing git operations in a separate tmux pane.
 
 
 ## Config files
 
 - [configs/.config/nvim/init.lua](configs/.config/nvim/init.lua)
+- [configs/.config/nvim/ftplugin](configs/.config/nvim/ftplugin)
 - [configs/.config/nvim/lua/plugins/](configs/.config/nvim/lua/plugins/)
 
 
@@ -71,6 +74,8 @@ See default keymappings:
 - https://neovim.io/doc/user/various.html
 - https://github.com/nvim-telescope/telescope.nvim#default-mappings
 - https://github.com/nvim-telescope/telescope-file-browser.nvim#mappings
+- https://codecompanion.olimorris.dev/usage/chat-buffer/#keymaps
+- https://codecompanion.olimorris.dev/usage/inline-assistant.html#diff-mode
 
 
 ## Use cases
@@ -86,8 +91,10 @@ See default keymappings:
 ### Chatting
 
 - `<leader>a` to open the CodeCompanion chat buffer
+  - _Write unit test for function foo in #buffer_
 - `<C-s>` to send the message
 - `<C-c>` to close the chat buffer
+- `gy` to paste the last code block generated from the LM chat into the current buffer
 
 
 ### Inline edit
@@ -95,6 +102,8 @@ See default keymappings:
 - `V` to select a code block
 - `:cc <question>` to ask a question to the LLM to edit the code
 - `ga` to accept the suggestion, `gr` to reject it
+
+Still flaky, doesn't help with unit tests in Go, since they are in a separate file.
 
 
 ## Configuration
