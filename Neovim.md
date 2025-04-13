@@ -58,10 +58,10 @@
 | `gg`             | [neovim motion default](https://neovim.io/doc/user/motion.html#gg)                  | Go to top of file |
 | `G`              | [neovim motion default](https://neovim.io/doc/user/motion.html#G)                   | Go to end of file |
 | `za`             | [neovim fold default](https://neovim.io/doc/user/fold.html#za)                      | Toggle fold |
-| `gd`             | [init.lua](configs/.config/nvim/init.lua)                                           | LSP: Go to definition |
 | `grn`            | [neovim LSP global default](https://neovim.io/doc/user/lsp.html#_global-defaults)   | LSP: Rename current symbol |
 | `grr`            | [neovim LSP global default](https://neovim.io/doc/user/lsp.html#_global-defaults)   | LSP: List current symbol references |
 | `gO`             | [neovim LSP global default](https://neovim.io/doc/user/lsp.html#_global-defaults)   | LSP: List all symbols in current file |
+| `<C-]>`          | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | LSP: Go to definition |
 | `gq`             | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | LSP: Format current selection |
 | `gw`             | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | LSP: Word wrap (or unwrap) current selection |
 | `K`              | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | LSP: Show hover information |
