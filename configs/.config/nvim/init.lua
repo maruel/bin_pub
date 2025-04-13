@@ -65,63 +65,6 @@ require('config.lazy')
 require("plugins.custom.spinner"):init()
 
 
--- When we get an error on save like:
---   [LSP] Format request failed, no matching language servers.
---   method textDocument/codeAction is not supported by any of the servers registered for the current buffer
--- We need to check https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md and configure the language server.
--- This will change soon: https://github.com/neovim/nvim-lspconfig/issues/3494
--- TODO: Revisit after 2025-06.
--- vim.lsp.set_log_level("debug")
-local lspconfig = require('lspconfig')
-lspconfig.gopls.setup({
-	on_attach = function(client, bufnr)
-		if vim.bo[bufnr].filetype == 'gomod' then
-			-- As of 2025-03, it's unusable.
-			client.stop()
-		end
-	end,
-	settings = {
-		gopls = {
-			analyses = { unusedparams = true, },
-			staticcheck = true,
-			gofumpt = true,
-		},
-	},
-})
--- lspconfig.grammarly.setup({})
-lspconfig.lua_ls.setup({
-	settings = {
-		Lua = {
-			runtime = { version = 'LuaJIT', },
-			workspace = { library = vim.api.nvim_get_runtime_file('', true), },
-		},
-	},
-})
-lspconfig.marksman.setup({})
-lspconfig.pyright.setup({})
-lspconfig.sourcekit.setup({
-	capabilities = {
-		workspace = {
-			didChangeWatchedFiles = {
-				dynamicRegistration = true,
-			},
-		},
-	},
-})
-lspconfig.yamlls.setup({})
-
-
--- Check if there are any LSP clients that can format.
-local function has_formatter(bufnr)
-	for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr or 0 })) do
-		if client.server_capabilities.documentFormattingProvider then
-			return true
-		end
-	end
-	return false
-end
-
-
 -- Delete the current file.
 local function confirm_and_delete_buffer()
 	if vim.fn.confirm("Delete buffer and file?", "&Yes\n&No", 2) == 1 then
@@ -171,29 +114,42 @@ vim.cmd([[cab cc CodeCompanion]])
 -- Enable features that only work if there is a language server active in the file.
 -- See https://neovim.io/doc/user/lsp.html#lsp-attach
 vim.api.nvim_create_autocmd('LspAttach', {
-	group = vim.api.nvim_create_augroup('my.lsp', {}),
+	group = vim.api.nvim_create_augroup('maruel.lsp.attach', { clear = true }),
 	callback = function(args)
-		vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = args.buf })
-		-- Auto format on save if supported.
-		-- TODO: I think I understand, there's multiple LSPs connecting!
 		local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
-		if not client:supports_method('textDocument/codeAction') then
+		-- Auto format on save if supported.
+		-- TODO: Figure out how to detect support.
+		if client:supports_method('textDocument/codeAction')
+			and client.server_capabilities.codeActionProvider
+			and vim.bo[args.buf].filetype == 'go' then
+			-- print(string.format("LspAttach: %s - with codeAction", client.name))
 			vim.api.nvim_create_autocmd('BufWritePre', {
-				group = vim.api.nvim_create_augroup("my.lsp", { clear = false }),
+				group = vim.api.nvim_create_augroup("maruel.lsp.bufwritepre.fixing", { clear = true }),
 				buffer = args.buf,
 				callback = function()
-					vim.lsp.buf.code_action { context = { diagnostics = {}, only = { 'source.organizeImports' } }, apply = true, triggerKind = 2 }
+					vim.lsp.buf.code_action({
+						context = {
+							diagnostics = {},
+							only = { vim.lsp.protocol.CodeActionKind.SourceOrganizeImports },
+							triggerKind = vim.lsp.protocol.CodeActionTriggerKind.Automatic,
+						},
+						apply = true,
+					})
 				end,
 			})
-		elseif not client:supports_method('textDocument/willSaveWaitUntil')
-			and client:supports_method('textDocument/formatting') then
+			-- not client:supports_method('textDocument/willSaveWaitUntil')
+		elseif client:supports_method('textDocument/formatting') then
+			-- print(string.format("LspAttach: %s - simple formatting", client.name))
 			vim.api.nvim_create_autocmd('BufWritePre', {
-				group = vim.api.nvim_create_augroup("my.lsp", { clear = false }),
+				group = vim.api.nvim_create_augroup("maruel.lsp.bufwritepre.formatting", { clear = true }),
 				buffer = args.buf,
 				callback = function()
 					vim.lsp.buf.format({ bufnr = args.buf, id = client.id, timeout_ms = 1000 })
 				end,
 			})
+		else
+			-- LLM based 'LSP's do not support most commands.
+			-- print(string.format("LspAttach: %s - Dumb LSP", client.name))
 		end
 	end,
 })

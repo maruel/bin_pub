@@ -3,5 +3,7 @@
 return {
 	'williamboman/mason.nvim',
 	config = true,
-	opts = {},
+	opts = {
+		ensure_installed = { 'black' },
+	},
 }
