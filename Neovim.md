@@ -59,7 +59,7 @@
 | `]]`             | [neovim motion default](https://neovim.io/doc/user/motion.html#%5D%5D)              | Next section |
 | `gg`             | [neovim motion default](https://neovim.io/doc/user/motion.html#gg)                  | Go to top of file |
 | `G`              | [neovim motion default](https://neovim.io/doc/user/motion.html#G)                   | Go to end of file |
-| `g\`"`           | [neovim motion default](https://neovim.io/doc/user/motion.html#g%60a)               | Last position |
+| `g``"`           | [neovim motion default](https://neovim.io/doc/user/motion.html#g%60a)               | Last position |
 | `ma`             | [neovim motion default](https://neovim.io/doc/user/motion.html#m)                   | Set mark a |
 | `'a`             | [neovim motion default](https://neovim.io/doc/user/motion.html#')                   | Go to mark a |
 | `za`             | [neovim fold default](https://neovim.io/doc/user/fold.html#za)                      | Toggle fold |
