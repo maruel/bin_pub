@@ -35,9 +35,11 @@
 | `F10`            | [init.lua](configs/.config/nvim/init.lua) | Next buffer |
 | `<C-h>`          | [init.lua](configs/.config/nvim/init.lua) | Previous buffer |
 | `<C-l>`          | [init.lua](configs/.config/nvim/init.lua) | Next buffer |
+| `<C-W> h`        | [neovim window default](https://neovim.io/doc/user/vimindex.html#CTRL-W) | Move focus to window on the right |
+| `<C-W> l`        | [neovim window default](https://neovim.io/doc/user/vimindex.html#CTRL-W) | Move focus to window on the left |
 | `<leader>df`     | [init.lua](configs/.config/nvim/init.lua) | Delete current file |
 | `<leader>ff`     | [init.lua](configs/.config/nvim/init.lua) | [Telescope](https://github.com/nvim-telescope/telescope.nvim) find files |
-| ↪ `<C-h>`        | [Telescope file browser](https://github.com/nvim-telescope/telescope-file-browser.nvim#mappings)  | Toggle hiden files |
+| ↪ `<C-h>`        | [Telescope file browser](https://github.com/nvim-telescope/telescope-file-browser.nvim#mappings)  | Toggle hidden files |
 | `<leader>fg`     | [init.lua](configs/.config/nvim/init.lua)                                                         | [Telescope](https://github.com/nvim-telescope/telescope.nvim) live grep |
 | ↪ `<C-q>`        | [Telescope](https://github.com/nvim-telescope/telescope.nvim?tab=readme-ov-file#default-mappings) | Send to quickfix list and open list |
 | `<leader>fb`     | [init.lua](configs/.config/nvim/init.lua) | [Telescope file browser](https://github.com/nvim-telescope/telescope-file-browser.nvim) |
@@ -57,6 +59,9 @@
 | `]]`             | [neovim motion default](https://neovim.io/doc/user/motion.html#%5D%5D)              | Next section |
 | `gg`             | [neovim motion default](https://neovim.io/doc/user/motion.html#gg)                  | Go to top of file |
 | `G`              | [neovim motion default](https://neovim.io/doc/user/motion.html#G)                   | Go to end of file |
+| `g\`"`           | [neovim motion default](https://neovim.io/doc/user/motion.html#g%60a)               | Last position |
+| `ma`             | [neovim motion default](https://neovim.io/doc/user/motion.html#m)                   | Set mark a |
+| `'a`             | [neovim motion default](https://neovim.io/doc/user/motion.html#')                   | Go to mark a |
 | `za`             | [neovim fold default](https://neovim.io/doc/user/fold.html#za)                      | Toggle fold |
 | `grn`            | [neovim LSP global default](https://neovim.io/doc/user/lsp.html#_global-defaults)   | LSP: Rename current symbol |
 | `grr`            | [neovim LSP global default](https://neovim.io/doc/user/lsp.html#_global-defaults)   | LSP: List current symbol references |
@@ -77,6 +82,7 @@
 - https://neovim.io/doc/user/motion.html
 - https://neovim.io/doc/user/undo.html
 - https://neovim.io/doc/user/various.html
+- https://neovim.io/doc/user/vimindex.html
 - https://github.com/nvim-telescope/telescope.nvim#default-mappings
 - https://github.com/nvim-telescope/telescope-file-browser.nvim#mappings
 - https://codecompanion.olimorris.dev/usage/chat-buffer/#keymaps
