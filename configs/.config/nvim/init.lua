@@ -119,9 +119,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
 		-- Auto format on save if supported.
 		-- TODO: Figure out how to detect support.
-		if client:supports_method('textDocument/codeAction')
-			and client.server_capabilities.codeActionProvider
-			and vim.bo[args.buf].filetype == 'go' then
+		-- if client:supports_method('textDocument/codeAction')
+		-- and client.server_capabilities.codeActionProvider then
+		if client.name == 'gopls' then
 			-- print(string.format("LspAttach: %s - with codeAction", client.name))
 			vim.api.nvim_create_autocmd('BufWritePre', {
 				group = vim.api.nvim_create_augroup("maruel.lsp.bufwritepre.fixing", { clear = true }),
