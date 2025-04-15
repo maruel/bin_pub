@@ -58,6 +58,29 @@ vim.cmd('highlight netrwDir   ctermfg=Cyan')
 -- vim.cmd('highlight ColorColumn ctermbg=Yellow')
 
 
+-- Debugging function when diagnosing why the hell things are not working.
+-- To debug live, run commands like:
+--   :lua print(string.format("%s", vim.inspect(vim.lsp.get_client_by_id(1).server_capabilities)))
+-- vs
+--   :lua print(string.format("%s", vim.inspect(vim.lsp.get_client_by_id(1).capabilities)))
+local function goddam(fmt, ...)
+	-- Use `:messages` to see the logs.
+	if false then
+		print(string.format(fmt, ...))
+	end
+	if false then
+		local filepath = vim.fn.stdpath('log') .. '/goddam.log'
+		local f = io.open(filepath, 'a')
+		if f then
+			f:write(string.format(fmt, ...) .. "\n") -- Write the formatted string and a newline
+			f:close()
+		else
+			print("Error opening file: " .. filepath)
+		end
+	end
+end
+
+
 -- Load all plugins.
 -- Documentation: https://lazy.folke.io/spec
 require('config.lazy')
@@ -111,45 +134,55 @@ vim.keymap.set({ 'n', 'v' }, 'U', '<Cmd>redo<CR>')
 
 -- Expand 'cc' into 'CodeCompanion' in the command line
 vim.cmd([[cab cc CodeCompanion]])
--- Enable features that only work if there is a language server active in the file.
--- See https://neovim.io/doc/user/lsp.html#lsp-attach
-vim.api.nvim_create_autocmd('LspAttach', {
-	group = vim.api.nvim_create_augroup('maruel.lsp.attach', { clear = true }),
+
+
+-- Auto format on save.
+vim.api.nvim_create_autocmd('BufWritePre', {
+	group = vim.api.nvim_create_augroup("maruel.lsp.bufwritepre.fixing", { clear = true }),
 	callback = function(args)
-		local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
-		-- Auto format on save if supported.
-		-- TODO: Figure out how to detect support.
-		-- if client:supports_method('textDocument/codeAction')
-		-- and client.server_capabilities.codeActionProvider then
-		if client.name == 'gopls' then
-			-- print(string.format("LspAttach: %s - with codeAction", client.name))
-			vim.api.nvim_create_autocmd('BufWritePre', {
-				group = vim.api.nvim_create_augroup("maruel.lsp.bufwritepre.fixing", { clear = true }),
-				buffer = args.buf,
-				callback = function()
-					vim.lsp.buf.code_action({
-						context = {
-							diagnostics = {},
-							only = { vim.lsp.protocol.CodeActionKind.SourceOrganizeImports },
-							triggerKind = vim.lsp.protocol.CodeActionTriggerKind.Automatic,
-						},
-						apply = true,
-					})
-				end,
-			})
-			-- not client:supports_method('textDocument/willSaveWaitUntil')
-		elseif client:supports_method('textDocument/formatting') then
-			-- print(string.format("LspAttach: %s - simple formatting", client.name))
-			vim.api.nvim_create_autocmd('BufWritePre', {
-				group = vim.api.nvim_create_augroup("maruel.lsp.bufwritepre.formatting", { clear = true }),
-				buffer = args.buf,
-				callback = function()
-					vim.lsp.buf.format({ bufnr = args.buf, id = client.id, timeout_ms = 1000 })
-				end,
-			})
-		else
-			-- LLM based 'LSP's do not support most commands.
-			-- print(string.format("LspAttach: %s - Dumb LSP", client.name))
+		-- This is not super efficient to query on each save but LSPs can be loaded late, and many LSPs can
+		--  be attached to a single buffer and their functionality can be loaded dynamically. We want only one
+		--  formatting BufWritePre so it's better to just lazy query every time.
+		goddam("BufWritePre: %s", vim.inspect(args))
+		local foundOrganize = false
+		local foundFormat = false
+		for _, client in ipairs(vim.lsp.get_clients({ bufnr = args.buf })) do
+			-- Check for: 'source.OrganizeImports' inside 'textDocument/codeAction'
+			if client:supports_method(vim.lsp.protocol.Methods.textDocument_codeAction)
+				and client.capabilities
+				and client.capabilities.textDocument
+				and client.capabilities.textDocument.codeAction
+				and client.capabilities.textDocument.codeAction.codeActionLiteralSupport
+				and client.capabilities.textDocument.codeAction.codeActionLiteralSupport.codeActionKind
+				and client.capabilities.textDocument.codeAction.codeActionLiteralSupport.codeActionKind.valueSet
+				and vim.tbl_contains(
+					client.capabilities.textDocument.codeAction.codeActionLiteralSupport.codeActionKind.valueSet,
+					vim.lsp.protocol.CodeActionKind.SourceOrganizeImports) then
+				goddam("BufWritePre: %s: sourceOrganize", client.name)
+				foundOrganize = true
+			end
+			-- 'textDocument/formatting'
+			if client:supports_method(vim.lsp.protocol.Methods.textDocument_formatting) then
+				goddam("BufWritePre: %s: format", client.name)
+				foundFormat = true
+			end
+		end
+		-- While slower, I realized it's better to format first then organize. The reason is that many LSP lie
+		-- that they can organize but do nothing. So better to be sure that the code is formatted.
+		if foundFormat then
+			vim.lsp.buf.format({ bufnr = args.buf })
+		end
+		if foundOrganize then
+			vim.lsp.buf.code_action(
+				{
+					bufnr = args.buf,
+					context = {
+						diagnostics = {},
+						only = { vim.lsp.protocol.CodeActionKind.SourceOrganizeImports },
+						triggerKind = vim.lsp.protocol.CodeActionTriggerKind.Automatic,
+					},
+					apply = true,
+				})
 		end
 	end,
 })
