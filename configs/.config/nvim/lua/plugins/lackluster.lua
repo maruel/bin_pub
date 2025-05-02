@@ -9,6 +9,9 @@ return {
 		tweak_background = {
 			normal = "#000000",
 		},
+		tweak_syntax = {
+			comment = "#02750a",
+		},
 	},
 	init = function()
 		vim.cmd.colorscheme("lackluster-night")
