@@ -201,3 +201,12 @@ cargo install ripgrep
 ```
 
 Then restart the shell.
+
+
+## Ghostty
+
+```
+snap install ghostty --classic
+```
+
+Ref: https://ghostty.org/docs/install/binary#snap
