@@ -54,6 +54,8 @@ end
 require('config.lazy')
 -- TODO: Make this automatic.
 require("plugins.custom.spinner"):init()
+-- Colors in lua/maruelcolor.lua
+require('maruelcolor').colorscheme()
 
 
 -- Delete the current file.
