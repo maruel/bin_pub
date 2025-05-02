@@ -25,38 +25,6 @@ vim.opt.foldenable = true
 vim.opt.foldmethod = 'indent'
 vim.opt.foldlevelstart = 99
 
--- Need some testing...
--- vim.o.termguicolors = true
--- vim.api.nvim_create_autocmd('ColorScheme', {
--- 	pattern = '*',
--- 	callback = function()
--- 		vim.cmd('highlight Normal guifg=#FFFFFF ctermfg=231')
--- 	end,
--- })
-
-vim.cmd('colorscheme default')
--- vim.opt.background = 'dark'
-vim.cmd('highlight Normal ctermbg=black')
-vim.cmd('highlight SpecialKey ctermfg=Red')
--- Syntax highlighting for the primary groups. These only take effect when
--- 'syntax on' is used.
--- (see :help group-name):
-vim.cmd('highlight Comment    ctermfg=LightBlue')
-vim.cmd('highlight Constant   ctermfg=White')
-vim.cmd('highlight String     ctermfg=DarkGreen')
-vim.cmd('highlight Identifier ctermfg=White')
--- Keep statements highlighted: highlight Statement  ctermfg=White
-vim.cmd('highlight PreProc    ctermfg=White')
-vim.cmd('highlight Type       ctermfg=White')
-vim.cmd('highlight Special    ctermfg=DarkGreen')
--- Highlight changes outside of groups. They take effect even when 'syntax off'
--- is used.
-vim.cmd('highlight Search     ctermfg=Black ctermbg=DarkYellow')
-vim.cmd('highlight IncSearch  ctermfg=Black ctermbg=DarkYellow')
-vim.cmd('highlight treeDir    ctermfg=Cyan')
-vim.cmd('highlight netrwDir   ctermfg=Cyan')
--- vim.cmd('highlight ColorColumn ctermbg=Yellow')
-
 
 -- Debugging function when diagnosing why the hell things are not working.
 -- To debug live, run commands like:
@@ -187,6 +155,14 @@ vim.api.nvim_create_autocmd('BufWritePre', {
 	end,
 })
 
+
+vim.api.nvim_create_autocmd('LspAttach', {
+	group = vim.api.nvim_create_augroup('maruel.lsp.attach', { clear = true }),
+	callback = function(args)
+		-- Alternative to `<C-]>`
+		vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = args.buf })
+	end,
+})
 
 -- Save cursor position
 vim.api.nvim_create_augroup('RestoreCursorPosition', { clear = true })
