@@ -37,11 +37,17 @@
 | `<C-l>`          | [init.lua](configs/.config/nvim/init.lua) | Next buffer |
 | `<C-W> h`        | [neovim window default](https://neovim.io/doc/user/vimindex.html#CTRL-W) | Move focus to window on the right |
 | `<C-W> l`        | [neovim window default](https://neovim.io/doc/user/vimindex.html#CTRL-W) | Move focus to window on the left |
+| `<C-W> 5<`       | [neovim window default](https://neovim.io/doc/user/vimindex.html#CTRL-W) | Reduce width
+by 5 columns |
+| `<C-W> 5-`       | [neovim window default](https://neovim.io/doc/user/vimindex.html#CTRL-W) | Reduce height
+by 5 rows |
 | `<leader>df`     | [init.lua](configs/.config/nvim/init.lua) | Delete current file |
 | `<leader>ff`     | [init.lua](configs/.config/nvim/init.lua) | [Telescope](https://github.com/nvim-telescope/telescope.nvim) find files |
 | ↪ `<C-h>`        | [Telescope file browser](https://github.com/nvim-telescope/telescope-file-browser.nvim#mappings)  | Toggle hidden files |
 | `<leader>fg`     | [init.lua](configs/.config/nvim/init.lua)                                                         | [Telescope](https://github.com/nvim-telescope/telescope.nvim) live grep |
-| ↪ `<C-q>`        | [Telescope](https://github.com/nvim-telescope/telescope.nvim?tab=readme-ov-file#default-mappings) | Send to quickfix list and open list |
+| ↪ `<C-q>`        | [Telescope](https://github.com/nvim-telescope/telescope.nvim?tab=readme-ov-file#default-mappings) | Send to [quickfix](https://neovim.io/doc/user/quickfix.html) list and open list |
+| `<leader>n`      | [init.lua](configs/.config/nvim/init.lua) | Next quickfix |
+| `<leader>p`      | [init.lua](configs/.config/nvim/init.lua) | Previous quickfix |
 | `<leader>fb`     | [init.lua](configs/.config/nvim/init.lua) | [Telescope file browser](https://github.com/nvim-telescope/telescope-file-browser.nvim) |
 | `<C-f>`          | [init.lua](configs/.config/nvim/init.lua) | [Namu](https://github.com/bassamsdata/namu.nvim) Go to symbol fuzy search |
 | `<C-j>`          | [init.lua](configs/.config/nvim/init.lua) | Accept [Copilot](https://github.com/github/copilot.vim) suggestion |
