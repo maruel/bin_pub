@@ -13,17 +13,20 @@ vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.smarttab = true
 vim.opt.mouse = ''
+vim.opt.scrolloff = 5
+vim.opt.sidescrolloff = 5
 -- Make 'gw' wrap at 110 columns.
 vim.opt.textwidth = 110
 --  Use a subtle highlight at 80 columns.
 -- PROBLEM: breaks copying with the termina.
 -- PROBLEM: ColorColumn is ignored.
 -- vim.opt.colorcolumn = '80'
-vim.opt.undofile = true
+-- vim.opt.undofile = true -- Testing if it makes autoread fail
 vim.opt.undolevels = 1000
 vim.opt.foldenable = true
 vim.opt.foldmethod = 'indent'
 vim.opt.foldlevelstart = 99
+vim.opt.autoread = true
 
 
 -- Debugging function when diagnosing why the hell things are not working.
