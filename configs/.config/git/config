@@ -18,6 +18,7 @@
   precomposeunicode = true
   commitGraph = true
   symlinks = true
+	pager = delta
   ; Requires https://github.com/dandavison/delta to be installed.
   ;pager = delta
 
@@ -28,13 +29,12 @@
   skippedCherryPicks = false
 
 
-; Requires https://github.com/dandavison/delta to be installed.
-; In practice I didn't find it that great, so I'll likely remove it.
 [interactive]
-  ; diffFilter = delta --color-only
+	diffFilter = delta --color-only
 [delta]
   features = side-by-side line-numbers decorations
   whitespace-error-style = 22 reverse
+	navigate = true
 [delta "decorations"]
   commit-decoration-style = bold yellow box ul
   file-style = bold yellow ul

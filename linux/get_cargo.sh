@@ -19,5 +19,7 @@ rm $TEMP_FILE
 
 # Needed for nvim telescope plugin
 $HOME/.cargo/bin/cargo install ripgrep
+# Testing to see if I like it
+$HOME/.cargo/bin/cargo install git-delta
 
 echo "Don't forget to restart your shell so rust and cargo are in PATH!"
