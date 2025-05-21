@@ -193,11 +193,8 @@ Visit `chrome://flags#crostini-gpu-support` and enable accelerated OpenGL.
 
 ## Rust
 
-Customize and do not modify the PATH (my scripts already do):
-
 ```
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-cargo install ripgrep
+./get_cargo.sh
 ```
 
 Then restart the shell.
