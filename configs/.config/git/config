@@ -1,44 +1,46 @@
 ; Super power git grep:
 [grep]
-  patternType = perl
+	patternType = perl
 
 
 ; Only meaningful if you use HTTPS cookies authentication.
 [http]
-  cookiefile = ~/.config/git/cookies
+	cookiefile = ~/.config/git/cookies
 
 
 ; Make it work reasonably well on Windows. The auto-crlf breaks the file's hash,
 ; which can break things if you hash the file content outside of git, like for
 ; releases. Symlinks should be used nowadays.
 [core]
-  autocrlf = false
-  deltaBaseCacheLimit = 1G
-  askpass = 
-  precomposeunicode = true
-  commitGraph = true
-  symlinks = true
-	pager = delta
+	autocrlf = false
+	deltaBaseCacheLimit = 1G
+	askpass = 
+	precomposeunicode = true
+	commitGraph = true
+	symlinks = true
   ; Requires https://github.com/dandavison/delta to be installed.
-  ;pager = delta
+	pager = delta
+
+
+; Requires https://github.com/dandavison/delta to be installed.
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	file-decoration-style =
+	hunk-header-decoration-style =
+	hunk-header-style = syntax
+	line-numbers-left-format = "{nm:^4}"
+	line-numbers-right-format = "{nm:^4}"
+	navigate = true
+	side-by-side = true
+	syntax-theme = none
+	whitespace-error-style = 22 reverse
 
 
 ; Reduce noise.
 [advice]
-  detachedHead = false
-  skippedCherryPicks = false
-
-
-[interactive]
-	diffFilter = delta --color-only
-[delta]
-  features = side-by-side line-numbers decorations
-  whitespace-error-style = 22 reverse
-	navigate = true
-[delta "decorations"]
-  commit-decoration-style = bold yellow box ul
-  file-style = bold yellow ul
-  file-decoration-style = none
+	detachedHead = false
+	skippedCherryPicks = false
 
 
 ; Super power git mergetool. It starts vimdiff in 4 windows mode.
@@ -49,29 +51,29 @@
 ; to remove the unnecessary lines, then :wqa to move to the next file. Works
 ; great!
 [merge]
-  tool = vimdiff4way
+	tool = vimdiff4way
 [mergetool]
-  prompt = false
-  keepBackup = false
+	prompt = false
+	keepBackup = false
 [mergetool "vimdiff4way"]
-  cmd = vimdiff -c \"wincmd J\" -c \"0\" -c \"/<<<<<<< \" $MERGED $LOCAL $BASE $REMOTE
+	cmd = vimdiff -c \"wincmd J\" -c \"0\" -c \"/<<<<<<< \" $MERGED $LOCAL $BASE $REMOTE
 
 
 ; Coupled with color.ui = auto above, makes git diff output nice. I recommend to
 ; set in bash the following alias:
 ;   alias diff="git diff --no-index --no-ext-diff --no-prefix"
 [diff]
-  tool = vimdiff
-  noprefix = true
+	tool = vimdiff
+	noprefix = true
 
 
 ; May not be great ideas to set as default. I like to live dangerously.
 [push]
-  default = current
+	default = current
 [gui]
-  pruneduringfetch = true
+	pruneduringfetch = true
 [receive]
-  denyCurrentBranch = warn
+	denyCurrentBranch = warn
 
 
 ; Required to use a flow where "one PR/CL equals one named branch". This is
@@ -79,11 +81,11 @@
 ; projects that aims towards a linear commit history but less often used
 ; elsewhere.
 [branch]
-  autosetupmerge = always
-  autosetuprebase = always
-  sort = -committerdate
+	autosetupmerge = always
+	autosetuprebase = always
+	sort = -committerdate
 [pull]
-  rebase = true
+	rebase = true
 
 
 ; My aliases.
@@ -91,80 +93,80 @@
 [alias]
   ; Shortcuts
 
-  br = branch
-  ci = commit
-  co = checkout
+	br = branch
+	ci = commit
+	co = checkout
 
   ; Querying
 
   ; status but don't look into submodules.
-  st = status --ignore-submodule=all -sb
+	st = status --ignore-submodule=all -sb
   ; list all local branches and their recent commit subject
-  heads = "branch --format=\"%(color:red)%(align:30,right)%(refname:short)%(end)%(color:reset): %(subject)\""
+	heads = "branch --format=\"%(color:red)%(align:30,right)%(refname:short)%(end)%(color:reset): %(subject)\""
   ; diff against merge base using vimdiff.
-  df = "!git difftool \"$(git ancestor)\" -- "
+	df = "!git difftool \"$(git ancestor)\" -- "
   ; log with patches until merge base.
-  lp = "log -p @{u}.."
+	lp = "log -p @{u}.."
   ; Prints untracked files
-  untracked = "!cd \"$(git rev-parse --show-cdup)\" && git clean -n -d | cut -c 14- | sed -e \"s/\\/$//\" | while read i; do echo /$i; done"
+	untracked = "!cd \"$(git rev-parse --show-cdup)\" && git clean -n -d | cut -c 14- | sed -e \"s/\\/$//\" | while read i; do echo /$i; done"
   ; Prints the repo's description if it exists.
-  which = !cat $(git rev-parse --git-dir)/description
+	which = !cat $(git rev-parse --git-dir)/description
   ; Prints a graph about the current state of the branches
-  confused = log --graph --decorate --pretty=format:\"%Cgreen%h%d %Cred%ad %Creset%s\" --branches --date-order --date=short --tags
+	confused = log --graph --decorate --pretty=format:\"%Cgreen%h%d %Cred%ad %Creset%s\" --branches --date-order --date=short --tags
   ; Returns the 'ancestor' hash at which the current branch is based on
-  ancestor = !git merge-base HEAD @{u}
+	ancestor = !git merge-base HEAD @{u}
   ; Smaller log against the ancestor
-  compact-log = !git log --pretty=format:\"%B\" $(git ancestor)..HEAD
+	compact-log = !git log --pretty=format:\"%B\" $(git ancestor)..HEAD
   ; Blames against a branch given as an argument
-  blamebranch = "!foo() { git diff --name-only \"$@\" | while read i; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr; }; foo"
+	blamebranch = "!foo() { git diff --name-only \"$@\" | while read i; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr; }; foo"
   ; Blames against the 'upstream' branch
-  blameup = !git blamebranch $(git ancestor)
+	blameup = !git blamebranch $(git ancestor)
   ; Blames a for a few files. The length of arguments is relatively limited, it'll
   ; fail after ~100 files or so, depending on the actual string (total file names)
   ; length.
-  blamefiles = "!foo() { for i in \"$@\"; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr; }; foo"
+	blamefiles = "!foo() { for i in \"$@\"; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr; }; foo"
   ; Generate a graph
-  graphviz = "!f() { echo 'digraph git {' ; git log --pretty='format:  %h -> { %p }' \"$@\" | sed 's/[0-9a-f][0-9a-f]*/\"&\"/g' ; echo '}'; }; f"
+	graphviz = "!f() { echo 'digraph git {' ; git log --pretty='format:  %h -> { %p }' \"$@\" | sed 's/[0-9a-f][0-9a-f]*/\"&\"/g' ; echo '}'; }; f"
 
   ; Editing
 
   ; Squash all the commits against the ancestor into a single commit
-  squash = "!OLDLOG=$(git compact-log); git reset --soft $(git ancestor) && git commit -m \"$OLDLOG\""
+	squash = "!OLDLOG=$(git compact-log); git reset --soft $(git ancestor) && git commit -m \"$OLDLOG\""
   ; Run sed on all files skipping symlinks. It is significantly slower than
   ; git sed-fast but does the right thing.
-  sed = "!git ls-files -z -- . | xargs -0 -P 10 -i git sed-internal \"{}\""
+	sed = "!git ls-files -z -- . | xargs -0 -P 10 -i git sed-internal \"{}\""
   ; Internal script used by git sed to reorder the arguments. Not meant to be
   ; used directly.
-  sed-internal = "!foo() { [ -L \"$1\" ] || sed -i \"${@:2}\" \"$1\"; }; foo"
+	sed-internal = "!foo() { [ -L \"$1\" ] || sed -i \"${@:2}\" \"$1\"; }; foo"
   ; Run sed on all files; fast version. The caveat is that it converts symlinks
   ; in the tree to files.
-  sed-fast = "!git ls-files -z -- . | xargs -0 -P 10 -L 1 sed -i"
+	sed-fast = "!git ls-files -z -- . | xargs -0 -P 10 -L 1 sed -i"
   ; Delete branch
-  bd = branch -D
+	bd = branch -D
   ; Add all untracked files to .git/info/exclude
-  ignoreall = "!cd \"$(git rev-parse --show-cdup)\" && git clean -n -d | cut -c 14- | sed -e \"s/\\/$//\" >> $(git rev-parse --git-dir)/info/exclude"
+	ignoreall = "!cd \"$(git rev-parse --show-cdup)\" && git clean -n -d | cut -c 14- | sed -e \"s/\\/$//\" >> $(git rev-parse --git-dir)/info/exclude"
   ; Rebase against the ancestor
-  reroll = !git rebase -i $(git ancestor)
+	reroll = !git rebase -i $(git ancestor)
   ; TODO(maruel): How to not hardcode origin/main?
-  new = "!f() { git fetch && git checkout -b $@ origin/main; }; f"
+	new = "!f() { git fetch && git checkout -b $@ origin/main; }; f"
   ; Create a CL. Requires Commit-Id: footer script.
   ; TODO(maruel): Use git for-each-ref --format='%(refname:short)' "$(git symbolic-ref -q HEAD)"
-  gerrit = push origin HEAD:refs/for/main
-  gerritmaster = push origin HEAD:refs/for/master
+	gerrit = push origin HEAD:refs/for/main
+	gerritmaster = push origin HEAD:refs/for/master
   ; Create a CL and trigger the label Commit-Queue.
-  gerritcq = push origin HEAD:refs/for/main%l=Commit-Queue+1
+	gerritcq = push origin HEAD:refs/for/main%l=Commit-Queue+1
 
 
 [submodule]
-  fetchJobs = 16
+	fetchJobs = 16
 
 
 [init]
-  defaultBranch = main
+	defaultBranch = main
 
 
 [checkout]
-  defaultRemote = origin
+	defaultRemote = origin
 
 
 [filter "lfs"]
