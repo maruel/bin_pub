@@ -91,11 +91,6 @@ vim.keymap.set({ 'n', 'v' }, '<leader>ff', '<Cmd>Telescope find_files<CR>', { de
 vim.keymap.set({ 'n', 'v' }, '<leader>fg', '<Cmd>Telescope live_grep<CR>', { desc = 'Telescope live grep' })
 vim.keymap.set({ 'n', 'v' }, '<leader>fb', '<Cmd>Telescope file_browser path=%:p:h select_buffer=true<CR>')
 vim.keymap.set('n', '<leader>df', confirm_and_delete_buffer)
--- AI
-vim.keymap.set('i', '<C-J>', "copilot#Accept('\\<CR>')", {
-	expr = true,
-	replace_keycodes = false
-})
 -- ga = accept change
 -- gr = reject change
 vim.keymap.set({ 'n', 'v' }, '<leader>s', '<Cmd>CodeCompanionActions<CR>')
