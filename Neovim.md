@@ -27,6 +27,7 @@
 
 | Key              | Source                               | Description |
 | ---------------- | ------------------------------------ | ----------- |
+| `F3`             | [init.lua](configs/.config/nvim/init.lua) | Toggle sign column |
 | `F4`             | [init.lua](configs/.config/nvim/init.lua) | Git blame |
 | `F5`             | [init.lua](configs/.config/nvim/init.lua) | Go coverage |
 | `F7`             | [init.lua](configs/.config/nvim/init.lua) | Toggle paste |

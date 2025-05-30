@@ -69,6 +69,37 @@ local function confirm_and_delete_buffer()
 	end
 end
 
+-- Disable the annoying left shift. But it makes copying annoying.
+vim.opt.signcolumn = 'yes'
+vim.api.nvim_create_autocmd('InsertEnter', {
+	callback = function()
+		if vim.o.paste then
+			vim.opt.signcolumn = 'no'
+		end
+	end,
+})
+vim.api.nvim_create_autocmd('InsertLeave', {
+	callback = function()
+		if vim.o.paste then
+			vim.opt.signcolumn = 'auto'
+		end
+	end,
+})
+-- Disable sign column in diff mode.
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "diff" },
+	callback = function()
+		vim.opt_local.signcolumn = "no"
+	end,
+})
+local function toggle_signcolumn()
+	if vim.opt.signcolumn:get() == 'no' then
+		vim.opt.signcolumn = 'yes'
+	else
+		vim.opt.signcolumn = 'no'
+	end
+end
+
 
 -- Key bindings.
 -- Difficult to use:
@@ -77,6 +108,7 @@ end
 -- https://neovim.io/doc/user/lua.html#_lua-module:-vim.keymap
 -- https://neovim.io/doc/user/intro.html#keycodes
 -- F-keys
+vim.keymap.set({ 'i', 'n', 'v' }, '<F3>', toggle_signcolumn)
 vim.keymap.set({ 'i', 'n', 'v' }, '<F4>', '<Cmd>Gitsigns blame<CR>')
 --vim.keymap.set({ 'i', 'n', 'v' }, '<C-4>', '<Cmd>Gitsigns toggle_current_line_blame<CR>')
 vim.keymap.set({ 'i', 'n', 'v' }, '<F5>', '<Cmd>GoCoverage<CR>') -- TODO: move to Go specific.
@@ -176,33 +208,4 @@ vim.api.nvim_create_autocmd('BufReadPost', {
 			vim.cmd('normal! g`"')
 		end
 	end
-})
-
-
--- Disable the annoying left shift. But it makes copying annoying.
--- :set scl=no
--- :set scl=yes
--- :set scl=auto
-vim.opt.signcolumn = 'yes'
-vim.api.nvim_create_autocmd('InsertEnter', {
-	callback = function()
-		if vim.o.paste then
-			vim.opt.signcolumn = 'no'
-		end
-	end,
-})
-vim.api.nvim_create_autocmd('InsertLeave', {
-	callback = function()
-		if vim.o.paste then
-			vim.opt.signcolumn = 'yes'
-		end
-	end,
-})
-
--- Disable sign column in diff mode.
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "diff" },
-	callback = function()
-		vim.opt_local.signcolumn = "no"
-	end,
 })

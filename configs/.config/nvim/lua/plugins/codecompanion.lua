@@ -1,24 +1,38 @@
 -- https://codecompanion.olimorris.dev/
+--
+-- Actions:
+-- https://codecompanion.olimorris.dev/usage/action-palette.html
+--
+-- Inline assistant:
+-- https://codecompanion.olimorris.dev/usage/inline-assistant.html
+--
+-- Key mappings:
+-- https://codecompanion.olimorris.dev/usage/chat-buffer/#keymaps
+--
+-- Commands:
+-- https://codecompanion.olimorris.dev/usage/chat-buffer/slash-commands.html
 return {
 	'olimorris/codecompanion.nvim',
 	opts = {
 		strategies = {
 			chat = {
+				adapter = 'gemini',
 				-- Options: 'anthropic', 'cerebras', 'copilot', 'groq', 'ollama'
-				adapter = 'cerebras',
-				tools = {
-					['mcp'] = {
-						-- Calling it in a function prevent mcphub from being loaded before it's needed since
-						-- it's slow.
-						callback = function() return require('mcphub.extensions.codecompanion') end,
-						description = 'Call tools and resources from the MCP Servers',
-					},
-				},
+				-- adapter = 'cerebras',
+				-- tools = {
+				-- 	['mcp'] = {
+				-- 		-- Calling it in a function prevent mcphub from being loaded before it's needed since
+				-- 		-- it's slow.
+				-- 		callback = function() return require('mcphub.extensions.codecompanion') end,
+				-- 		description = 'Call tools and resources from the MCP Servers',
+				-- 	},
+				-- },
 				start_in_insert_mode = true,
 			},
-			-- TODO: figure out to make it work without copilot plugin.
+			-- https://codecompanion.olimorris.dev/usage/chat-buffer/#completion
 			inline = {
-				adapter = 'cerebras',
+				-- adapter = 'cerebras',
+				adapter = 'gemini',
 			},
 		},
 		adapters = {
@@ -61,5 +75,5 @@ return {
 		'nvim-lua/plenary.nvim',
 		'nvim-treesitter/nvim-treesitter',
 	},
-	build = ':TSInstall yaml',
+	build = ':TSInstall markdown markdown_inline yaml',
 }
