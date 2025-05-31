@@ -132,6 +132,17 @@ Still flaky, doesn't help with unit tests in Go, since they are in a separate fi
   - `gg`, `V`, `G`, `:s/\r//g` converts Windows line endings to Unix line endings.
 
 
+### Find and replace in many files
+
+- `<space>fg` to open Telescope live_grep
+- Type regexp
+- `<C-q>` to send files to quickfix
+- `:cfdo :%s/Foo/Bar/g | update | bd` 
+  - `cfdo` opens each file in QuickFix, run the commands.
+  - `update` is like `write` but doesn't write if there's no change.
+  - `bd` closes the buffer (file).
+
+
 ## Configuration
 
 - Install: [linux/get_nvim.sh](linux/get_nvim.sh), [mac/get_nvim.sh](mac/get_nvim.sh) or
