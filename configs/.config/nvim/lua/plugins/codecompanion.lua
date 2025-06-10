@@ -17,6 +17,8 @@ return {
 		strategies = {
 			chat = {
 				adapter = 'gemini',
+				model = 'gemini-2.5-flash-preview-05-20',
+				-- model = 'gemini-2.5-pro-preview-06-05',
 				-- Options: 'anthropic', 'cerebras', 'copilot', 'groq', 'ollama'
 				-- adapter = 'cerebras',
 				-- tools = {
@@ -32,7 +34,7 @@ return {
 			-- https://codecompanion.olimorris.dev/usage/chat-buffer/#completion
 			inline = {
 				-- adapter = 'cerebras',
-				adapter = 'gemini',
+				-- adapter = 'gemini',
 			},
 		},
 		adapters = {

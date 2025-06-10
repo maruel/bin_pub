@@ -61,6 +61,34 @@ require("plugins.custom.spinner"):init()
 require('maruelcolor').colorscheme()
 
 
+-- LSP
+vim.lsp.config('gopls', {
+	on_attach = function(client, bufnr)
+		if vim.bo[bufnr].filetype == 'gomod' then
+			-- As of 2025-03, it's unusable.
+			client.stop()
+		end
+	end,
+	settings = {
+		gopls = {
+			analyses = { unusedparams = true, },
+			staticcheck = true,
+			gofumpt = true,
+		},
+	},
+})
+vim.lsp.config('lua_ls', {
+	settings = {
+		Lua = {
+			runtime = { version = 'LuaJIT', },
+			workspace = { library = vim.api.nvim_get_runtime_file('', true), },
+			diagnostics = { globals = { 'vim', }, },
+			telemetry = { enable = false, },
+		},
+	},
+})
+
+
 -- Delete the current file.
 local function confirm_and_delete_buffer()
 	if vim.fn.confirm("Delete buffer and file?", "&Yes\n&No", 2) == 1 then
