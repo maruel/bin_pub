@@ -8,16 +8,17 @@
 # A simplified version of https://github.com/boldsoftware/sketch/blob/main/loop/server/local_ssh.md but
 # without the certification verification done properly yet.
 
-set -eu
+set -euo pipefail
 
 # Settings:
 CONTAINER_NAME=mydevenv
 BASE_IMAGE=debian:12.11-slim
+GO_VERSION=1.24.4
 
 
 # Common script to be used all the time.
 SCRIPT=$(cat <<- EOF
-	set -eu
+	set -euo pipefail
 	echo ''
 	echo '- Initializing ...'
 	apt-get update -q -q
@@ -68,6 +69,7 @@ EOF
 
 # Extras:
 SCRIPT_EXTRAS=$(cat <<- EOF
+	set -euo pipefail
 	echo '- Installing node ...'
 	curl -sSL -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | METHOD=script bash
 	source \$HOME/.nvm/nvm.sh
@@ -77,6 +79,11 @@ SCRIPT_EXTRAS=$(cat <<- EOF
 	echo ''
 	echo '- Installing gemini CLI ...'
 	npm install -g @google/gemini-cli
+
+	echo ''
+	echo '- Installing Go ${GO_VERSION} ...'
+	curl -sSL -o- https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar -C /usr/local -xzf -
+	echo 'export PATH="\$PATH:/usr/local/go/bin"' >> /root/.bashrc
 EOF
 )
 
