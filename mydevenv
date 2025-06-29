@@ -1,0 +1,151 @@
+#!/bin/bash
+# Copyright 2025 Marc-Antoine Ruel. All Rights Reserved. Use of this
+# source code is governed by a BSD-style license that can be found in the
+# LICENSE file.
+#
+# mydevenv: sets up a local dev environment with a local git clone for quick iteration.
+#
+# A simplified version of https://github.com/boldsoftware/sketch/blob/main/loop/server/local_ssh.md but
+# without the certification verification done properly yet.
+
+set -eu
+
+# Settings:
+CONTAINER_NAME=mydevenv
+BASE_IMAGE=debian:12.11-slim
+
+
+# Common script to be used all the time.
+SCRIPT=$(cat <<- EOF
+	set -eu
+	echo ''
+	echo '- Initializing ...'
+	apt-get update -q -q
+	apt-get install -q -q -y --no-install-recommends ca-certificates curl git openssh-server vim > /dev/null
+	curl -sSL -o /root/.git-completion.bash https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
+	echo 'source /root/.git-completion.bash' >> /root/.bashrc
+	echo 'source /etc/bash_completion.d/git-prompt' >> /root/.bashrc
+	echo 'GIT_PS1_DESCRIBE_STYLE=tag' >> /root/.bashrc
+	echo 'GIT_PS1_SHOWCOLORHINTS=1' >> /root/.bashrc
+	echo 'GIT_PS1_SHOWDIRTYSTATE=1' >> /root/.bashrc
+	echo 'GIT_PS1_SHOWSTASHSTATE=1' >> /root/.bashrc
+	echo 'GIT_PS1_SHOWUNTRACKEDFILES=1' >> /root/.bashrc
+	echo 'GIT_PS1_SHOWUPSTREAM=auto' >> /root/.bashrc
+  	echo 'function __my_ps1 {' >> /root/.bashrc
+    echo '  __git_ps1 \\' >> /root/.bashrc
+    echo '    "\\[\\e]0;\\W\\a\\]\\[\\e[0m\\]\\\$(_V=\\\$?; if [ \\\$_V != 0 ]; then echo -e -n \\"\\\\[\\\\e[31m\\\\]\\\$_V\\\\[\\\\e[0m\\\\]\\" ; fi)" \\' >> /root/.bashrc
+    echo '    "\\[\\e[33m\\]\\w\\[\\e[0m\\]🐳 "' >> /root/.bashrc
+    echo '}' >> /root/.bashrc
+	echo 'PROMPT_COMMAND=__my_ps1' >> /root/.bashrc
+
+	echo '- Configuring SSH ...'
+	mkdir /root/.ssh 
+	chmod 700 /root/.ssh 
+	# TODO: Use strict host validation:
+	echo 'StrictHostKeyChecking no' >> /root/.ssh/config
+	echo 'PermitRootLogin prohibit-password' >> /etc/ssh/sshd_config
+	echo 'PasswordAuthentication no' >> /etc/ssh/sshd_config
+	# Copy files instead of mounting so the ACL is good.
+	cp /root/.ssh_src/container_user_identity.pub /root/.ssh/authorized_keys
+	cp /root/.ssh_src/container_user_identity /root/.ssh/id_rsa
+	cp /root/.ssh_src/container_user_identity.pub /root/.ssh/id_rsa.pub
+	cp /root/.ssh_src/container_server_identity /etc/ssh/ssh_host_rsa_key
+	cp /root/.ssh_src/container_server_identity.pub /etc/ssh/ssh_host_rsa_key.pub
+	chmod 600 /root/.ssh/*.*
+	echo 'Welcome to "$CONTAINER_NAME"!' > /etc/motd
+	service ssh start
+
+	echo '- Configuring /app as a git repository ...'
+	mkdir /app
+	cd /app
+	git init -q
+	echo 'cd /app' >> /root/.bashrc
+EOF
+)
+
+# Extras:
+SCRIPT_EXTRAS=$(cat <<- EOF
+	echo '- Installing node ...'
+	curl -sSL -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | METHOD=script bash
+	source \$HOME/.nvm/nvm.sh
+	nvm install --no-progress node
+	nvm use node
+
+	echo ''
+	echo '- Installing gemini CLI ...'
+	npm install -g @google/gemini-cli
+EOF
+)
+
+
+######
+
+
+function run {
+	echo "- Removing old container $CONTAINER_NAME"
+	docker rm -f $CONTAINER_NAME 2>/dev/null || true
+
+	echo "- Creating container $CONTAINER_NAME"
+	docker run -d \
+	  --name $CONTAINER_NAME \
+	  -v ~/.config/sketch/container_user_identity.pub:/root/.ssh_src/container_user_identity.pub:ro \
+	  -v ~/.config/sketch/container_user_identity:/root/.ssh_src/container_user_identity:ro \
+	  -v ~/.config/sketch/container_server_identity:/root/.ssh_src/container_server_identity:ro \
+	  -v ~/.config/sketch/container_server_identity.pub:/root/.ssh_src/container_server_identity.pub:ro \
+	  -v ~/.gemini:/root/.gemini \
+	  $BASE_IMAGE bash -c "sleep infinity"
+
+	echo "- Configuring ssh to container ..."
+	IP_ADDRESS=$(docker inspect --format '{{.NetworkSettings.IPAddress}}' $CONTAINER_NAME)
+	echo "Host $CONTAINER_NAME" > ~/.ssh/config.d/$CONTAINER_NAME.conf
+	echo "  HostName $IP_ADDRESS" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
+	echo "  User root" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
+	echo "  IdentityFile $HOME/.config/sketch/container_user_identity" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
+	echo '  CertificateFile $HOME/.config/sketch/container_ca.pub' >> ~/.ssh/config.d/$CONTAINER_NAME.conf
+	echo "  StrictHostKeyChecking no" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
+	# TODO: Use strict host validation:
+	#echo "  UserKnownHostsFile $HOME/.config/sketch/known_hosts" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
+	echo "  UserKnownHostsFile /dev/null" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
+
+	echo "- Configuring container ..."
+	docker exec -it $CONTAINER_NAME bash -c "$SCRIPT"
+
+	echo "- git clone into container ..."
+	git remote add $CONTAINER_NAME root@$CONTAINER_NAME:/app || true
+	git fetch $CONTAINER_NAME
+	git push -q $CONTAINER_NAME HEAD:$CURRENT_BRANCH
+	ssh $CONTAINER_NAME "cd /app && git checkout -q $CURRENT_BRANCH"
+
+	echo "- Installing extras ..."
+	docker exec -it $CONTAINER_NAME bash -c "$SCRIPT_EXTRAS"
+
+	echo ""
+	echo "Use this command to ssh:"
+	echo "  ssh $CONTAINER_NAME"
+	echo "When done:"
+	echo "  docker rm -f $CONTAINER_NAME"
+}
+
+
+
+# Preflight checks:
+if [ $# -ne 0 ]; then
+	echo "Unexpected argument" >&2
+	exit 1
+fi
+if [ ! -f $HOME/.config/sketch/container_user_identity ]; then
+	echo "Run sketch from sketch.dev first to create the SSH keys" >&2
+	echo "TODO: This is lazy, we could create them ourselves." >&2
+	exit 1
+fi
+if [ ! -d $HOME/.gemini ]; then
+	echo "Make sure to login to gemini if you want to use it" >&2
+	mkdir $HOME/.gemini
+fi
+CURRENT_BRANCH=$(git branch --show-current)
+if [ -z "$CURRENT_BRANCH" ]; then
+	echo "Check out a named branch" >&2
+	exit 1
+fi
+
+run
