@@ -38,24 +38,27 @@ SCRIPT=$(cat <<- EOF
     echo '}' >> /root/.bashrc
 	echo 'PROMPT_COMMAND=__my_ps1' >> /root/.bashrc
 
-	echo '- Configuring SSH ...'
 	mkdir /root/.ssh 
 	chmod 700 /root/.ssh 
 	# TODO: Use strict host validation:
 	echo 'StrictHostKeyChecking no' >> /root/.ssh/config
 	echo 'PermitRootLogin prohibit-password' >> /etc/ssh/sshd_config
 	echo 'PasswordAuthentication no' >> /etc/ssh/sshd_config
+	echo 'PubkeyAuthentication yes' >> /etc/ssh/sshd_config
+	echo 'HostbasedAuthentication yes' >> /etc/ssh/sshd_config
+	echo 'TrustedUserCAKeys /etc/ssh/container_ca.pub' >> /etc/ssh/sshd_config
 	# Copy files instead of mounting so the ACL is good.
 	cp /root/.ssh_src/container_user_identity.pub /root/.ssh/authorized_keys
 	cp /root/.ssh_src/container_user_identity /root/.ssh/id_rsa
 	cp /root/.ssh_src/container_user_identity.pub /root/.ssh/id_rsa.pub
+	rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub
 	cp /root/.ssh_src/container_server_identity /etc/ssh/ssh_host_rsa_key
 	cp /root/.ssh_src/container_server_identity.pub /etc/ssh/ssh_host_rsa_key.pub
+	cp /root/.ssh_src/container_ca.pub /etc/ssh/
 	chmod 600 /root/.ssh/*.*
 	echo 'Welcome to "$CONTAINER_NAME"!' > /etc/motd
 	service ssh start
 
-	echo '- Configuring /app as a git repository ...'
 	mkdir /app
 	cd /app
 	git init -q
@@ -81,33 +84,37 @@ EOF
 ######
 
 
-function run {
-	echo "- Removing old container $CONTAINER_NAME"
-	docker rm -f $CONTAINER_NAME 2>/dev/null || true
 
-	echo "- Creating container $CONTAINER_NAME"
+function run {
+	docker rm -f $CONTAINER_NAME &>/dev/null || true
+	echo "- Starting container $CONTAINER_NAME ..."
 	docker run -d \
 	  --name $CONTAINER_NAME \
+	  -p 127.0.0.1:0:22 \
 	  -v ~/.config/sketch/container_user_identity.pub:/root/.ssh_src/container_user_identity.pub:ro \
 	  -v ~/.config/sketch/container_user_identity:/root/.ssh_src/container_user_identity:ro \
 	  -v ~/.config/sketch/container_server_identity:/root/.ssh_src/container_server_identity:ro \
 	  -v ~/.config/sketch/container_server_identity.pub:/root/.ssh_src/container_server_identity.pub:ro \
+	  -v ~/.config/sketch/container_ca.pub:/root/.ssh_src/container_ca.pub:ro \
 	  -v ~/.gemini:/root/.gemini \
 	  $BASE_IMAGE bash -c "sleep infinity"
 
-	echo "- Configuring ssh to container ..."
-	IP_ADDRESS=$(docker inspect --format '{{.NetworkSettings.IPAddress}}' $CONTAINER_NAME)
+	PORT_NUMBER=$(docker inspect --format "{{(index .NetworkSettings.Ports \"22/tcp\" 0).HostPort}}" $CONTAINER_NAME)
+	# IP_ADDRESS=$(docker inspect --format '{{.NetworkSettings.IPAddress}}' $CONTAINER_NAME)
+	IP_ADDRESS="127.0.0.1"
 	echo "Host $CONTAINER_NAME" > ~/.ssh/config.d/$CONTAINER_NAME.conf
 	echo "  HostName $IP_ADDRESS" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
+	echo "  Port $PORT_NUMBER" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
 	echo "  User root" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
 	echo "  IdentityFile $HOME/.config/sketch/container_user_identity" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
-	echo '  CertificateFile $HOME/.config/sketch/container_ca.pub' >> ~/.ssh/config.d/$CONTAINER_NAME.conf
+	echo "  CertificateFile /home/maruel/.config/sketch/host_cert" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
+	echo "  UserKnownHostsFile ~/.ssh/config.d/$CONTAINER_NAME.known_hosts" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
+	(echo -n "@cert-authority localhost,127.0.0.1,[::1] " && cat "$HOME/.config/sketch/container_ca.pub") > ~/.ssh/config.d/$CONTAINER_NAME.known_hosts
+	#echo "  UserKnownHostsFile /dev/null" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
 	echo "  StrictHostKeyChecking no" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
-	# TODO: Use strict host validation:
-	#echo "  UserKnownHostsFile $HOME/.config/sketch/known_hosts" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
-	echo "  UserKnownHostsFile /dev/null" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
+	#echo "  HostbasedAuthentication yes" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
+	#echo "  EnableSSHKeysign yes" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
 
-	echo "- Configuring container ..."
 	docker exec -it $CONTAINER_NAME bash -c "$SCRIPT"
 
 	echo "- git clone into container ..."
@@ -136,6 +143,8 @@ fi
 if [ ! -f $HOME/.config/sketch/container_user_identity ]; then
 	echo "Run sketch from sketch.dev first to create the SSH keys" >&2
 	echo "TODO: This is lazy, we could create them ourselves." >&2
+	# ssh-keygen -t rsa -b 4096 -f container_ca
+	# keygen -s container_ca -I "host_identifier" -h -n 127.0.0.1 container_server_identity.pub
 	exit 1
 fi
 if [ ! -d $HOME/.gemini ]; then
