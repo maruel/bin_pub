@@ -65,7 +65,7 @@ SCRIPT=$(cat <<- EOF
 	echo 'GIT_PS1_SHOWUPSTREAM=auto' >> /root/.bashrc
 	echo 'function __my_ps1 {' >> /root/.bashrc
     echo '  __git_ps1 \\' >> /root/.bashrc
-    echo '    "\\[\\e]0;\\W\\a\\]\\[\\e[0m\\]\\\$(_V=\\\$?; if [ \\\$_V != 0 ]; then echo -e -n \\"\\\\[\\\\e[31m\\\\]\\\$_V\\\\[\\\\e[0m\\\\]\\" ; fi)" \\' >> /root/.bashrc
+    echo '    "\\[\\e]0;\\W\\a\\]\\[\\e[0m\\]\\\$(_V=\\\$?; if [ \\\$_V != 0 ]; then echo -e -n \\"\\\\[\\\\e[36m\\\\]\\\$_V\\\\[\\\\e[0m\\\\]\\" ; fi)" \\' >> /root/.bashrc
 	echo '    "\\[\\e[33m\\]\\w\\[\\e[0m\\]🐳 "' >> /root/.bashrc
 	echo '}' >> /root/.bashrc
 	echo 'PROMPT_COMMAND=__my_ps1' >> /root/.bashrc
@@ -170,11 +170,11 @@ function run {
 	docker exec -it $CONTAINER_NAME bash -c "$SCRIPT_EXTRAS"
 
 	echo ""
-	echo "Use this command to ssh:"
-	echo "  ssh $CONTAINER_NAME"
 	echo "When done:"
 	echo "  docker rm -f $CONTAINER_NAME"
 }
 
 
 run
+
+ssh $CONTAINER_NAME
