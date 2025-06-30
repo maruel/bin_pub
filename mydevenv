@@ -141,6 +141,8 @@ SCRIPT_EXTRAS=$(cat <<- EOF
 	echo '- Installing Go ${GO_VERSION} ...'
 	curl -sSL -o- https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar -C /usr/local -xzf -
 	echo 'export PATH="\$PATH:/usr/local/go/bin"' >> /root/.bashrc
+	mkdir -p /root/go/bin
+	echo 'export PATH="\$PATH:/root/go/bin"' >> /root/.bashrc
 EOF
 )
 
@@ -184,11 +186,11 @@ function run {
 	git push -q $CONTAINER_NAME HEAD:$GIT_CURRENT_BRANCH
 	ssh $CONTAINER_NAME "cd /app && git checkout -q $GIT_CURRENT_BRANCH"
 
-	# Simpler to copy the files than trying to mount read-only.
-	rsync -aq -W --zc=none --mkpath $HOME/.config/nvim/ $CONTAINER_NAME:/root/.config/nvim
-	rsync -aq -W --zc=none --mkpath $HOME/.local/share/nvim/ $CONTAINER_NAME:/root/.local/share/nvim
-	rsync -aq -W --zc=none --mkpath $HOME/.local/state/nvim/lazy/ $CONTAINER_NAME:/root/.local/state/nvim/lazy
-	rsync -aq -W --zc=none --mkpath $HOME/go/bin/ $CONTAINER_NAME:/root/go/bin
+	# Simpler and faster to copy the files than trying to mount read-only.
+	rsync -qrlptW --zc=none --mkpath $HOME/.config/nvim/ $CONTAINER_NAME:/root/.config/nvim
+	rsync -qrlptW --zc=none --mkpath $HOME/.local/share/nvim/ $CONTAINER_NAME:/root/.local/share/nvim
+	rsync -qrlptW --zc=none --mkpath $HOME/.local/state/nvim/lazy/ $CONTAINER_NAME:/root/.local/state/nvim/lazy
+	rsync -qrlptW --zc=none --mkpath $HOME/go/bin/ $CONTAINER_NAME:/root/go/bin
 
 	echo "- Installing extras ..."
 	docker exec -it $CONTAINER_NAME bash -c "$SCRIPT_EXTRAS"
