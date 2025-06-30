@@ -115,6 +115,10 @@ SCRIPT=$(cat <<- EOF
 	git config --global user.name "$GIT_USER_NAME"
 	git config --global user.email "$GIT_USER_EMAIL"
 	git config --global receive.denyCurrentBranch warn
+	git config --global alias.br branch
+	git config --global alias.ci commit
+	git config --global alias.co checkout
+	git config --global alias.st "status --ignore-submodule=all -sb"
 	mkdir /app
 	cd /app
 	git init -q
