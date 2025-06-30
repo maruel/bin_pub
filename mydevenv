@@ -12,8 +12,6 @@
 # - Confirm ssh host key authentication.
 # - Generate our own keys instead of relying on sketch.dev's keys.
 # - Support multiple containers simultaneously.
-# - Alias gemini --yolo since we always want to use it
-# - Add common aliases like ll="ls -al", ls with colors, etc.
 # - Install a few Go tools.
 
 set -euo pipefail
@@ -65,12 +63,17 @@ SCRIPT=$(cat <<- EOF
 	echo 'GIT_PS1_SHOWSTASHSTATE=1' >> /root/.bashrc
 	echo 'GIT_PS1_SHOWUNTRACKEDFILES=1' >> /root/.bashrc
 	echo 'GIT_PS1_SHOWUPSTREAM=auto' >> /root/.bashrc
-  	echo 'function __my_ps1 {' >> /root/.bashrc
+	echo 'function __my_ps1 {' >> /root/.bashrc
     echo '  __git_ps1 \\' >> /root/.bashrc
     echo '    "\\[\\e]0;\\W\\a\\]\\[\\e[0m\\]\\\$(_V=\\\$?; if [ \\\$_V != 0 ]; then echo -e -n \\"\\\\[\\\\e[31m\\\\]\\\$_V\\\\[\\\\e[0m\\\\]\\" ; fi)" \\' >> /root/.bashrc
-    echo '    "\\[\\e[33m\\]\\w\\[\\e[0m\\]🐳 "' >> /root/.bashrc
-    echo '}' >> /root/.bashrc
+	echo '    "\\[\\e[33m\\]\\w\\[\\e[0m\\]🐳 "' >> /root/.bashrc
+	echo '}' >> /root/.bashrc
 	echo 'PROMPT_COMMAND=__my_ps1' >> /root/.bashrc
+	echo 'export LS_OPTIONS="--color=auto"' >> /root/.bashrc
+	echo 'eval "\$(dircolors)"' >> /root/.bashrc
+	echo "alias ls='ls \\\$LS_OPTIONS'" >> /root/.bashrc
+	echo "alias ll='ls \\\$LS_OPTIONS -l'" >> /root/.bashrc
+	echo "alias l='ls \\\$LS_OPTIONS -lA'" >> /root/.bashrc
 
 	mkdir /root/.ssh 
 	chmod 700 /root/.ssh 
@@ -114,6 +117,7 @@ SCRIPT_EXTRAS=$(cat <<- EOF
 	echo ''
 	echo '- Installing gemini CLI ...'
 	npm install -g @google/gemini-cli
+	echo "alias gemini='\$(which gemini) --yolo'" >> /root/.bashrc
 
 	echo ''
 	echo '- Installing Go ${GO_VERSION} ...'
@@ -124,7 +128,6 @@ EOF
 
 
 ######
-
 
 
 function run {
@@ -142,10 +145,8 @@ function run {
 	  $BASE_IMAGE bash -c "sleep infinity"
 
 	PORT_NUMBER=$(docker inspect --format "{{(index .NetworkSettings.Ports \"22/tcp\" 0).HostPort}}" $CONTAINER_NAME)
-	# IP_ADDRESS=$(docker inspect --format '{{.NetworkSettings.IPAddress}}' $CONTAINER_NAME)
-	IP_ADDRESS="127.0.0.1"
 	echo "Host $CONTAINER_NAME" > ~/.ssh/config.d/$CONTAINER_NAME.conf
-	echo "  HostName $IP_ADDRESS" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
+	echo "  HostName 127.0.0.1" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
 	echo "  Port $PORT_NUMBER" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
 	echo "  User root" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
 	echo "  IdentityFile $HOME/.config/sketch/container_user_identity" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
