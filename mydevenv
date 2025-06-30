@@ -114,6 +114,7 @@ SCRIPT=$(cat <<- EOF
 
 	git config --global user.name "$GIT_USER_NAME"
 	git config --global user.email "$GIT_USER_EMAIL"
+	git config --global receive.denyCurrentBranch warn
 	mkdir /app
 	cd /app
 	git init -q
