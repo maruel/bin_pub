@@ -79,8 +79,6 @@ SCRIPT=$(cat <<- EOF
 	echo 'eval "\$(dircolors)"' >> /root/.bashrc
 	echo "alias ls='ls \\\$LS_OPTIONS'" >> /root/.bashrc
 	echo "alias ll='ls \\\$LS_OPTIONS -la'" >> /root/.bashrc
-	mkdir -p /root/.local/bin
-	echo 'export PATH="\$PATH:/root/.local/bin"' >> /root/.bashrc
 
 	mkdir /root/.ssh 
 	chmod 700 /root/.ssh 
@@ -103,10 +101,16 @@ SCRIPT=$(cat <<- EOF
 	echo 'Welcome to "$CONTAINER_NAME"!' > /etc/motd
 	service ssh start
 
-	curl -sSL -o- https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz | tar xz -C /opt --strip-component=1
+	ARCH=\$(uname -m | sed s/aarch64/arm64/)
+	echo "Running on \$ARCH"
+	curl -sSL -o- https://github.com/neovim/neovim/releases/latest/download/nvim-linux-\$ARCH.tar.gz | tar xz -C /opt --strip-component=1
 	ln -s /opt/bin/nvim /usr/local/bin/nvim
 	ln -s /opt/bin/nvim /usr/local/bin/vim
 	ln -s /opt/bin/nvim /usr/local/bin/vi
+	mkdir -p /root/.config/nvim
+	mkdir -p /root/.local/bin
+	mkdir -p /root/.local/share/nvim
+	mkdir -p /root/.local/state/nvim/lazy
 
 	git config --global user.name "$GIT_USER_NAME"
 	git config --global user.email "$GIT_USER_EMAIL"
@@ -139,9 +143,11 @@ SCRIPT_EXTRAS=$(cat <<- EOF
 
 	echo ''
 	echo '- Installing Go ${GO_VERSION} ...'
-	curl -sSL -o- https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar -C /usr/local -xzf -
-	echo 'export PATH="\$PATH:/usr/local/go/bin"' >> /root/.bashrc
+	ARCH=\$(uname -m | sed s/aarch64/arm64/ | sed s/x86_64/amd64/)
+	curl -sSL -o- https://go.dev/dl/go${GO_VERSION}.linux-\${ARCH}.tar.gz | tar -C /usr/local -xzf -
 	mkdir -p /root/go/bin
+	echo 'export PATH="\$PATH:/root/.local/bin"' >> /root/.bashrc
+	echo 'export PATH="\$PATH:/usr/local/go/bin"' >> /root/.bashrc
 	echo 'export PATH="\$PATH:/root/go/bin"' >> /root/.bashrc
 EOF
 )
@@ -187,13 +193,16 @@ function run {
 	ssh $CONTAINER_NAME "cd /app && git checkout -q $GIT_CURRENT_BRANCH"
 
 	# Simpler and faster to copy the files than trying to mount read-only.
-	rsync -qrlptW --zc=none --mkpath $HOME/.config/nvim/ $CONTAINER_NAME:/root/.config/nvim
-	rsync -qrlptW --zc=none --mkpath $HOME/.local/share/nvim/ $CONTAINER_NAME:/root/.local/share/nvim
-	rsync -qrlptW --zc=none --mkpath $HOME/.local/state/nvim/lazy/ $CONTAINER_NAME:/root/.local/state/nvim/lazy
-	rsync -qrlptW --zc=none --mkpath $HOME/go/bin/ $CONTAINER_NAME:/root/go/bin
+	# These flags are incompatible on macOS: --zc=none --mkpath
+	rsync -qrlptW $HOME/.config/nvim/ $CONTAINER_NAME:/root/.config/nvim
+	rsync -qrlptW $HOME/.local/share/nvim/ $CONTAINER_NAME:/root/.local/share/nvim
+	rsync -qrlptW $HOME/.local/state/nvim/lazy/ $CONTAINER_NAME:/root/.local/state/nvim/lazy
 
 	echo "- Installing extras ..."
 	docker exec -it $CONTAINER_NAME bash -c "$SCRIPT_EXTRAS"
+	if [ $(uname) == "linux" ]; then
+		rsync -qrlptW $HOME/go/bin/ $CONTAINER_NAME:/root/go/bin
+	fi
 
 	echo ""
 	echo "When done:"
