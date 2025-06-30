@@ -14,7 +14,6 @@
 # - Support multiple containers simultaneously.
 # - Alias gemini --yolo since we always want to use it
 # - Add common aliases like ll="ls -al", ls with colors, etc.
-# - Fix pager, it seems debian-slim doesn't have the tooling necessary for pager support.
 # - Install a few Go tools.
 
 set -euo pipefail
@@ -55,10 +54,8 @@ GIT_USER_EMAIL="$(git config --get user.email)"
 # Common script to be used all the time.
 SCRIPT=$(cat <<- EOF
 	set -euo pipefail
-	echo ''
-	echo '- Initializing ...'
 	apt-get update -q -q
-	apt-get install -q -q -y --no-install-recommends ca-certificates curl git openssh-server vim > /dev/null
+	apt-get install -q -q -y --no-install-recommends ca-certificates curl git less openssh-server vim > /dev/null
 	curl -sSL -o /root/.git-completion.bash https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
 	echo 'source /root/.git-completion.bash' >> /root/.bashrc
 	echo 'source /etc/bash_completion.d/git-prompt' >> /root/.bashrc
