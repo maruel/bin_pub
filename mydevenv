@@ -5,6 +5,12 @@
 #
 # mydevenv: sets up a local dev environment with a local git clone for quick iteration.
 #
+# Assumptions:
+# - only tested on ubuntu
+# - sketch.dev was run on the system
+# - gemini cli was run on the system
+# - nvim is configured
+#
 # A simplified version of https://github.com/boldsoftware/sketch/blob/main/loop/server/local_ssh.md but
 # without the certification verification done properly yet.
 #
@@ -18,7 +24,7 @@ set -euo pipefail
 
 # Settings:
 CONTAINER_NAME_PREFIX=cli-
-BASE_IMAGE=debian:12.11-slim
+BASE_IMAGE=debian:12.11
 GO_VERSION=1.24.4
 
 
@@ -53,7 +59,7 @@ GIT_USER_EMAIL="$(git config --get user.email)"
 SCRIPT=$(cat <<- EOF
 	set -euo pipefail
 	apt-get update -q -q
-	apt-get install -q -q -y --no-install-recommends ca-certificates curl git less openssh-server vim > /dev/null
+	apt-get install -q -q -y --no-install-recommends build-essential ca-certificates curl git less openssh-server rsync > /dev/null
 	curl -sSL -o /root/.git-completion.bash https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
 	echo 'source /root/.git-completion.bash' >> /root/.bashrc
 	echo 'source /etc/bash_completion.d/git-prompt' >> /root/.bashrc
@@ -66,14 +72,15 @@ SCRIPT=$(cat <<- EOF
 	echo 'function __my_ps1 {' >> /root/.bashrc
     echo '  __git_ps1 \\' >> /root/.bashrc
     echo '    "\\[\\e]0;\\W\\a\\]\\[\\e[0m\\]\\\$(_V=\\\$?; if [ \\\$_V != 0 ]; then echo -e -n \\"\\\\[\\\\e[36m\\\\]\\\$_V\\\\[\\\\e[0m\\\\]\\" ; fi)" \\' >> /root/.bashrc
-	echo '    "\\[\\e[33m\\]\\w\\[\\e[0m\\]🐳 "' >> /root/.bashrc
+	echo '    "\\[\\e[36m\\]\\w\\[\\e[0m\\]🐳 "' >> /root/.bashrc
 	echo '}' >> /root/.bashrc
 	echo 'PROMPT_COMMAND=__my_ps1' >> /root/.bashrc
 	echo 'export LS_OPTIONS="--color=auto"' >> /root/.bashrc
 	echo 'eval "\$(dircolors)"' >> /root/.bashrc
 	echo "alias ls='ls \\\$LS_OPTIONS'" >> /root/.bashrc
-	echo "alias ll='ls \\\$LS_OPTIONS -l'" >> /root/.bashrc
-	echo "alias l='ls \\\$LS_OPTIONS -lA'" >> /root/.bashrc
+	echo "alias ll='ls \\\$LS_OPTIONS -la'" >> /root/.bashrc
+	mkdir -p /root/.local/bin
+	echo 'export PATH="\$PATH:/root/.local/bin"' >> /root/.bashrc
 
 	mkdir /root/.ssh 
 	chmod 700 /root/.ssh 
@@ -85,16 +92,21 @@ SCRIPT=$(cat <<- EOF
 	echo 'HostbasedAuthentication yes' >> /etc/ssh/sshd_config
 	echo 'TrustedUserCAKeys /etc/ssh/container_ca.pub' >> /etc/ssh/sshd_config
 	# Copy files instead of mounting so the ACL is good.
-	cp /root/.ssh_src/container_user_identity.pub /root/.ssh/authorized_keys
-	cp /root/.ssh_src/container_user_identity /root/.ssh/id_rsa
-	cp /root/.ssh_src/container_user_identity.pub /root/.ssh/id_rsa.pub
+	cp /etc/ssh_src/container_user_identity.pub /root/.ssh/authorized_keys
+	cp /etc/ssh_src/container_user_identity /root/.ssh/id_rsa
+	cp /etc/ssh_src/container_user_identity.pub /root/.ssh/id_rsa.pub
 	rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub
-	cp /root/.ssh_src/container_server_identity /etc/ssh/ssh_host_rsa_key
-	cp /root/.ssh_src/container_server_identity.pub /etc/ssh/ssh_host_rsa_key.pub
-	cp /root/.ssh_src/container_ca.pub /etc/ssh/
+	cp /etc/ssh_src/container_server_identity /etc/ssh/ssh_host_rsa_key
+	cp /etc/ssh_src/container_server_identity.pub /etc/ssh/ssh_host_rsa_key.pub
+	cp /etc/ssh_src/container_ca.pub /etc/ssh/
 	chmod 600 /root/.ssh/*.*
 	echo 'Welcome to "$CONTAINER_NAME"!' > /etc/motd
 	service ssh start
+
+	curl -sSL -o- https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz | tar xz -C /opt --strip-component=1
+	ln -s /opt/bin/nvim /usr/local/bin/nvim
+	ln -s /opt/bin/nvim /usr/local/bin/vim
+	ln -s /opt/bin/nvim /usr/local/bin/vi
 
 	git config --global user.name "$GIT_USER_NAME"
 	git config --global user.email "$GIT_USER_EMAIL"
@@ -120,6 +132,12 @@ SCRIPT_EXTRAS=$(cat <<- EOF
 	echo "alias gemini='\$(which gemini) --yolo'" >> /root/.bashrc
 
 	echo ''
+	echo '- Installing claude CLI ...'
+	npm install -g @anthropic-ai/claude-code
+	claude config set --global preferredNotifChannel terminal_bell
+	# echo "alias claude='\$(which claude) --dangerously-skip-permissions'" >> /root/.bashrc
+
+	echo ''
 	echo '- Installing Go ${GO_VERSION} ...'
 	curl -sSL -o- https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar -C /usr/local -xzf -
 	echo 'export PATH="\$PATH:/usr/local/go/bin"' >> /root/.bashrc
@@ -136,12 +154,12 @@ function run {
 	docker run -d \
 	  --name $CONTAINER_NAME \
 	  -p 127.0.0.1:0:22 \
-	  -v ~/.config/sketch/container_user_identity.pub:/root/.ssh_src/container_user_identity.pub:ro \
-	  -v ~/.config/sketch/container_user_identity:/root/.ssh_src/container_user_identity:ro \
-	  -v ~/.config/sketch/container_server_identity:/root/.ssh_src/container_server_identity:ro \
-	  -v ~/.config/sketch/container_server_identity.pub:/root/.ssh_src/container_server_identity.pub:ro \
-	  -v ~/.config/sketch/container_ca.pub:/root/.ssh_src/container_ca.pub:ro \
-	  -v ~/.gemini:/root/.gemini \
+	  -v ~/.config/sketch/container_user_identity.pub:/etc/ssh_src/container_user_identity.pub:ro \
+	  -v ~/.config/sketch/container_user_identity:/etc/ssh_src/container_user_identity:ro \
+	  -v ~/.config/sketch/container_server_identity:/etc/ssh_src/container_server_identity:ro \
+	  -v ~/.config/sketch/container_server_identity.pub:/etc/ssh_src/container_server_identity.pub:ro \
+	  -v ~/.config/sketch/container_ca.pub:/etc/ssh_src/container_ca.pub:ro \
+	  -v ~/.gemini/:/root/.gemini/ \
 	  $BASE_IMAGE bash -c "sleep infinity"
 
 	PORT_NUMBER=$(docker inspect --format "{{(index .NetworkSettings.Ports \"22/tcp\" 0).HostPort}}" $CONTAINER_NAME)
@@ -165,6 +183,12 @@ function run {
 	git fetch $CONTAINER_NAME
 	git push -q $CONTAINER_NAME HEAD:$GIT_CURRENT_BRANCH
 	ssh $CONTAINER_NAME "cd /app && git checkout -q $GIT_CURRENT_BRANCH"
+
+	# Simpler to copy the files than trying to mount read-only.
+	rsync -aq -W --zc=none --mkpath $HOME/.config/nvim/ $CONTAINER_NAME:/root/.config/nvim
+	rsync -aq -W --zc=none --mkpath $HOME/.local/share/nvim/ $CONTAINER_NAME:/root/.local/share/nvim
+	rsync -aq -W --zc=none --mkpath $HOME/.local/state/nvim/lazy/ $CONTAINER_NAME:/root/.local/state/nvim/lazy
+	rsync -aq -W --zc=none --mkpath $HOME/go/bin/ $CONTAINER_NAME:/root/go/bin
 
 	echo "- Installing extras ..."
 	docker exec -it $CONTAINER_NAME bash -c "$SCRIPT_EXTRAS"
