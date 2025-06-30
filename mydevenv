@@ -59,7 +59,7 @@ GIT_USER_EMAIL="$(git config --get user.email)"
 SCRIPT=$(cat <<- EOF
 	set -euo pipefail
 	apt-get update -q -q
-	apt-get install -q -q -y --no-install-recommends build-essential ca-certificates curl git less openssh-server rsync > /dev/null
+	apt-get install -q -q -y --no-install-recommends build-essential ca-certificates curl git less openssh-server rsync shared-mime-info > /dev/null
 	curl -sSL -o /root/.git-completion.bash https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
 	echo 'source /root/.git-completion.bash' >> /root/.bashrc
 	echo 'source /etc/bash_completion.d/git-prompt' >> /root/.bashrc
