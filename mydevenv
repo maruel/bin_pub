@@ -7,13 +7,49 @@
 #
 # A simplified version of https://github.com/boldsoftware/sketch/blob/main/loop/server/local_ssh.md but
 # without the certification verification done properly yet.
+#
+# TODO:
+# - Confirm ssh host key authentication.
+# - Generate our own keys instead of relying on sketch.dev's keys.
+# - Support multiple containers simultaneously.
+# - Alias gemini --yolo since we always want to use it
+# - Add common aliases like ll="ls -al", ls with colors, etc.
+# - Fix pager, it seems debian-slim doesn't have the tooling necessary for pager support.
+# - Install a few Go tools.
 
 set -euo pipefail
 
 # Settings:
-CONTAINER_NAME=mydevenv
+CONTAINER_NAME_PREFIX=cli-
 BASE_IMAGE=debian:12.11-slim
 GO_VERSION=1.24.4
+
+
+# Preflight checks:
+if [ $# -ne 0 ]; then
+	echo "Unexpected argument" >&2
+	exit 1
+fi
+if [ ! -f $HOME/.config/sketch/container_user_identity ]; then
+	echo "Run sketch from sketch.dev first to create the SSH keys" >&2
+	echo "TODO: This is lazy, we could create them ourselves." >&2
+	# ssh-keygen -t rsa -b 4096 -f container_ca
+	# keygen -s container_ca -I "host_identifier" -h -n 127.0.0.1 container_server_identity.pub
+	exit 1
+fi
+if [ ! -d $HOME/.gemini ]; then
+	echo "Make sure to login to gemini if you want to use it" >&2
+	mkdir $HOME/.gemini
+fi
+GIT_CURRENT_BRANCH=$(git branch --show-current)
+if [ -z "$GIT_CURRENT_BRANCH" ]; then
+	echo "Check out a named branch" >&2
+	exit 1
+fi
+GIT_ROOT_DIR=$(git rev-parse --show-toplevel)
+CONTAINER_NAME="${CONTAINER_NAME_PREFIX}$(basename $GIT_ROOT_DIR)"
+GIT_USER_NAME="$(git config --get user.name)"
+GIT_USER_EMAIL="$(git config --get user.email)"
 
 
 # Common script to be used all the time.
@@ -60,6 +96,8 @@ SCRIPT=$(cat <<- EOF
 	echo 'Welcome to "$CONTAINER_NAME"!' > /etc/motd
 	service ssh start
 
+	git config --global user.name "$GIT_USER_NAME"
+	git config --global user.email "$GIT_USER_EMAIL"
 	mkdir /app
 	cd /app
 	git init -q
@@ -127,8 +165,8 @@ function run {
 	echo "- git clone into container ..."
 	git remote add $CONTAINER_NAME root@$CONTAINER_NAME:/app || true
 	git fetch $CONTAINER_NAME
-	git push -q $CONTAINER_NAME HEAD:$CURRENT_BRANCH
-	ssh $CONTAINER_NAME "cd /app && git checkout -q $CURRENT_BRANCH"
+	git push -q $CONTAINER_NAME HEAD:$GIT_CURRENT_BRANCH
+	ssh $CONTAINER_NAME "cd /app && git checkout -q $GIT_CURRENT_BRANCH"
 
 	echo "- Installing extras ..."
 	docker exec -it $CONTAINER_NAME bash -c "$SCRIPT_EXTRAS"
@@ -140,28 +178,5 @@ function run {
 	echo "  docker rm -f $CONTAINER_NAME"
 }
 
-
-
-# Preflight checks:
-if [ $# -ne 0 ]; then
-	echo "Unexpected argument" >&2
-	exit 1
-fi
-if [ ! -f $HOME/.config/sketch/container_user_identity ]; then
-	echo "Run sketch from sketch.dev first to create the SSH keys" >&2
-	echo "TODO: This is lazy, we could create them ourselves." >&2
-	# ssh-keygen -t rsa -b 4096 -f container_ca
-	# keygen -s container_ca -I "host_identifier" -h -n 127.0.0.1 container_server_identity.pub
-	exit 1
-fi
-if [ ! -d $HOME/.gemini ]; then
-	echo "Make sure to login to gemini if you want to use it" >&2
-	mkdir $HOME/.gemini
-fi
-CURRENT_BRANCH=$(git branch --show-current)
-if [ -z "$CURRENT_BRANCH" ]; then
-	echo "Check out a named branch" >&2
-	exit 1
-fi
 
 run
