@@ -112,6 +112,9 @@ SCRIPT=$(cat <<- EOF
 	mkdir -p /root/.local/share/nvim
 	mkdir -p /root/.local/state/nvim/lazy
 
+	mkdir ~/.config/git
+	touch ~/.config/git/config
+	echo -e '.coverage\ncover.cov\n*.egg-info\n*.orig\n*.pyc\n*.rej\n*.swp\n*~' > ~/.config/git/ignore
 	git config --global user.name "$GIT_USER_NAME"
 	git config --global user.email "$GIT_USER_EMAIL"
 	git config --global receive.denyCurrentBranch warn
