@@ -208,7 +208,7 @@ function run {
 
 	echo "- Installing extras ..."
 	docker exec -it $CONTAINER_NAME bash -c "$SCRIPT_EXTRAS"
-	if [ $(uname) == "linux" ]; then
+	if [ $(uname) == "Linux" ]; then
 		rsync -qrlptW $HOME/go/bin/ $CONTAINER_NAME:/root/go/bin
 	fi
 
