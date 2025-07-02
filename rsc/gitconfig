@@ -1,0 +1,7 @@
+[receive]
+        denyCurrentBranch = warn
+[alias]
+        br = branch
+        ci = commit
+        co = checkout
+        st = status --ignore-submodule=all -sb
