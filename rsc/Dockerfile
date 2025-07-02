@@ -70,7 +70,8 @@ RUN adduser --disabled-password user
 #RUN useradd -ms /bin/bash user && mkdir -p /app && chown user:user /app
 RUN su user -c "mkdir -p /home/user/.ssh /home/user/.config/git"
 COPY sketch/container_user_identity.pub /home/user/.ssh/authorized_keys
-COPY gitconfig /home/user/.config/git/config
+COPY config/git/config /home/user/.config/git/config
+COPY config/git/ignore /home/user/.config/git/ignore
 RUN echo "cd /app" >> /home/user/.bashrc
 RUN chown -R user:user /home/user/.ssh /home/user/.config
 RUN chmod 0700 /home/user/.ssh

@@ -24,8 +24,7 @@ set -euo pipefail
 
 # Settings:
 CONTAINER_NAME_PREFIX=cli-
-BASE_IMAGE=debian:12.11
-GO_VERSION=1.24.4
+IMAGE_NAME=mydevenv
 
 
 # Preflight checks:
@@ -55,114 +54,22 @@ GIT_USER_NAME="$(git config --get user.name)"
 GIT_USER_EMAIL="$(git config --get user.email)"
 
 
-# Common script to be used all the time.
-SCRIPT=$(cat <<- EOF
-	set -euo pipefail
-	apt-get update -q -q
-	apt-get install -q -q -y --no-install-recommends build-essential ca-certificates curl git less openssh-server rsync shared-mime-info > /dev/null
-	curl -sSL -o /root/.git-completion.bash https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
-	echo 'source /root/.git-completion.bash' >> /root/.bashrc
-	echo 'source /etc/bash_completion.d/git-prompt' >> /root/.bashrc
-	echo 'GIT_PS1_DESCRIBE_STYLE=tag' >> /root/.bashrc
-	echo 'GIT_PS1_SHOWCOLORHINTS=1' >> /root/.bashrc
-	echo 'GIT_PS1_SHOWDIRTYSTATE=1' >> /root/.bashrc
-	echo 'GIT_PS1_SHOWSTASHSTATE=1' >> /root/.bashrc
-	echo 'GIT_PS1_SHOWUNTRACKEDFILES=1' >> /root/.bashrc
-	echo 'GIT_PS1_SHOWUPSTREAM=auto' >> /root/.bashrc
-	echo 'function __my_ps1 {' >> /root/.bashrc
-    echo '  __git_ps1 \\' >> /root/.bashrc
-    echo '    "\\[\\e]0;\\W\\a\\]\\[\\e[0m\\]\\\$(_V=\\\$?; if [ \\\$_V != 0 ]; then echo -e -n \\"\\\\[\\\\e[36m\\\\]\\\$_V\\\\[\\\\e[0m\\\\]\\" ; fi)" \\' >> /root/.bashrc
-	echo '    "\\[\\e[36m\\]\\w\\[\\e[0m\\]🐳 "' >> /root/.bashrc
-	echo '}' >> /root/.bashrc
-	echo 'PROMPT_COMMAND=__my_ps1' >> /root/.bashrc
-	echo 'export LS_OPTIONS="--color=auto"' >> /root/.bashrc
-	echo 'eval "\$(dircolors)"' >> /root/.bashrc
-	echo "alias ls='ls \\\$LS_OPTIONS'" >> /root/.bashrc
-	echo "alias ll='ls \\\$LS_OPTIONS -la'" >> /root/.bashrc
-
-	mkdir /root/.ssh 
-	chmod 700 /root/.ssh 
-	# TODO: Use strict host validation:
-	echo 'StrictHostKeyChecking no' >> /root/.ssh/config
-	echo 'PermitRootLogin prohibit-password' >> /etc/ssh/sshd_config
-	echo 'PasswordAuthentication no' >> /etc/ssh/sshd_config
-	echo 'PubkeyAuthentication yes' >> /etc/ssh/sshd_config
-	echo 'HostbasedAuthentication yes' >> /etc/ssh/sshd_config
-	echo 'TrustedUserCAKeys /etc/ssh/container_ca.pub' >> /etc/ssh/sshd_config
-	# Copy files instead of mounting so the ACL is good.
-	cp /etc/ssh_src/container_user_identity.pub /root/.ssh/authorized_keys
-	cp /etc/ssh_src/container_user_identity /root/.ssh/id_rsa
-	cp /etc/ssh_src/container_user_identity.pub /root/.ssh/id_rsa.pub
-	rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub
-	cp /etc/ssh_src/container_server_identity /etc/ssh/ssh_host_rsa_key
-	cp /etc/ssh_src/container_server_identity.pub /etc/ssh/ssh_host_rsa_key.pub
-	cp /etc/ssh_src/container_ca.pub /etc/ssh/
-	chmod 600 /root/.ssh/*.*
-	echo 'Welcome to "$CONTAINER_NAME"!' > /etc/motd
-	service ssh start
-
-	ARCH=\$(uname -m | sed s/aarch64/arm64/)
-	echo "Running on \$ARCH"
-	curl -sSL -o- https://github.com/neovim/neovim/releases/latest/download/nvim-linux-\$ARCH.tar.gz | tar xz -C /opt --strip-component=1
-	ln -s /opt/bin/nvim /usr/local/bin/nvim
-	ln -s /opt/bin/nvim /usr/local/bin/vim
-	ln -s /opt/bin/nvim /usr/local/bin/vi
-	mkdir -p /root/.config/nvim
-	mkdir -p /root/.local/bin
-	mkdir -p /root/.local/share/nvim
-	mkdir -p /root/.local/state/nvim/lazy
-
-	mkdir ~/.config/git
-	touch ~/.config/git/config
-	echo -e '.coverage\ncover.cov\n*.egg-info\n*.orig\n*.pyc\n*.rej\n*.swp\n*~' > ~/.config/git/ignore
-	git config --global user.name "$GIT_USER_NAME"
-	git config --global user.email "$GIT_USER_EMAIL"
-	git config --global receive.denyCurrentBranch warn
-	git config --global alias.br branch
-	git config --global alias.ci commit
-	git config --global alias.co checkout
-	git config --global alias.st "status --ignore-submodule=all -sb"
-	mkdir /app
-	cd /app
-	git init -q
-	echo 'cd /app' >> /root/.bashrc
-EOF
-)
-
-# Extras:
-SCRIPT_EXTRAS=$(cat <<- EOF
-	set -euo pipefail
-	echo '- Installing node ...'
-	curl -sSL -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | METHOD=script bash
-	source \$HOME/.nvm/nvm.sh
-	nvm install --no-progress node
-	nvm use node
-
-	echo ''
-	echo '- Installing gemini CLI ...'
-	npm install -g @google/gemini-cli
-	echo "alias gemini='\$(which gemini) --yolo'" >> /root/.bashrc
-
-	echo ''
-	echo '- Installing claude CLI ...'
-	npm install -g @anthropic-ai/claude-code
-	claude config set --global preferredNotifChannel terminal_bell
-	# echo "alias claude='\$(which claude) --dangerously-skip-permissions'" >> /root/.bashrc
-
-	echo ''
-	echo '- Installing Go ${GO_VERSION} ...'
-	ARCH=\$(uname -m | sed s/aarch64/arm64/ | sed s/x86_64/amd64/)
-	curl -sSL -o- https://go.dev/dl/go${GO_VERSION}.linux-\${ARCH}.tar.gz | tar -C /usr/local -xzf -
-	mkdir -p /root/go/bin
-	echo 'export PATH="\$PATH:/root/.local/bin"' >> /root/.bashrc
-	echo 'export PATH="\$PATH:/usr/local/go/bin"' >> /root/.bashrc
-	echo 'export PATH="\$PATH:/root/go/bin"' >> /root/.bashrc
-EOF
-)
-
-
 ######
 
+function build {
+	echo "- Building Docker image $IMAGE_NAME ..."
+	ROOT=$(dirname $0)
+	cd $ROOT/rsc
+	# TODO: Generate our own keys instead of relying on sketch.dev's keys.
+	# TODO: Do not bake the keys in the image, load them on first run.
+	rm -rf sketch
+	mkdir sketch
+	cp ~/.config/sketch/* sketch/
+	cp ~/.config/sketch/*.* sketch/
+	docker build -t $IMAGE_NAME .
+	rm -rf sketch
+	cd -
+}
 
 function run {
 	docker rm -f $CONTAINER_NAME &>/dev/null || true
@@ -170,19 +77,15 @@ function run {
 	docker run -d \
 	  --name $CONTAINER_NAME \
 	  -p 127.0.0.1:0:22 \
-	  -v ~/.config/sketch/container_user_identity.pub:/etc/ssh_src/container_user_identity.pub:ro \
-	  -v ~/.config/sketch/container_user_identity:/etc/ssh_src/container_user_identity:ro \
-	  -v ~/.config/sketch/container_server_identity:/etc/ssh_src/container_server_identity:ro \
-	  -v ~/.config/sketch/container_server_identity.pub:/etc/ssh_src/container_server_identity.pub:ro \
-	  -v ~/.config/sketch/container_ca.pub:/etc/ssh_src/container_ca.pub:ro \
-	  -v ~/.gemini/:/root/.gemini/ \
-	  $BASE_IMAGE bash -c "sleep infinity"
+	  -v ~/.gemini/:/home/user/.gemini/ \
+	  $IMAGE_NAME
 
 	PORT_NUMBER=$(docker inspect --format "{{(index .NetworkSettings.Ports \"22/tcp\" 0).HostPort}}" $CONTAINER_NAME)
+	echo "- Found ssh port $PORT_NUMBER"
 	echo "Host $CONTAINER_NAME" > ~/.ssh/config.d/$CONTAINER_NAME.conf
 	echo "  HostName 127.0.0.1" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
 	echo "  Port $PORT_NUMBER" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
-	echo "  User root" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
+	echo "  User user" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
 	echo "  IdentityFile $HOME/.config/sketch/container_user_identity" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
 	echo "  CertificateFile /home/maruel/.config/sketch/host_cert" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
 	echo "  UserKnownHostsFile ~/.ssh/config.d/$CONTAINER_NAME.known_hosts" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
@@ -192,32 +95,22 @@ function run {
 	#echo "  HostbasedAuthentication yes" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
 	#echo "  EnableSSHKeysign yes" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
 
-	docker exec -it $CONTAINER_NAME bash -c "$SCRIPT"
-
 	echo "- git clone into container ..."
-	git remote add $CONTAINER_NAME root@$CONTAINER_NAME:/app || true
+	ssh $CONTAINER_NAME "
+		git config --global user.name \"$GIT_USER_NAME\"
+		git config --global user.email \"$GIT_USER_EMAIL\" "
+	git remote rm $CONTAINER_NAME || true
+	git remote add $CONTAINER_NAME user@$CONTAINER_NAME:/app || true
 	git fetch $CONTAINER_NAME
 	git push -q $CONTAINER_NAME HEAD:$GIT_CURRENT_BRANCH
 	ssh $CONTAINER_NAME "cd /app && git checkout -q $GIT_CURRENT_BRANCH"
-
-	# Simpler and faster to copy the files than trying to mount read-only.
-	# These flags are incompatible on macOS: --zc=none --mkpath
-	rsync -qrlptW $HOME/.config/nvim/ $CONTAINER_NAME:/root/.config/nvim
-	rsync -qrlptW $HOME/.local/share/nvim/ $CONTAINER_NAME:/root/.local/share/nvim
-	rsync -qrlptW $HOME/.local/state/nvim/lazy/ $CONTAINER_NAME:/root/.local/state/nvim/lazy
-
-	echo "- Installing extras ..."
-	docker exec -it $CONTAINER_NAME bash -c "$SCRIPT_EXTRAS"
-	if [ $(uname) == "Linux" ]; then
-		rsync -qrlptW $HOME/go/bin/ $CONTAINER_NAME:/root/go/bin
-	fi
 
 	echo ""
 	echo "When done:"
 	echo "  docker rm -f $CONTAINER_NAME"
 }
 
-
+build
 run
 
 ssh $CONTAINER_NAME
