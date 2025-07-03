@@ -62,8 +62,8 @@ RUN ARCH=$(uname -m | sed s/aarch64/arm64/) && \
 
 # Install Go (as root)
 RUN ARCH=$(uname -m | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) && \
-    curl -sSL -o- https://go.dev/dl/go${GO_VERSION}.linux-${ARCH}.tar.gz | tar -C /usr/local -xzf -
-ENV PATH="/usr/local/go/bin:${PATH}"
+    curl -sSL -o- https://go.dev/dl/go${GO_VERSION}.linux-${ARCH}.tar.gz | tar -C /usr/local -xzf - && \
+    echo PATH="/usr/local/go/bin:\${PATH}" >> /etc/bash.bashrc
 
 # Create user "user"
 RUN adduser --disabled-password user
