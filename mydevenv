@@ -57,17 +57,21 @@ GIT_USER_EMAIL="$(git config --get user.email)"
 ######
 
 function build {
-	echo "- Building Docker image $IMAGE_NAME ..."
 	ROOT=$(dirname $0)
 	cd $ROOT/rsc
+
+	echo "- Building Docker image ${IMAGE_NAME}.base ..."
 	# TODO: Generate our own keys instead of relying on sketch.dev's keys.
 	# TODO: Do not bake the keys in the image, load them on first run.
 	rm -rf sketch
 	mkdir sketch
 	cp ~/.config/sketch/* sketch/
 	cp ~/.config/sketch/*.* sketch/
-	docker build -t $IMAGE_NAME .
+	docker build -t ${IMAGE_NAME}.base -f Dockerfile.base .
 	rm -rf sketch
+
+	echo "- Building Docker image $IMAGE_NAME ..."
+	docker build -t $IMAGE_NAME .
 	cd -
 }
 
@@ -96,16 +100,13 @@ function run {
 	#echo "  EnableSSHKeysign yes" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
 
 	echo "- git clone into container ..."
+	git remote rm $CONTAINER_NAME || true
+	git remote add $CONTAINER_NAME user@$CONTAINER_NAME:/app || true
 	# We need to loop until the container is up and running. It's quite fast but can take a few hundreds of
 	# ms.
 	while ! ssh $CONTAINER_NAME exit &>/dev/null; do
 		sleep 0.1
 	done
-	ssh $CONTAINER_NAME "
-		git config --global user.name \"$GIT_USER_NAME\"
-		git config --global user.email \"$GIT_USER_EMAIL\" "
-	git remote rm $CONTAINER_NAME || true
-	git remote add $CONTAINER_NAME user@$CONTAINER_NAME:/app || true
 	git fetch $CONTAINER_NAME
 	git push -q $CONTAINER_NAME HEAD:$GIT_CURRENT_BRANCH
 	ssh $CONTAINER_NAME "cd /app && git checkout -q $GIT_CURRENT_BRANCH"

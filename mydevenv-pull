@@ -1,0 +1,18 @@
+#!/bin/bash
+# Copyright 2025 Marc-Antoine Ruel. All Rights Reserved. Use of this
+# source code is governed by a BSD-style license that can be found in the
+# LICENSE file.
+#
+# Pull from a mydevenv container.
+
+set -eu
+
+CONTAINER_NAME="cli-$(basename "$PWD")"
+echo "Working on $CONTAINER_NAME..."
+# Make sure everything is committed inside the container.
+ssh $CONTAINER_NAME "cd /app && git add .; git commit -a -q -m 'Pull from mydevenv'; true"
+REMOTE_BRANCH=$(ssh $CONTAINER_NAME "cd /app && git rev-parse --abbrev-ref HEAD")
+# Pull from the current remote checkout into the current branch, independent of its name.
+git pull -q $CONTAINER_NAME $REMOTE_BRANCH:
+go test ./...
+go install

@@ -5,3 +5,6 @@
         ci = commit
         co = checkout
         st = status --ignore-submodule=all -sb
+[user]
+	name = mydevenv
+	email = "<>"
