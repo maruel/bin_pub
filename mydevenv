@@ -96,6 +96,11 @@ function run {
 	#echo "  EnableSSHKeysign yes" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
 
 	echo "- git clone into container ..."
+	# We need to loop until the container is up and running. It's quite fast but can take a few hundreds of
+	# ms.
+	while ! ssh $CONTAINER_NAME exit &>/dev/null; do
+		sleep 0.1
+	done
 	ssh $CONTAINER_NAME "
 		git config --global user.name \"$GIT_USER_NAME\"
 		git config --global user.email \"$GIT_USER_EMAIL\" "
