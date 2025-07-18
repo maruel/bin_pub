@@ -49,3 +49,8 @@ fi
 
 # Neovim doesn't provide a vimdiff binary, alias it.
 alias vimdiff='nvim -d'
+
+# Requires Gemini CLI to be installed and configured.
+# Model to be updated whenever there's a new one.
+# As of 2025-07-17, Gemini CLI is free. Use github.com/maruel/ask when the free quota runs out.
+alias google='f(){ gemini -m gemini-2.5-flash -p "Search google for <query>$*</query> and summarize results"; }; f'
