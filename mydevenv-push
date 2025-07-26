@@ -8,6 +8,7 @@
 set -eu
 
 CONTAINER_NAME="cli-$(basename "$PWD")"
-echo "Working on $CONTAINER_NAME..."
+BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+echo "Pushing $BRANCH to $CONTAINER_NAME..."
 git push -f $CONTAINER_NAME
-ssh $CONTAINER_NAME "cd /app && git reset --hard"
+ssh $CONTAINER_NAME "cd /app && git reset --hard && git checkout $BRANCH"
