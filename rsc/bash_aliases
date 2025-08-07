@@ -1,3 +1,4 @@
+alias gemini="\$(which gemini) --yolo"
 if [ -f $HOME/.env ]; then
     set -a
     source $HOME/.env

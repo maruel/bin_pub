@@ -39,6 +39,8 @@ RUN su user -c 'curl -sSL -o- https://raw.githubusercontent.com/nvm-sh/nvm/v${NV
     nvm install --no-progress node && \
     npm install -g @anthropic-ai/claude-code @google/gemini-cli \
 	'
+	
+# https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/configuration.md'
 COPY etc/gemini-cli/settings.json /etc/gemini-cli/settings.json
 
 # Start SSH server
