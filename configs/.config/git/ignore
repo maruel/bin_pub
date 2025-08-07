@@ -1,3 +1,5 @@
+/.env
+/.vscode
 .coverage
 .DS_Store
 cover.cov
@@ -7,4 +9,3 @@ cover.cov
 *.rej
 *.swp
 *~
-.vscode

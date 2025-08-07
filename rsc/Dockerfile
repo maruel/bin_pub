@@ -5,9 +5,17 @@
 # Defined in Dockerfile.base
 FROM mydevenv.base
 
+ARG ENV_FILE
+
 # Settings from the script. We'll want to eventually just use whatever is the current latest.
 ENV GO_VERSION=1.24.4
 ENV NVM_VERSION=0.40.3
+
+# Copy the file setting environment variables.
+COPY ${ENV_FILE:+$ENV_FILE} ${ENV_FILE:+/home/user/.env}
+
+# Copy the aliases
+COPY bash_aliases /home/user/.bash_aliases
 
 # Install latest Neovim (as root)
 RUN ARCH=$(uname -m | sed s/aarch64/arm64/) && \
@@ -29,8 +37,9 @@ RUN su user -c '/usr/local/go/bin/go install golang.org/x/tools/cmd/goimports@la
 RUN su user -c 'curl -sSL -o- https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/install.sh | bash && \
     . ~/.nvm/nvm.sh && \
     nvm install --no-progress node && \
-	npm install -g @google/gemini-cli @anthropic-ai/claude-code && \
-	echo "alias gemini=\"\\\\$(which gemini) --yolo\"" >> /home/user/.bashrc'
+    npm install -g @anthropic-ai/claude-code @google/gemini-cli \
+	'
+COPY etc/gemini-cli/settings.json /etc/gemini-cli/settings.json
 
 # Start SSH server
 CMD ["/root/start.sh"]

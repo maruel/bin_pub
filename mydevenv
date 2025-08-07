@@ -71,6 +71,7 @@ function build {
 	rm -rf sketch
 
 	echo "- Building Docker image $IMAGE_NAME ..."
+	# We could use ARGS ENV_FILE in there but the image would become specific to this repository.
 	docker build -t $IMAGE_NAME .
 	cd -
 }
@@ -110,6 +111,10 @@ function run {
 	git fetch $CONTAINER_NAME
 	git push -q $CONTAINER_NAME HEAD:$GIT_CURRENT_BRANCH
 	ssh $CONTAINER_NAME "cd /app && git checkout -q $GIT_CURRENT_BRANCH"
+	if [ -f .env ]; then
+		echo "- sending .env into container ..."
+		scp .env $CONTAINER_NAME:/home/user/.env
+	fi
 
 	echo ""
 	echo "When done:"
