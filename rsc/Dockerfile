@@ -37,7 +37,7 @@ RUN su user -c '/usr/local/go/bin/go install golang.org/x/tools/cmd/goimports@la
 RUN su user -c 'curl -sSL -o- https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/install.sh | bash && \
     . ~/.nvm/nvm.sh && \
     nvm install --no-progress node && \
-    npm install -g @anthropic-ai/claude-code @google/gemini-cli \
+    npm install -g @anthropic-ai/claude-code @google/gemini-cli @qwen-code/qwen-code@latest \
 	'
 	
 # https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/configuration.md'

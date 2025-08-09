@@ -40,8 +40,12 @@ if [ ! -f $HOME/.config/sketch/container_user_identity ]; then
 	exit 1
 fi
 if [ ! -d $HOME/.gemini ]; then
-	echo "Make sure to login to gemini if you want to use it" >&2
+	echo "Make sure to login to Gemini CLI if you want to use it" >&2
 	mkdir $HOME/.gemini
+fi
+if [ ! -d $HOME/.qwen ]; then
+	echo "Make sure to login to Qwen CLI if you want to use it" >&2
+	mkdir $HOME/.qwen
 fi
 GIT_CURRENT_BRANCH=$(git branch --show-current)
 if [ -z "$GIT_CURRENT_BRANCH" ]; then
@@ -83,6 +87,7 @@ function run {
 	  --name $CONTAINER_NAME \
 	  -p 127.0.0.1:0:22 \
 	  -v ~/.gemini/:/home/user/.gemini/ \
+	  -v ~/.qwen/:/home/user/.qwen/ \
 	  $IMAGE_NAME
 
 	PORT_NUMBER=$(docker inspect --format "{{(index .NetworkSettings.Ports \"22/tcp\" 0).HostPort}}" $CONTAINER_NAME)
