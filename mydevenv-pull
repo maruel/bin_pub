@@ -6,6 +6,7 @@
 # Pull from a mydevenv container.
 
 set -eu
+cd "$(git rev-parse --show-toplevel)"
 
 CONTAINER_NAME="cli-$(basename "$PWD")"
 echo "Working on $CONTAINER_NAME..."
