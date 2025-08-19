@@ -8,7 +8,6 @@
 # Assumptions:
 # - only tested on ubuntu
 # - sketch.dev was run on the system
-# - gemini cli was run on the system
 # - nvim is configured
 #
 # A simplified version of https://github.com/boldsoftware/sketch/blob/main/loop/server/local_ssh.md but
@@ -17,21 +16,9 @@
 # TODO:
 # - Confirm ssh host key authentication.
 # - Generate our own keys instead of relying on sketch.dev's keys.
-# - Support multiple containers simultaneously.
-# - Install a few Go tools.
 
 set -euo pipefail
 
-# Settings:
-CONTAINER_NAME_PREFIX=cli-
-IMAGE_NAME=mydevenv
-
-
-# Preflight checks:
-if [ $# -ne 0 ]; then
-	echo "Unexpected argument" >&2
-	exit 1
-fi
 if [ ! -f $HOME/.config/sketch/container_user_identity ]; then
 	echo "Run sketch from sketch.dev first to create the SSH keys" >&2
 	echo "TODO: This is lazy, we could create them ourselves." >&2
@@ -40,11 +27,9 @@ if [ ! -f $HOME/.config/sketch/container_user_identity ]; then
 	exit 1
 fi
 if [ ! -d $HOME/.gemini ]; then
-	echo "Make sure to login to Gemini CLI if you want to use it" >&2
 	mkdir $HOME/.gemini
 fi
 if [ ! -d $HOME/.qwen ]; then
-	echo "Make sure to login to Qwen CLI if you want to use it" >&2
 	mkdir $HOME/.qwen
 fi
 GIT_CURRENT_BRANCH=$(git branch --show-current)
@@ -53,10 +38,17 @@ if [ -z "$GIT_CURRENT_BRANCH" ]; then
 	exit 1
 fi
 GIT_ROOT_DIR=$(git rev-parse --show-toplevel)
-CONTAINER_NAME="${CONTAINER_NAME_PREFIX}$(basename $GIT_ROOT_DIR)"
 GIT_USER_NAME="$(git config --get user.name)"
 GIT_USER_EMAIL="$(git config --get user.email)"
+CONTAINER_NAME="cli-$(basename $GIT_ROOT_DIR)"
+IMAGE_NAME=mydevenv
 
+if [ $# -gt 1 ]; then
+    echo "Usage: $0 [container_name]" >&2
+    exit 1
+elif [ $# -eq 1 ]; then
+    CONTAINER_NAME="$1"
+fi
 
 ######
 
