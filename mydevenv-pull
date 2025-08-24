@@ -9,6 +9,12 @@ set -eu
 cd "$(git rev-parse --show-toplevel)"
 
 CONTAINER_NAME="cli-$(basename "$PWD")"
+if [ $# -gt 1 ]; then
+    echo "Usage: $0 [container_name]" >&2
+    exit 1
+elif [ $# -eq 1 ]; then
+    CONTAINER_NAME="$1"
+fi
 echo "Working on $CONTAINER_NAME..."
 # Make sure everything is committed inside the container.
 ssh $CONTAINER_NAME "cd /app && git add .; git commit -a -q -m 'Pull from mydevenv'; true"
