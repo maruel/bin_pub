@@ -26,7 +26,7 @@ if [ ! -f $HOME/.config/sketch/container_user_identity ]; then
 	# keygen -s container_ca -I "host_identifier" -h -n 127.0.0.1 container_server_identity.pub
 	exit 1
 fi
-if [ ! -d $HOME/.claude]; then
+if [ ! -d $HOME/.claude ]; then
 	mkdir $HOME/.claude
 fi
 if [ ! -d $HOME/.gemini ]; then
