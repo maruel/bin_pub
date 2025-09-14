@@ -60,11 +60,10 @@ COPY etc/profile.d/mydevenv.sh /etc/profile.d/mydevenv.sh
 RUN adduser --disabled-password user
 #RUN useradd -ms /bin/bash user && mkdir -p /app && chown user:user /app
 RUN su user -c "mkdir -p /home/user/.ssh /home/user/.config/git"
-COPY sketch/container_user_identity.pub /home/user/.ssh/authorized_keys
-COPY config/git/config /home/user/.config/git/config
-COPY config/git/ignore /home/user/.config/git/ignore
+COPY --chown=user:user sketch/container_user_identity.pub /home/user/.ssh/authorized_keys
+COPY --chown=user:user config/git/config /home/user/.config/git/config
+COPY --chown=user:user config/git/ignore /home/user/.config/git/ignore
 RUN echo "cd /app" >> /etc/profile.d/mydevenv.sh
-RUN chown -R user:user /home/user/.ssh /home/user/.config
 RUN chmod 0700 /home/user/.ssh
 RUN chmod 0400 /home/user/.ssh/authorized_keys
 
