@@ -12,6 +12,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install dependencies
 RUN apt-get update -q && \
     apt-get install -q -y --no-install-recommends \
+		brotli \
 		build-essential \
 		ca-certificates \
 		curl \
@@ -26,7 +27,8 @@ RUN apt-get update -q && \
 		rsync \
 		shared-mime-info \
 		wget \
-		xvfb && \
+		xvfb \
+		zstd && \
 	apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

@@ -79,10 +79,10 @@ function run {
 	docker rm -f $CONTAINER_NAME &>/dev/null || true
 	echo "- Starting container $CONTAINER_NAME ..."
 	# Port 3000 is mapped.
+	# -p 127.0.0.1:3000:3000
 	docker run -d \
 	  --name $CONTAINER_NAME \
 	  -p 127.0.0.1:0:22 \
-	  -p 127.0.0.1:3000:3000 \
 	  -v ~/.claude/:/home/user/.claude/ \
 	  -v ~/.gemini/:/home/user/.gemini/ \
 	  -v ~/.qwen/:/home/user/.qwen/ \
