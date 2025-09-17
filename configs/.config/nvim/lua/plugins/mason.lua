@@ -4,6 +4,9 @@ return {
 	'mason-org/mason.nvim',
 	config = true,
 	opts = {
-		ensure_installed = { 'black' },
+		ensure_installed = {
+			'black',
+			-- 'djlint',
+		},
 	},
 }

@@ -65,6 +65,7 @@
 [diff]
 	tool = vimdiff
 	noprefix = true
+	colorMoved = dimmed-zebra
 
 
 ; May not be great ideas to set as default. I like to live dangerously.

@@ -27,7 +27,9 @@ vim.opt.foldenable = true
 vim.opt.foldmethod = 'indent'
 vim.opt.foldlevelstart = 99
 vim.opt.autoread = true
-
+-- modeline is cool
+vim.opt.modeline = true
+vim.opt.modelineexpr = true
 
 -- Debugging function when diagnosing why the hell things are not working.
 -- To debug live, run commands like:
@@ -74,6 +76,22 @@ vim.lsp.config('gopls', {
 			analyses = { unusedparams = true, },
 			staticcheck = true,
 			gofumpt = true,
+		},
+	},
+})
+vim.lsp.config('html', {
+	filetypes = { "html", "gohtml" },
+	settings = {
+		html = {
+			format = {
+				templating = true,
+				wrapLineLength = 120,
+				wrapAttributes = 'auto',
+			},
+			hover = {
+				documentation = true,
+				references = true,
+			},
 		},
 	},
 })

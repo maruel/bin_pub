@@ -6,6 +6,8 @@ return {
 		null_ls.setup({
 			-- https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md
 			sources = {
+				-- null_ls.builtins.formatting.jq,
+
 				-- All
 				-- null_ls.builtins.diagnostics.codespell,
 				-- null_ls.builtins.formatting.codespell,
@@ -85,6 +87,8 @@ return {
 
 				-- YAML
 				-- null_ls.builtins.formatting.yamlfix,
+
+				-- null_ls.builtins.formatting.prettier,
 			},
 		})
 	end,
