@@ -17,3 +17,5 @@ mkdir -p nodejs
 curl -sSL -o nodejs/nodejs.tar.xz https://nodejs.org/dist/latest/$NODEJS_VERSION
 tar -C nodejs --strip-components=1 -xJf nodejs/nodejs.tar.xz
 rm nodejs/nodejs.tar.xz
+
+npm install -g vscode-langservers-extracted

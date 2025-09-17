@@ -13,4 +13,4 @@ if ! which node &> /dev/null; then
 fi
 
 # Install or update packages
-npm install -g @anthropic-ai/claude-code @google/gemini-cli @openai/codex @qwen-code/qwen-code@latest
+npm install -g @anthropic-ai/claude-code @google/gemini-cli @openai/codex @qwen-code/qwen-code@latest vscode-langservers-extracted
