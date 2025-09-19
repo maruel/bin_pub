@@ -87,6 +87,11 @@ vim.lsp.config('html', {
 				templating = true,
 				wrapLineLength = 120,
 				wrapAttributes = 'auto',
+				unformatted = '',
+				contentUnformatted = '',
+				indentInnerHtml = true,
+				preserveNewLines = true,
+				maxPreserveNewLines = 2,
 			},
 			hover = {
 				documentation = true,
@@ -95,6 +100,33 @@ vim.lsp.config('html', {
 		},
 	},
 })
+vim.lsp.config('cssls', {
+	filetypes = { "css", "scss", "less" },
+	settings = {
+		css = {
+			format = {
+				enable = true,
+				wrapLineLength = 120,
+				indentSize = 2,
+			},
+		},
+		scss = {
+			format = {
+				enable = true,
+				wrapLineLength = 120,
+				indentSize = 2,
+			},
+		},
+		less = {
+			format = {
+				enable = true,
+				wrapLineLength = 120,
+				indentSize = 2,
+			},
+		},
+	},
+})
+
 vim.lsp.config('lua_ls', {
 	settings = {
 		Lua = {
@@ -102,6 +134,54 @@ vim.lsp.config('lua_ls', {
 			workspace = { library = vim.api.nvim_get_runtime_file('', true), },
 			diagnostics = { globals = { 'vim', }, },
 			telemetry = { enable = false, },
+		},
+	},
+})
+
+vim.lsp.config('ts_ls', {
+	filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
+	settings = {
+		typescript = {
+			format = {
+				enable = true,
+				indentSize = 2,
+				tabSize = 2,
+				convertTabsToSpaces = true,
+				semicolons = 'ignore',
+				insertSpaceBeforeAndAfterBinaryOperators = true,
+				insertSpaceAfterKeywordsInControlFlowStatements = true,
+				insertSpaceAfterFunctionKeywordForAnonymousFunctions = true,
+				insertSpaceBeforeFunctionParenthesis = false,
+				insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis = false,
+				insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets = false,
+				insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces = true,
+				insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces = false,
+				insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces = false,
+				insertSpaceAfterTypeAssertion = false,
+				placeOpenBraceOnNewLineForFunctions = false,
+				placeOpenBraceOnNewLineForControlBlocks = false,
+			},
+		},
+		javascript = {
+			format = {
+				enable = true,
+				indentSize = 2,
+				tabSize = 2,
+				convertTabsToSpaces = true,
+				semicolons = 'ignore',
+				insertSpaceBeforeAndAfterBinaryOperators = true,
+				insertSpaceAfterKeywordsInControlFlowStatements = true,
+				insertSpaceAfterFunctionKeywordForAnonymousFunctions = true,
+				insertSpaceBeforeFunctionParenthesis = false,
+				insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis = false,
+				insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets = false,
+				insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces = true,
+				insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces = false,
+				insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces = false,
+				insertSpaceAfterTypeAssertion = false,
+				placeOpenBraceOnNewLineForFunctions = false,
+				placeOpenBraceOnNewLineForControlBlocks = false,
+			},
 		},
 	},
 })

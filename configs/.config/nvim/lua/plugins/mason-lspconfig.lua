@@ -10,7 +10,7 @@ return {
 			'cmake', -- CMake
 			'cssls', -- CSS
 			'gopls', -- Go
-			-- 'html', -- HTML
+			'html', -- HTML
 			-- 'superhtml', -- HTML
 			-- 'biome', -- HTML
 			'lua_ls', -- Lua

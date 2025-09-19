@@ -23,8 +23,8 @@ return {
 				-- null_ls.builtins.diagnostics.stylelint,
 
 				-- CSS/JS/TS
-				-- null_ls.builtins.formatting.biome,
-				-- null_ls.builtins.formatting.stylelint,
+				null_ls.builtins.formatting.biome,
+				null_ls.builtins.formatting.stylelint,
 
 				-- GitHub Actions
 				null_ls.builtins.diagnostics.actionlint,
@@ -35,8 +35,8 @@ return {
 				-- null_ls.builtins.diagnostics.staticcheck,
 
 				-- HTML
-				-- null_ls.builtins.diagnostics.tidy,
-				-- null_ls.builtins.formatting.tidy,
+				null_ls.builtins.diagnostics.tidy,
+				null_ls.builtins.formatting.tidy,
 
 				-- Make
 				-- null_ls.builtins.diagnostics.checkmake,
