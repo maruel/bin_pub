@@ -26,6 +26,7 @@ RUN apt-get update -q && \
 		python3-venv \
 		rsync \
 		shared-mime-info \
+		sqlite3 \
 		wget \
 		xvfb \
 		zstd && \
