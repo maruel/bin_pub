@@ -1,0 +1,15 @@
+{
+  "selectedAuthType": "oauth-personal",
+  "context": {
+	  "fileName": ["AGENTS.md"]
+  },
+  "privacy": {
+	  "usageStatisticsEnabled": false
+  },
+  "telemetry": {
+	  "enabled": false
+  },
+  "ui": {
+	  "hideBanner": true
+  }
+}
