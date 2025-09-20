@@ -1,0 +1,10 @@
+{
+  "contextFileName": "AGENTS.md",
+  "authoAccept": true,
+  "selectedAuthType": "qwen-oauth",
+  "hideBanner": true,
+  "telemetry": {
+	  "enabled": false
+  },
+  "usageStatisticsEnabled": false
+}
