@@ -1,5 +1,6 @@
 {
   "selectedAuthType": "oauth-personal",
+  "theme": "Default",
   "context": {
 	  "fileName": ["AGENTS.md"]
   },
