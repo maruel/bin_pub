@@ -5,6 +5,13 @@
         ci = commit
         co = checkout
         st = status --ignore-submodule=all -sb
+[merge]
+	tool = vimdiff4way
+[mergetool]
+	prompt = false
+	keepBackup = false
+[mergetool "vimdiff4way"]
+	cmd = vimdiff -c \"wincmd J\" -c \"0\" -c \"/<<<<<<< \" $MERGED $LOCAL $BASE $REMOTE
 [user]
 	name = mydevenv
 	email = "<>"
