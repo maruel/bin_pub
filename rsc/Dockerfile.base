@@ -9,7 +9,8 @@ FROM debian:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install dependencies
+# Install dependencies.
+# Install tools that the LLMs know about.
 RUN apt-get update -q && \
     apt-get install -q -y --no-install-recommends \
 		brotli \
@@ -19,8 +20,10 @@ RUN apt-get update -q && \
 		ffmpeg \
 		git \
 		gpg \
+		iproute2 \
 		jq \
 		less \
+		lsof \
 		openssh-server \
 		python3 \
 		python3-venv \
