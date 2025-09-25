@@ -3,26 +3,33 @@
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
 #
-# Pull from a mydevenv container.
+# Pull changes from a mydevenv container to the local repository.
 
 set -eu
 cd "$(git rev-parse --show-toplevel)"
 
-CONTAINER_NAME="cli-$(basename "$PWD")"
-if [ $# -gt 1 ]; then
-    echo "Usage: $0 [container_name]" >&2
-    exit 1
-elif [ $# -eq 1 ]; then
-    CONTAINER_NAME="$1"
+GIT_CURRENT_BRANCH=$(git branch --show-current)
+if [ -z "$GIT_CURRENT_BRANCH" ]; then
+	echo "Check out a named branch" >&2
+	exit 1
 fi
-echo "Working on $CONTAINER_NAME..."
+CONTAINER_NAME="cli-$(basename "$PWD")-$GIT_CURRENT_BRANCH"
+if [ $# -ne 0 ]; then
+    echo "Error: No arguments are supported" >&2
+    exit 1
+fi
 # Make sure everything is committed inside the container.
 ssh $CONTAINER_NAME "cd /app && git add .; git commit -a -q -m 'Pull from mydevenv'; true"
 REMOTE_BRANCH=$(ssh $CONTAINER_NAME "cd /app && git rev-parse --abbrev-ref HEAD")
 # Pull from the current remote checkout into the current branch, independent of its name.
 git pull -q $CONTAINER_NAME $REMOTE_BRANCH:
 
+# Update the base branch in the container to match the current state after pull
+ssh $CONTAINER_NAME "cd /app && git branch -f base $REMOTE_BRANCH"
+
 if [ -f go.mod ]; then
 	go test ./...
-	go install . ./cmd/...
+	if [ -d cmd ]; then
+		go install . ./cmd/...
+	fi
 fi

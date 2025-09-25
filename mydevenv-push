@@ -3,19 +3,25 @@
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
 #
-# Pull from a mydevenv container.
+# Push changes from local repository to a mydevenv container.
 
 set -eu
 cd "$(git rev-parse --show-toplevel)"
 
-CONTAINER_NAME="cli-$(basename "$PWD")"
-if [ $# -gt 1 ]; then
-    echo "Usage: $0 [container_name]" >&2
+GIT_CURRENT_BRANCH=$(git branch --show-current)
+if [ -z "$GIT_CURRENT_BRANCH" ]; then
+	echo "Check out a named branch" >&2
+	exit 1
+fi
+CONTAINER_NAME="cli-$(basename "$PWD")-$GIT_CURRENT_BRANCH"
+if [ $# -ne 0 ]; then
+    echo "Error: No arguments are supported" >&2
     exit 1
-elif [ $# -eq 1 ]; then
-    CONTAINER_NAME="$1"
 fi
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-echo "Pushing $BRANCH to $CONTAINER_NAME..."
+CONTAINER_CURRENT_BRANCH=$(ssh $CONTAINER_NAME "cd /app && git rev-parse --abbrev-ref HEAD")
+CONTAINER_CURRENT_COMMIT=$(ssh $CONTAINER_NAME "cd /app && git rev-parse HEAD")
+BACKUP_BRANCH="backup-$(date +%Y%m%d-%H%M%S)"
+ssh $CONTAINER_NAME "cd /app && git branch -f $BACKUP_BRANCH $CONTAINER_CURRENT_COMMIT"
 git push -f $CONTAINER_NAME
-ssh $CONTAINER_NAME "cd /app && git reset --hard && git checkout $BRANCH"
+ssh $CONTAINER_NAME "cd /app && git reset --hard && git checkout $BRANCH && git branch -f base $BRANCH"

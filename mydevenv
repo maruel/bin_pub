@@ -43,14 +43,12 @@ fi
 GIT_ROOT_DIR=$(git rev-parse --show-toplevel)
 GIT_USER_NAME="$(git config --get user.name)"
 GIT_USER_EMAIL="$(git config --get user.email)"
-CONTAINER_NAME="cli-$(basename $GIT_ROOT_DIR)"
+CONTAINER_NAME="cli-$(basename $GIT_ROOT_DIR)-$GIT_CURRENT_BRANCH"
 IMAGE_NAME=mydevenv
 
-if [ $# -gt 1 ]; then
-    echo "Usage: $0 [container_name]" >&2
+if [ $# -ne 0 ]; then
+    echo "Error: No arguments are supported" >&2
     exit 1
-elif [ $# -eq 1 ]; then
-    CONTAINER_NAME="$1"
 fi
 
 ######
@@ -114,11 +112,16 @@ function run {
 	git fetch $CONTAINER_NAME
 	git push -q $CONTAINER_NAME HEAD:$GIT_CURRENT_BRANCH
 	ssh $CONTAINER_NAME "cd /app && git checkout -q $GIT_CURRENT_BRANCH"
-	if [ -f .env ]; then
+	# Set up base branch to match the original state for easy diffing
+	ssh $CONTAINER_NAME "cd /app && git branch -f base $GIT_CURRENT_BRANCH && git checkout base && git checkout $GIT_CURRENT_BRANCH"
+		if [ -f .env ]; then
 		echo "- sending .env into container ..."
 		scp .env $CONTAINER_NAME:/home/user/.env
 	fi
 
+	echo ""
+	echo "Base branch '$GIT_CURRENT_BRANCH' has been set up in the container as 'base' for easy diffing."
+	echo "Inside the container, you can use 'git diff base' to see your changes."
 	echo ""
 	echo "When done:"
 	echo "  docker rm -f $CONTAINER_NAME"
