@@ -5,7 +5,8 @@
 # Dockerfile to create mydevenv.base
 
 # We don't need it to be stuck on old images so just fetch whatever is current latest.
-FROM debian:latest
+# FROM debian:latest
+FROM ghcr.io/linuxcontainers/debian-slim:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
