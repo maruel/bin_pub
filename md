@@ -26,6 +26,9 @@ if [ ! -f $HOME/.config/sketch/container_user_identity ]; then
 	# keygen -s container_ca -I "host_identifier" -h -n 127.0.0.1 container_server_identity.pub
 	exit 1
 fi
+if [ ! -d $HOME/.codex ]; then
+	mkdir $HOME/.codex
+fi
 if [ ! -d $HOME/.claude ]; then
 	mkdir $HOME/.claude
 fi
@@ -87,6 +90,7 @@ function run {
 	docker run -d \
 	  --name $CONTAINER_NAME \
 	  -p 127.0.0.1:0:22 \
+	  -v ~/.codex/:/home/user/.codex/ \
 	  -v ~/.claude/:/home/user/.claude/ \
 	  -v ~/.gemini/:/home/user/.gemini/ \
 	  -v ~/.qwen/:/home/user/.qwen/ \
