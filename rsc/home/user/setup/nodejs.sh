@@ -14,4 +14,4 @@ if ! which node &> /dev/null; then
 	nvm install --no-progress node
 fi
 
-npm install -g eslint typescript typescript-eslint
+npm install -g eslint tsx typescript typescript-eslint

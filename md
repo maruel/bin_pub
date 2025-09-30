@@ -52,7 +52,7 @@ fi
 GIT_ROOT_DIR=$(git rev-parse --show-toplevel)
 GIT_USER_NAME="$(git config --get user.name)"
 GIT_USER_EMAIL="$(git config --get user.email)"
-CONTAINER_NAME="cli-$(basename $GIT_ROOT_DIR)-$GIT_CURRENT_BRANCH"
+CONTAINER_NAME="md-$(basename $GIT_ROOT_DIR)-$GIT_CURRENT_BRANCH"
 IMAGE_NAME=mydevenv
 
 if [ $# -ne 0 ]; then

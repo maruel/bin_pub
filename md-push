@@ -13,7 +13,8 @@ if [ -z "$GIT_CURRENT_BRANCH" ]; then
 	echo "Check out a named branch" >&2
 	exit 1
 fi
-CONTAINER_NAME="cli-$(basename "$PWD")-$GIT_CURRENT_BRANCH"
+GIT_ROOT_DIR=$(git rev-parse --show-toplevel)
+CONTAINER_NAME="md-$(basename $GIT_ROOT_DIR)-$GIT_CURRENT_BRANCH"
 if [ $# -ne 0 ]; then
     echo "Error: No arguments are supported" >&2
     exit 1
