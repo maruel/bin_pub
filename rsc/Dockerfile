@@ -14,7 +14,7 @@ ENV GO_VERSION=1.25.0
 COPY --chown=user:user ${ENV_FILE:+$ENV_FILE} ${ENV_FILE:+/home/user/.env}
 
 # Copy the aliases
-COPY --chown=user:user bash_aliases /home/user/.bash_aliases
+COPY --chown=user:user home/user/.bash_aliases /home/user/.bash_aliases
 
 # Install latest Neovim (as root)
 RUN ARCH=$(uname -m | sed s/aarch64/arm64/) && \
