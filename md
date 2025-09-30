@@ -3,7 +3,7 @@
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
 #
-# mydevenv: sets up a local dev environment with a local git clone for quick iteration.
+# md (mydevenv): sets up a local dev environment with a local git clone for quick iteration.
 #
 # Assumptions:
 # - only tested on ubuntu
@@ -34,6 +34,12 @@ if [ ! -d $HOME/.gemini ]; then
 fi
 if [ ! -d $HOME/.qwen ]; then
 	mkdir $HOME/.qwen
+fi
+if [ ! -d $HOME/.config/goose ]; then
+	mkdir $HOME/.config/goose
+fi
+if [ ! -d $HOME/.local/share/goose ]; then
+	mkdir $HOME/.local/share/goose
 fi
 GIT_CURRENT_BRANCH=$(git branch --show-current)
 if [ -z "$GIT_CURRENT_BRANCH" ]; then
@@ -84,6 +90,8 @@ function run {
 	  -v ~/.claude/:/home/user/.claude/ \
 	  -v ~/.gemini/:/home/user/.gemini/ \
 	  -v ~/.qwen/:/home/user/.qwen/ \
+	  -v ~/.config/goose/:/home/user/.config/goose/ \
+	  -v ~/.local/share/goose/:/home/user/.local/share/goose/ \
 	  $IMAGE_NAME
 
 	PORT_NUMBER=$(docker inspect --format "{{(index .NetworkSettings.Ports \"22/tcp\" 0).HostPort}}" $CONTAINER_NAME)

@@ -1,6 +1,8 @@
 #!/bin/bash
-# Install nvm, node.js, npm, Claude Code and Gemini CLI (as user)
+# Install nvm, node.js, npm, typescript, eslint (as user)
+
 set -eu
+cd $HOME
 
 if ! which nvm &> /dev/null; then
 	# TODO: Update from time to time.
@@ -12,6 +14,4 @@ if ! which node &> /dev/null; then
 	nvm install --no-progress node
 fi
 
-# Install or update packages
-npm install -g @anthropic-ai/claude-code @google/gemini-cli @openai/codex @qwen-code/qwen-code@latest vscode-langservers-extracted \
-	eslint typescript typescript-eslint
+npm install -g eslint typescript typescript-eslint

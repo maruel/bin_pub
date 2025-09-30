@@ -33,7 +33,9 @@ RUN su user -c /home/user/setup/go.sh
 
 # Install nvm, node.js, npm, Claude Code and Gemini CLI (as user)
 COPY --chown=user:user home/user/setup/nodejs.sh /home/user/setup/nodejs.sh
+COPY --chown=user:user home/user/setup/llm.sh /home/user/setup/llm.sh
 RUN su user -c /home/user/setup/nodejs.sh
+RUN su user -c /home/user/setup/llm.sh
 
 # https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/configuration.md'
 COPY etc/gemini-cli/settings.json /etc/gemini-cli/settings.json
