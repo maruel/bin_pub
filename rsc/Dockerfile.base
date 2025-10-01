@@ -5,14 +5,15 @@
 # Dockerfile to create mydevenv.base
 
 # We don't need it to be stuck on old images so just fetch whatever is current latest.
-# FROM debian:latest
-FROM ghcr.io/linuxcontainers/debian-slim:latest
+FROM debian:latest
+# FROM ghcr.io/linuxcontainers/debian-slim:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies.
 # Install tools that the LLMs know about.
 RUN apt-get update -q && \
+    apt-get upgrade -q -y && \
     apt-get install -q -y --no-install-recommends \
 		brotli \
 		build-essential \
@@ -25,7 +26,9 @@ RUN apt-get update -q && \
 		jq \
 		less \
 		lsof \
+		net-tools \
 		openssh-server \
+		podman \
 		python3 \
 		python3-venv \
 		rsync \
