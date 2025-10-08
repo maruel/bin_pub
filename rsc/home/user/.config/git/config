@@ -1,10 +1,10 @@
+[grep]
+	patternType = perl
 [receive]
         denyCurrentBranch = warn
-[alias]
-        br = branch
-        ci = commit
-        co = checkout
-        st = status --ignore-submodule=all -sb
+[advice]
+	detachedHead = false
+	skippedCherryPicks = false
 [merge]
 	tool = vimdiff4way
 [mergetool]
@@ -15,3 +15,12 @@
 [user]
 	name = mydevenv
 	email = "<>"
+[diff]
+	tool = vimdiff
+	noprefix = true
+	colorMoved = dimmed-zebra
+[alias]
+        br = branch
+        ci = commit
+        co = checkout
+        st = status --ignore-submodule=all -sb

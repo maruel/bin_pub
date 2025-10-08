@@ -12,3 +12,5 @@ theme = CGA
 
 # https://ghostty.org/docs/config/reference#font-feature
 font-feature = -calt, -liga, -dlig
+
+app-notifications = no-clipboard-copy
