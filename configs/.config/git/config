@@ -1,3 +1,6 @@
+; Copyright 2025 Marc-Antoine Ruel
+; https://github.com/maruel/bin_pub
+
 ; Super power git grep:
 [grep]
 	patternType = perl
@@ -42,23 +45,6 @@
 	detachedHead = false
 	skippedCherryPicks = false
 
-
-; Super power git mergetool. It starts vimdiff in 4 windows mode.
-; The top panes are LOCAL, BASE, REMOTE.
-; The bottom pane is the output file, with the merge conflict markers.
-; Upon startup, a search for the first merge conflict marker is done to point
-; the cursor at the right place. Then you can furiously press 'd' and down arrow
-; to remove the unnecessary lines, then :wqa to move to the next file. Works
-; great!
-[merge]
-	tool = vimdiff4way
-[mergetool]
-	prompt = false
-	keepBackup = false
-[mergetool "vimdiff4way"]
-	cmd = vimdiff -c \"wincmd J\" -c \"0\" -c \"/<<<<<<< \" $MERGED $LOCAL $BASE $REMOTE
-
-
 ; Coupled with color.ui = auto above, makes git diff output nice. I recommend to
 ; set in bash the following alias:
 ;   alias diff="git diff --no-index --no-ext-diff --no-prefix"
@@ -77,16 +63,8 @@
 	denyCurrentBranch = warn
 
 
-; Required to use a flow where "one PR/CL equals one named branch". This is
-; explicitly using a "rebase flow" which is used in Chromium and other related
-; projects that aims towards a linear commit history but less often used
-; elsewhere.
 [branch]
-	autosetupmerge = always
-	autosetuprebase = always
 	sort = -committerdate
-[pull]
-	rebase = true
 
 
 ; My aliases.
@@ -127,8 +105,6 @@
 
   ; Editing
 
-	; Take the follow block to have `git squash` available:
-	
   ; Squash all the commits against the ancestor into a single commit
 	squash = "!OLDLOG=$(git compact-log); git reset --soft $(git ancestor) && git commit -m \"$OLDLOG\""
   ; Smaller log against the ancestor
@@ -179,5 +155,9 @@
 	required = true
 	clean = git-lfs clean -- %f
 
+
+[include]
+	path = squash.ini
+	path = fourwaysmerge.ini
 
 ; Add user.name and user.email here.
