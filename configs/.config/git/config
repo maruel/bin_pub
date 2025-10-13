@@ -114,10 +114,6 @@
 	which = !cat $(git rev-parse --git-dir)/description
   ; Prints a graph about the current state of the branches
 	confused = log --graph --decorate --pretty=format:\"%Cgreen%h%d %Cred%ad %Creset%s\" --branches --date-order --date=short --tags
-  ; Returns the 'ancestor' hash at which the current branch is based on
-	ancestor = !git merge-base HEAD @{u}
-  ; Smaller log against the ancestor
-	compact-log = !git log --pretty=format:\"%B\" $(git ancestor)..HEAD
   ; Blames against a branch given as an argument
 	blamebranch = "!foo() { git diff --name-only \"$@\" | while read i; do git blame --date=short -C $i | cut -d '(' -f 2 | cut -d ' ' -f 1; done | sort -f | uniq -ic | sort -nr; }; foo"
   ; Blames against the 'upstream' branch
@@ -131,8 +127,15 @@
 
   ; Editing
 
+	; Take the follow block to have `git squash` available:
+	
   ; Squash all the commits against the ancestor into a single commit
 	squash = "!OLDLOG=$(git compact-log); git reset --soft $(git ancestor) && git commit -m \"$OLDLOG\""
+  ; Smaller log against the ancestor
+	compact-log = !git log --pretty=format:\"%B\" $(git ancestor)..HEAD
+  ; Returns the 'ancestor' hash at which the current branch is based on
+	ancestor = !git merge-base HEAD @{u}
+
   ; Run sed on all files skipping symlinks. It is significantly slower than
   ; git sed-fast but does the right thing.
 	sed = "!git ls-files -z -- . | xargs -0 -P 10 -i git sed-internal \"{}\""
