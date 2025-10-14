@@ -32,6 +32,7 @@ RUN apt-get update -q && \
 		podman \
 		python3 \
 		python3-venv \
+		ripgrep \
 		rsync \
 		shared-mime-info \
 		sqlite3 \
