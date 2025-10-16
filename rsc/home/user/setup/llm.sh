@@ -13,6 +13,7 @@ npm install -g \
 	@google/gemini-cli \
 	@openai/codex \
 	@qwen-code/qwen-code@latest \
+	@sourcegraph/amp \
 	vscode-langservers-extracted
 
 # curl -fsSL https://github.com/block/goose/releases/download/stable/download_cli.sh | bash

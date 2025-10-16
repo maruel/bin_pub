@@ -11,7 +11,8 @@ if ! which nvm &> /dev/null; then
 fi
 
 if ! which node &> /dev/null; then
-	nvm install --no-progress node
+	# Lock to v24 as @sourcegraph/amp requires it as of 2025-10-15. Switch back to "node" to use latest.
+	nvm install --no-progress v24
 fi
 
 npm install -g eslint tsx typescript typescript-eslint

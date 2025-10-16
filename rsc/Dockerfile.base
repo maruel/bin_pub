@@ -71,7 +71,7 @@ COPY etc/profile.d/mydevenv.sh /etc/profile.d/mydevenv.sh
 # Create user "user"
 RUN adduser --disabled-password user
 #RUN useradd -ms /bin/bash user && mkdir -p /app && chown user:user /app
-RUN su user -c "mkdir -p /home/user/.ssh /home/user/.config/git"
+RUN su user -c "mkdir -p /home/user/.ssh /home/user/.config/git /home/user/.local/share"
 COPY --chown=user:user sketch/container_user_identity.pub /home/user/.ssh/authorized_keys
 COPY --chown=user:user home/user/.config/git/* /home/user/.config/git/
 RUN echo "cd /app" >> /etc/profile.d/mydevenv.sh
