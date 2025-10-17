@@ -26,6 +26,9 @@ if [ ! -f $HOME/.config/sketch/container_user_identity ]; then
 	# keygen -s container_ca -I "host_identifier" -h -n 127.0.0.1 container_server_identity.pub
 	exit 1
 fi
+if [ ! -d $HOME/.amp ]; then
+	mkdir $HOME/.amp
+fi
 if [ ! -d $HOME/.codex ]; then
 	mkdir $HOME/.codex
 fi
@@ -38,8 +41,14 @@ fi
 if [ ! -d $HOME/.qwen ]; then
 	mkdir $HOME/.qwen
 fi
+if [ ! -d $HOME/.config/amp ]; then
+	mkdir $HOME/.config/amp
+fi
 if [ ! -d $HOME/.config/goose ]; then
 	mkdir $HOME/.config/goose
+fi
+if [ ! -d $HOME/.local/share/amp ]; then
+	mkdir $HOME/.local/share/amp
 fi
 if [ ! -d $HOME/.local/share/goose ]; then
 	mkdir $HOME/.local/share/goose
@@ -90,11 +99,14 @@ function run {
 	docker run -d \
 	  --name $CONTAINER_NAME \
 	  -p 127.0.0.1:0:22 \
+	  -v ~/.amp/:/home/user/.amp/ \
 	  -v ~/.codex/:/home/user/.codex/ \
 	  -v ~/.claude/:/home/user/.claude/ \
 	  -v ~/.gemini/:/home/user/.gemini/ \
 	  -v ~/.qwen/:/home/user/.qwen/ \
+	  -v ~/.config/amp/:/home/user/.config/amp/ \
 	  -v ~/.config/goose/:/home/user/.config/goose/ \
+	  -v ~/.local/share/amp/:/home/user/.local/share/amp/ \
 	  -v ~/.local/share/goose/:/home/user/.local/share/goose/ \
 	  $IMAGE_NAME
 
