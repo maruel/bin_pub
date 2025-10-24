@@ -8,7 +8,7 @@ FROM mydevenv.base
 ARG ENV_FILE
 
 # Settings from the script. We'll want to eventually just use whatever is the current latest.
-ENV GO_VERSION=1.25.0
+ENV GO_VERSION=1.25.3
 
 # Copy the file setting environment variables.
 COPY --chown=user:user ${ENV_FILE:+$ENV_FILE} ${ENV_FILE:+/home/user/.env}
