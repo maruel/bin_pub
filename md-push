@@ -3,7 +3,7 @@
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
 #
-# Push changes from local repository to a mydevenv container.
+# Push changes from local repository to a md container.
 
 set -eu
 cd "$(git rev-parse --show-toplevel)"

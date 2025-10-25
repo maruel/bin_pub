@@ -2,7 +2,7 @@
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
 #
-# Dockerfile to create mydevenv.base
+# Dockerfile to create md.base
 
 # We don't need it to be stuck on old images so just fetch whatever is current latest.
 FROM docker.io/debian:stable-slim
@@ -58,15 +58,15 @@ RUN GECKODRIVER_URL=$(curl -sSL "https://api.github.com/repos/mozilla/geckodrive
 
 # Configure SSH
 RUN rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub
-COPY etc/ssh/sshd_config.d/mydevenv.conf /etc/ssh/sshd_config.d/mydevenv.conf
+COPY etc/ssh/sshd_config.d/md.conf /etc/ssh/sshd_config.d/md.conf
 COPY etc/ssh/ssh_host_ed25519_key /etc/ssh/ssh_host_ed25519_key
 COPY etc/ssh/ssh_host_ed25519_key.pub /etc/ssh/ssh_host_ed25519_key.pub
-RUN echo 'Welcome to mydevenv!' > /etc/motd
+RUN echo 'Welcome to md!' > /etc/motd
 COPY start.sh /root/start.sh
 
 # Configure Bash (for everyone)
 RUN curl -sSL -o /opt/git-completion.bash https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
-COPY etc/profile.d/mydevenv.sh /etc/profile.d/mydevenv.sh
+COPY etc/profile.d/md.sh /etc/profile.d/md.sh
 
 # Create user "user"
 RUN adduser --disabled-password user
@@ -74,7 +74,7 @@ RUN adduser --disabled-password user
 RUN su user -c "mkdir -p /home/user/.ssh /home/user/.config/git /home/user/.local/share"
 COPY --chown=user:user home/user/.ssh/authorized_keys /home/user/.ssh/authorized_keys
 COPY --chown=user:user home/user/.config/git/* /home/user/.config/git/
-RUN echo "cd /app" >> /etc/profile.d/mydevenv.sh
+RUN echo "cd /app" >> /etc/profile.d/md.sh
 RUN chmod 0700 /home/user/.ssh
 RUN chmod 0400 /home/user/.ssh/authorized_keys
 

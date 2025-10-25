@@ -3,7 +3,7 @@
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
 #
-# Pull changes from a mydevenv container to the local repository.
+# Pull changes from a md container to the local repository.
 
 set -eu
 cd "$(git rev-parse --show-toplevel)"
@@ -20,7 +20,7 @@ if [ $# -ne 0 ]; then
     exit 1
 fi
 # Make sure everything is committed inside the container.
-ssh $CONTAINER_NAME "cd /app && git add .; git commit -a -q -m 'Pull from mydevenv'; true"
+ssh $CONTAINER_NAME "cd /app && git add .; git commit -a -q -m 'Pull from md'; true"
 REMOTE_BRANCH=$(ssh $CONTAINER_NAME "cd /app && git rev-parse --abbrev-ref HEAD")
 # Pull from the current remote checkout into the current branch, independent of its name.
 git pull -q $CONTAINER_NAME $REMOTE_BRANCH:

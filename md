@@ -3,7 +3,7 @@
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
 #
-# md (mydevenv): sets up a local dev environment with a local git clone for quick iteration.
+# md (my devenv): sets up a local dev environment with a local git clone for quick iteration.
 #
 # Assumptions:
 # - only tested on ubuntu
@@ -65,7 +65,7 @@ GIT_USER_NAME="$(git config --get user.name)"
 GIT_USER_EMAIL="$(git config --get user.email)"
 REPO_NAME=$(basename "$GIT_ROOT_DIR")
 CONTAINER_NAME="md-$REPO_NAME-$GIT_CURRENT_BRANCH"
-IMAGE_NAME=mydevenv
+IMAGE_NAME=md
 
 MD_USER_KEY="$HOME/.ssh/md-$REPO_NAME"
 if [ ! -f "$MD_USER_KEY" ]; then

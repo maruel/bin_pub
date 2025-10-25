@@ -3,7 +3,7 @@
 # LICENSE file.
 
 # Defined in Dockerfile.base
-FROM mydevenv.base
+FROM md.base
 
 ARG ENV_FILE
 
@@ -25,7 +25,7 @@ RUN ARCH=$(uname -m | sed s/aarch64/arm64/) && \
 # Install Go (as root)
 RUN ARCH=$(uname -m | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) && \
     curl -sSL -o- https://go.dev/dl/go${GO_VERSION}.linux-${ARCH}.tar.gz | tar -C /usr/local -xzf - && \
-    echo PATH="/usr/local/go/bin:\${HOME}/go/bin:\${PATH}" >> /etc/profile.d/mydevenv.sh
+    echo PATH="/usr/local/go/bin:\${HOME}/go/bin:\${PATH}" >> /etc/profile.d/md.sh
 # Install Go packages (as user)
 RUN su user -c /home/user/setup/go.sh
 

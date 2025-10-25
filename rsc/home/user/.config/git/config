@@ -13,7 +13,7 @@
 [mergetool "vimdiff4way"]
 	cmd = vimdiff -c \"wincmd J\" -c \"0\" -c \"/<<<<<<< \" $MERGED $LOCAL $BASE $REMOTE
 [user]
-	name = mydevenv
+	name = md
 	email = "<>"
 [diff]
 	tool = vimdiff
