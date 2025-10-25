@@ -7,25 +7,19 @@
 #
 # Assumptions:
 # - only tested on ubuntu
-# - sketch.dev was run on the system
+# - ssh-keygen is available locally
 # - nvim is configured
 #
 # A simplified version of https://github.com/boldsoftware/sketch/blob/main/loop/server/local_ssh.md but
 # without the certification verification done properly yet.
 #
-# TODO:
-# - Confirm ssh host key authentication.
-# - Generate our own keys instead of relying on sketch.dev's keys.
-
 set -euo pipefail
 
-if [ ! -f $HOME/.config/sketch/container_user_identity ]; then
-	echo "Run sketch from sketch.dev first to create the SSH keys" >&2
-	echo "TODO: This is lazy, we could create them ourselves." >&2
-	# ssh-keygen -t rsa -b 4096 -f container_ca
-	# keygen -s container_ca -I "host_identifier" -h -n 127.0.0.1 container_server_identity.pub
-	exit 1
-fi
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+HOST_KEY_PATH="$SCRIPT_DIR/rsc/etc/ssh/ssh_host_ed25519_key"
+HOST_KEY_PUB_PATH="$HOST_KEY_PATH.pub"
+USER_AUTH_KEYS="$SCRIPT_DIR/rsc/home/user/.ssh/authorized_keys"
+
 if [ ! -d $HOME/.amp ]; then
 	mkdir $HOME/.amp
 fi
@@ -53,6 +47,14 @@ fi
 if [ ! -d $HOME/.local/share/goose ]; then
 	mkdir $HOME/.local/share/goose
 fi
+if [ ! -d "$HOME/.ssh" ]; then
+	mkdir -m 700 "$HOME/.ssh"
+fi
+if [ ! -d "$HOME/.ssh/config.d" ]; then
+	mkdir "$HOME/.ssh/config.d"
+fi
+mkdir -p "$(dirname "$HOST_KEY_PATH")"
+mkdir -p "$(dirname "$USER_AUTH_KEYS")"
 GIT_CURRENT_BRANCH=$(git branch --show-current)
 if [ -z "$GIT_CURRENT_BRANCH" ]; then
 	echo "Check out a named branch" >&2
@@ -61,8 +63,25 @@ fi
 GIT_ROOT_DIR=$(git rev-parse --show-toplevel)
 GIT_USER_NAME="$(git config --get user.name)"
 GIT_USER_EMAIL="$(git config --get user.email)"
-CONTAINER_NAME="md-$(basename $GIT_ROOT_DIR)-$GIT_CURRENT_BRANCH"
+REPO_NAME=$(basename "$GIT_ROOT_DIR")
+CONTAINER_NAME="md-$REPO_NAME-$GIT_CURRENT_BRANCH"
 IMAGE_NAME=mydevenv
+
+MD_USER_KEY="$HOME/.ssh/md-$REPO_NAME"
+if [ ! -f "$MD_USER_KEY" ]; then
+	echo "- Generating md user SSH key at $MD_USER_KEY ..."
+	ssh-keygen -q -t ed25519 -N '' -C "md-user" -f "$MD_USER_KEY"
+fi
+if [ ! -f "$MD_USER_KEY.pub" ]; then
+	ssh-keygen -y -f "$MD_USER_KEY" > "$MD_USER_KEY.pub"
+fi
+if [ ! -f "$HOST_KEY_PATH" ]; then
+	echo "- Generating md host SSH key at $HOST_KEY_PATH ..."
+	ssh-keygen -q -t ed25519 -N '' -C "md-host" -f "$HOST_KEY_PATH"
+fi
+if [ ! -f "$HOST_KEY_PUB_PATH" ]; then
+	ssh-keygen -y -f "$HOST_KEY_PATH" > "$HOST_KEY_PUB_PATH"
+fi
 
 if [ $# -ne 0 ]; then
     echo "Error: No arguments are supported" >&2
@@ -72,18 +91,13 @@ fi
 ######
 
 function build {
-	ROOT=$(dirname $0)
+	ROOT="$SCRIPT_DIR"
 	cd $ROOT/rsc
 
 	echo "- Building Docker image ${IMAGE_NAME}.base ..."
-	# TODO: Generate our own keys instead of relying on sketch.dev's keys.
-	# TODO: Do not bake the keys in the image, load them on first run.
-	rm -rf sketch
-	mkdir sketch
-	cp ~/.config/sketch/* sketch/
-	cp ~/.config/sketch/*.* sketch/
+	cp "$MD_USER_KEY.pub" "$USER_AUTH_KEYS"
+	chmod 600 "$USER_AUTH_KEYS"
 	docker build -t ${IMAGE_NAME}.base -f Dockerfile.base .
-	rm -rf sketch
 
 	echo "- Building Docker image $IMAGE_NAME ..."
 	# We could use ARGS ENV_FILE in there but the image would become specific to this repository.
@@ -112,18 +126,21 @@ function run {
 
 	PORT_NUMBER=$(docker inspect --format "{{(index .NetworkSettings.Ports \"22/tcp\" 0).HostPort}}" $CONTAINER_NAME)
 	echo "- Found ssh port $PORT_NUMBER"
-	echo "Host $CONTAINER_NAME" > ~/.ssh/config.d/$CONTAINER_NAME.conf
-	echo "  HostName 127.0.0.1" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
-	echo "  Port $PORT_NUMBER" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
-	echo "  User user" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
-	echo "  IdentityFile $HOME/.config/sketch/container_user_identity" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
-	echo "  CertificateFile /home/maruel/.config/sketch/host_cert" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
-	echo "  UserKnownHostsFile ~/.ssh/config.d/$CONTAINER_NAME.known_hosts" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
-	(echo -n "@cert-authority localhost,127.0.0.1,[::1] " && cat "$HOME/.config/sketch/container_ca.pub") > ~/.ssh/config.d/$CONTAINER_NAME.known_hosts
-	#echo "  UserKnownHostsFile /dev/null" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
-	echo "  StrictHostKeyChecking no" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
-	#echo "  HostbasedAuthentication yes" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
-	#echo "  EnableSSHKeysign yes" >> ~/.ssh/config.d/$CONTAINER_NAME.conf
+	local HOST_CONF="$HOME/.ssh/config.d/$CONTAINER_NAME.conf"
+	local HOST_KNOWN_HOSTS="$HOME/.ssh/config.d/$CONTAINER_NAME.known_hosts"
+	echo "Host $CONTAINER_NAME" > "$HOST_CONF"
+	echo "  HostName 127.0.0.1" >> "$HOST_CONF"
+	echo "  Port $PORT_NUMBER" >> "$HOST_CONF"
+	echo "  User user" >> "$HOST_CONF"
+	echo "  IdentityFile $MD_USER_KEY" >> "$HOST_CONF"
+	echo "  IdentitiesOnly yes" >> "$HOST_CONF"
+	echo "  UserKnownHostsFile $HOST_KNOWN_HOSTS" >> "$HOST_CONF"
+	echo "  StrictHostKeyChecking yes" >> "$HOST_CONF"
+	local HOST_PUBLIC_KEY
+	HOST_PUBLIC_KEY=$(cat "$HOST_KEY_PUB_PATH")
+	echo "[127.0.0.1]:$PORT_NUMBER $HOST_PUBLIC_KEY" > "$HOST_KNOWN_HOSTS"
+	#echo "  HostbasedAuthentication yes" >> "$HOST_CONF"
+	#echo "  EnableSSHKeysign yes" >> "$HOST_CONF"
 
 	echo "- git clone into container ..."
 	git remote rm $CONTAINER_NAME || true

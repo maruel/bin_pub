@@ -5,7 +5,7 @@
 # Dockerfile to create mydevenv.base
 
 # We don't need it to be stuck on old images so just fetch whatever is current latest.
-FROM debian:latest
+FROM docker.io/debian:stable-slim
 # FROM ghcr.io/linuxcontainers/debian-slim:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -21,6 +21,7 @@ RUN apt-get update -q && \
 		ca-certificates \
 		curl \
 		ffmpeg \
+		file \
 		git \
 		gpg \
 		iproute2 \
@@ -58,9 +59,8 @@ RUN GECKODRIVER_URL=$(curl -sSL "https://api.github.com/repos/mozilla/geckodrive
 # Configure SSH
 RUN rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub
 COPY etc/ssh/sshd_config.d/mydevenv.conf /etc/ssh/sshd_config.d/mydevenv.conf
-COPY sketch/container_server_identity /etc/ssh/ssh_host_rsa_key
-COPY sketch/container_server_identity.pub /etc/ssh/ssh_host_rsa_key.pub
-COPY sketch/container_ca.pub /etc/ssh/
+COPY etc/ssh/ssh_host_ed25519_key /etc/ssh/ssh_host_ed25519_key
+COPY etc/ssh/ssh_host_ed25519_key.pub /etc/ssh/ssh_host_ed25519_key.pub
 RUN echo 'Welcome to mydevenv!' > /etc/motd
 COPY start.sh /root/start.sh
 
@@ -72,7 +72,7 @@ COPY etc/profile.d/mydevenv.sh /etc/profile.d/mydevenv.sh
 RUN adduser --disabled-password user
 #RUN useradd -ms /bin/bash user && mkdir -p /app && chown user:user /app
 RUN su user -c "mkdir -p /home/user/.ssh /home/user/.config/git /home/user/.local/share"
-COPY --chown=user:user sketch/container_user_identity.pub /home/user/.ssh/authorized_keys
+COPY --chown=user:user home/user/.ssh/authorized_keys /home/user/.ssh/authorized_keys
 COPY --chown=user:user home/user/.config/git/* /home/user/.config/git/
 RUN echo "cd /app" >> /etc/profile.d/mydevenv.sh
 RUN chmod 0700 /home/user/.ssh
