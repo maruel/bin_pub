@@ -1,0 +1,168 @@
+#!/bin/bash
+# git rb: Rebases all local branches onto their upstreams in topological order
+# Depends on git squash defined in configs/.config/git/squash.ini
+set -euo pipefail
+
+get_branch_tree() {
+    declare -A tree
+    for branch in $(git branch -l --format='%(refname:short)' | sort); do
+        local upstream
+        upstream=$(git rev-parse --abbrev-ref "$branch@{u}" 2>/dev/null || echo "")
+        if [[ -n "$upstream" ]]; then
+            tree["$branch"]="$upstream"
+        fi
+    done
+    for branch in "${!tree[@]}"; do
+        echo "$branch|${tree[$branch]}"
+    done
+}
+
+topo_iter() {
+    declare -A visited
+    declare -a queue
+    declare -a result
+    declare -A tree
+    while IFS='|' read -r branch parent; do
+        tree["$branch"]="$parent"
+    done
+    for branch in $(printf '%s\n' "${!tree[@]}" | sort); do
+        local parent="${tree[$branch]}"
+        local found=0
+        for key in "${!tree[@]}"; do
+            if [[ "$key" == "$parent" ]]; then
+                found=1
+                break
+            fi
+        done
+        if [[ $found -eq 0 ]]; then
+            queue+=("$branch")
+        fi
+    done
+    while [[ ${#queue[@]} -gt 0 ]]; do
+        local branch="${queue[0]}"
+        queue=("${queue[@]:1}")
+        if [[ -n "${visited[$branch]:-}" ]]; then
+            continue
+        fi
+        visited["$branch"]=1
+        result+=("$branch")
+        for b in $(printf '%s\n' "${!tree[@]}" | sort); do
+            if [[ "${tree[$b]}" == "$branch" ]] && [[ -z "${visited[$b]:-}" ]]; then
+                queue+=("$b")
+            fi
+        done
+    done
+    for branch in "${result[@]}"; do
+        echo "$branch|${tree[$branch]}"
+    done
+}
+
+format_branch_name() {
+    echo -e "\033[1m$1\033[0m"
+}
+
+rebase_branch() {
+    local branch="$1"
+    local parent="$2"
+    local start_hash="$3"
+    if git rev-parse "$parent" >/dev/null 2>&1; then
+        local parent_hash
+        parent_hash=$(git rev-parse "$parent")
+        local merge_base
+        merge_base=$(git rev-parse "$start_hash" 2>/dev/null || echo "")
+        if [[ "$parent_hash" == "$merge_base" ]]; then
+            echo "$(format_branch_name "$branch") up-to-date"
+            return 0
+        fi
+    fi
+    echo "Rebasing: $(format_branch_name "$branch")"
+    git switch "$branch" || return 1
+    local num_commits
+    num_commits=$(git rev-list --count "$start_hash..HEAD" 2>/dev/null || echo "1")
+    local consider_squashing=0
+    if [[ $num_commits -ne 1 ]]; then
+        consider_squashing=1
+    fi
+    if git rebase "$parent" 2>/dev/null; then
+        echo "Success!"
+        return 0
+    fi
+    if [[ $consider_squashing -eq 0 ]]; then
+        echo "Rebase failed."
+        return 1
+    fi
+    echo -n "Failed! Attempting to squash $(format_branch_name "$branch") ... "
+    git rebase --abort 2>/dev/null || true
+    local squash_branch="${branch}_squash_attempt"
+    git checkout -b "$squash_branch" || true
+    if git squash 2>/dev/null && git rebase "$parent" 2>/dev/null; then
+        git switch "$branch"
+        git reset --hard "$squash_branch"
+        git branch -D "$squash_branch"
+        return 0
+    fi
+    echo "Failed!"
+    git rebase --abort 2>/dev/null || true
+    git switch "$branch"
+    git branch -D "$squash_branch" 2>/dev/null || true
+    git rebase "$parent" 2>/dev/null || true
+    return 1
+}
+
+remove_empty_branches() {
+    for branch_line in $(get_branch_tree | topo_iter); do
+        IFS='|' read -r branch parent <<<"$branch_line"
+        if [[ "$branch" == "master" || "$branch" == "main" ]]; then
+            continue
+        fi
+        local branch_tree
+        branch_tree=$(git rev-parse "$branch:^{tree}" 2>/dev/null || echo "")
+        local parent_tree
+        parent_tree=$(git rev-parse "$parent:^{tree}" 2>/dev/null || echo "")
+        if [[ -n "$branch_tree" && "$branch_tree" == "$parent_tree" ]]; then
+            git branch -d "$branch" && echo "Deleted $branch"
+        fi
+    done
+}
+
+main() {
+    if [[ $# -gt 0 ]]; then
+        echo "Unexpected argument: $1" >&2
+        exit 1
+    fi
+    cd "$(git rev-parse --show-toplevel)"
+    if [[ -d .git/rebase-merge ]] || [[ -d .git/rebase-apply ]]; then
+        echo "Rebase in progress. Please complete the rebase before running git rb again." >&2
+        exit 1
+    fi
+    local branch_tree
+    branch_tree=$(get_branch_tree)
+    git fetch --all -q
+    declare -A merge_base
+    while IFS='|' read -r branch parent; do
+        merge_base["$branch"]=$(git merge-base "$branch" "$parent" 2>/dev/null || git rev-parse "$parent")
+    done < <(echo "$branch_tree")
+    local retcode=0
+    declare -a unrebased_branches=()
+    while IFS='|' read -r branch parent; do
+        if ! rebase_branch "$branch" "$parent" "${merge_base[$branch]}"; then
+            retcode=1
+            unrebased_branches+=("$branch")
+            break
+        fi
+    done < <(echo "$branch_tree" | topo_iter)
+    if [[ ${#unrebased_branches[@]} -gt 0 ]]; then
+        echo
+        echo "The following branches could not be cleanly rebased:"
+        for branch in "${unrebased_branches[@]}"; do
+            echo "  $(format_branch_name "$branch")"
+        done
+    fi
+    if [[ $retcode -eq 0 ]]; then
+        remove_empty_branches
+        git gc --auto
+    fi
+    exit $retcode
+}
+
+main "$@"
