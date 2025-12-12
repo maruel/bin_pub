@@ -95,7 +95,7 @@ def rebase_branch(branch: str, parent: str, start_hash: str) -> bool:
         ret = subprocess.run(["git", "mergetool"], check=False)
         if ret.returncode:
             return False
-        if run_git_command(["git", "rebase", "--continue"], check=False)[1] == 0:
+        if not subprocess.run(["git", "rebase", "--continue"], check=False).returncode:
             return True
 
 
