@@ -1,16 +1,28 @@
 {
-  "selectedAuthType": "oauth-personal",
-  "theme": "Default",
   "context": {
-	  "fileName": ["AGENTS.md"]
+    "fileName": [
+      "AGENTS.md"
+    ]
+  },
+  "general": {
+    "previewFeatures": true
   },
   "privacy": {
 	  "usageStatisticsEnabled": false
   },
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    },
+    "folderTrust": {
+      "enabled": true
+    }
+  },
   "telemetry": {
 	  "enabled": false
   },
+  "theme": "Default",
   "ui": {
-	  "hideBanner": true
+    "hideBanner": true
   }
 }

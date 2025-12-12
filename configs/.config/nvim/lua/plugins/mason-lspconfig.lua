@@ -10,6 +10,7 @@ return {
 			'cmake', -- CMake
 			'cssls', -- CSS
 			'gopls', -- Go
+			'kotlin_language_server',
 			'html', -- HTML
 			-- 'superhtml', -- HTML
 			-- 'biome', -- HTML
@@ -18,7 +19,7 @@ return {
 			'pyright', -- Python
 			'remark_ls', -- Markdown
 			-- 'sourcekit', -- Swift, Objective-C
-			'ts_ls', -- TypeScript
+			'ts_ls',  -- TypeScript
 			'typos_lsp', -- Spelling
 			'yamlls', -- YAML
 		},

@@ -9,8 +9,8 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = "\\"
 
 -- https://neovim.io/doc/user/lua.html#vim.opt
-vim.opt.tabstop = 4
-vim.opt.shiftwidth = 4
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
 vim.opt.smarttab = true
 vim.opt.mouse = ''
 vim.opt.scrolloff = 5

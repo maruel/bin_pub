@@ -3,6 +3,7 @@
 .coverage
 .DS_Store
 cover.cov
+kls_database.db
 *.egg-info
 *.orig
 *.pyc

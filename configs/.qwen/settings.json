@@ -1,10 +1,21 @@
 {
-  "contextFileName": "AGENTS.md",
   "authoAccept": true,
-  "selectedAuthType": "qwen-oauth",
-  "hideBanner": true,
-  "telemetry": {
-	  "enabled": false
+  "context": {
+    "fileName": "AGENTS.md"
   },
-  "usageStatisticsEnabled": false
+  "privacy": {
+    "usageStatisticsEnabled": false
+  },
+  "security": {
+    "auth": {
+      "selectedType": "qwen-oauth"
+    }
+  },
+  "telemetry": {
+    "enabled": false
+  },
+  "ui": {
+    "hideBanner": true
+  },
+  "$version": 2
 }
