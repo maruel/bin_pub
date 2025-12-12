@@ -9,6 +9,7 @@ import os
 import platform
 import subprocess
 import sys
+import traceback
 import typing
 
 
@@ -86,36 +87,16 @@ def rebase_branch(branch: str, parent: str, start_hash: str) -> bool:
             return True
     print(f"- Rebasing: {format_branch_name(branch)}")
     run_git_command(["git", "switch", branch])
-    git_output = run_git_command(
-        ["git", "rev-list", "--count", f"{start_hash}..HEAD"], check=False
-    )
-    num_commits = int(git_output[0]) if git_output[1] == 0 else 1
-    consider_squashing = num_commits != 1
     if run_git_command(["git", "rebase", parent], check=False)[1] == 0:
         return True
-    if not consider_squashing:
-        print("  Rebase failed.")
-        return False
-    print(
-        f"  Failed! Attempting to squash {format_branch_name(branch)} ... ",
-        end="",
-        flush=True,
-    )
-    run_git_command(["git", "rebase", "--abort"], check=False)
-    squash_branch = f"{branch}_squash_attempt"
-    run_git_command(["git", "checkout", "-b", squash_branch])
-    if run_git_command(["git", "squash"], check=False)[1] == 0:
-        if run_git_command(["git", "rebase", parent], check=False)[1] == 0:
-            run_git_command(["git", "switch", branch])
-            run_git_command(["git", "reset", "--hard", squash_branch])
-            run_git_command(["git", "branch", "-D", squash_branch])
+    # Rebase failed - try to resolve with mergetool
+    print(f"  Conflicts detected. Starting mergetool...")
+    while True:
+        ret = subprocess.run(["git", "mergetool"], check=False)
+        if ret.returncode:
+            return False
+        if run_git_command(["git", "rebase", "--continue"], check=False)[1] == 0:
             return True
-    print("  Failed!")
-    run_git_command(["git", "rebase", "--abort"], check=False)
-    run_git_command(["git", "switch", branch])
-    run_git_command(["git", "branch", "-D", squash_branch])
-    run_git_command(["git", "rebase", parent], check=False)
-    return False
 
 
 def remove_empty_branches(sorted_branches: typing.List[typing.Tuple[str, str]]) -> None:
@@ -131,51 +112,70 @@ def remove_empty_branches(sorted_branches: typing.List[typing.Tuple[str, str]]) 
 
 def main() -> int:
     """Main entry point."""
-    if len(sys.argv) > 1:
-        print(f"Unexpected argument: {sys.argv[1]}", file=sys.stderr)
-        return 1
-    output, rc = run_git_command(["git", "rev-parse", "--show-toplevel"], check=False)
-    if rc != 0:
-        print("Not in a git repository", file=sys.stderr)
-        return 1
-    os.chdir(output)
-    if os.path.isdir(".git/rebase-merge") or os.path.isdir(".git/rebase-apply"):
-        print(
-            "Rebase in progress. Please complete the rebase before running git rb again.",
-            file=sys.stderr,
+    try:
+        if len(sys.argv) > 1:
+            print(f"Unexpected argument: {sys.argv[1]}", file=sys.stderr)
+            return 1
+        output, rc = run_git_command(
+            ["git", "rev-parse", "--show-toplevel"], check=False
         )
-        return 1
-    branch_tree = get_branch_tree()
-    if not branch_tree:
-        print("No branches with upstreams found.")
-        return 0
-    run_git_command(["git", "fetch", "--all", "-q"])
-    merge_bases = {}
-    for branch, parent in branch_tree.items():
-        mb_output, mb_rc = run_git_command(
-            ["git", "merge-base", branch, parent], check=False
-        )
-        merge_bases[branch] = (
-            mb_output
-            if mb_rc == 0
-            else run_git_command(["git", "rev-parse", parent])[0]
-        )
-    sorted_branches = topo_iter(branch_tree)
-    unrebased_branches = []
-    retcode = 0
-    for branch, parent in sorted_branches:
-        if not rebase_branch(branch, parent, merge_bases[branch]):
-            retcode = 1
-            unrebased_branches.append(branch)
-    if unrebased_branches:
-        print()
-        print("The following branches could not be cleanly rebased:")
-        for branch in unrebased_branches:
-            print(f"  {format_branch_name(branch)}")
-    if retcode == 0:
-        remove_empty_branches(sorted_branches)
-        run_git_command(["git", "gc", "--auto"])
-    return retcode
+        if rc != 0:
+            print("Not in a git repository", file=sys.stderr)
+            return 1
+        os.chdir(output)
+        if os.path.isdir(".git/rebase-merge") or os.path.isdir(".git/rebase-apply"):
+            print(
+                "Rebase in progress. Please complete the rebase before running git rb again.",
+                file=sys.stderr,
+            )
+            return 1
+        branch_tree = get_branch_tree()
+        if not branch_tree:
+            print("No branches with upstreams found.")
+            return 0
+        run_git_command(["git", "fetch", "--all", "-q"])
+        merge_bases = {}
+        for branch, parent in branch_tree.items():
+            mb_output, mb_rc = run_git_command(
+                ["git", "merge-base", branch, parent], check=False
+            )
+            merge_bases[branch] = (
+                mb_output
+                if mb_rc == 0
+                else run_git_command(["git", "rev-parse", parent])[0]
+            )
+        sorted_branches = topo_iter(branch_tree)
+        unrebased_branches = []
+        retcode = 0
+        for branch, parent in sorted_branches:
+            if not rebase_branch(branch, parent, merge_bases[branch]):
+                retcode = 1
+                unrebased_branches.append(branch)
+        if unrebased_branches:
+            print()
+            print("The following branches could not be cleanly rebased:")
+            for branch in unrebased_branches:
+                print(f"  {format_branch_name(branch)}")
+        if retcode == 0:
+            remove_empty_branches(sorted_branches)
+            run_git_command(["git", "gc", "--auto"])
+        return retcode
+    except subprocess.CalledProcessError as e:
+        # Find the frame that called run_git_command
+        tb = traceback.extract_tb(e.__traceback__)
+        frame = None
+        for i, f in enumerate(tb):
+            if f.name == "run_git_command" and i > 0:
+                frame = tb[i - 1]
+                break
+        if frame:
+            print(f"Error in {frame.name}() at line {frame.lineno}:", file=sys.stderr)
+        print(f"Command failed: {' '.join(e.cmd)}", file=sys.stderr)
+        if e.stdout:
+            print(f"stdout: {e.stdout}", file=sys.stderr)
+        if e.stderr:
+            print(f"stderr: {e.stderr}", file=sys.stderr)
+        return e.returncode
 
 
 if __name__ == "__main__":
