@@ -5,6 +5,7 @@
     ]
   },
   "general": {
+    "disableAutoUpdate": true,
     "previewFeatures": true
   },
   "privacy": {
@@ -21,8 +22,11 @@
   "telemetry": {
 	  "enabled": false
   },
-  "theme": "Default",
+  "tools": {
+    "autoAccept": true
+  },
   "ui": {
-    "hideBanner": true
+    "hideBanner": true,
+    "theme": "Default"
   }
 }
