@@ -92,7 +92,6 @@ def rebase_branch(branch: str, parent: str, start_hash: str) -> bool:
     num_commits = int(git_output[0]) if git_output[1] == 0 else 1
     consider_squashing = num_commits != 1
     if run_git_command(["git", "rebase", parent], check=False)[1] == 0:
-        print("  Success!")
         return True
     if not consider_squashing:
         print("  Rebase failed.")
