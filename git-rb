@@ -123,6 +123,8 @@ def main() -> int:
             print("Not in a git repository", file=sys.stderr)
             return 1
         os.chdir(output)
+        # Save the original branch/commit to restore later
+        original_ref, _ = run_git_command(["git", "rev-parse", "HEAD"], check=False)
         if os.path.isdir(".git/rebase-merge") or os.path.isdir(".git/rebase-apply"):
             print(
                 "Rebase in progress. Please complete the rebase before running git rb again.",
@@ -159,6 +161,9 @@ def main() -> int:
         if retcode == 0:
             remove_empty_branches(sorted_branches)
             run_git_command(["git", "gc", "--auto"])
+        # Restore the original branch/commit
+        if original_ref:
+            run_git_command(["git", "checkout", original_ref], check=False)
         return retcode
     except subprocess.CalledProcessError as e:
         # Find the frame that called run_git_command
