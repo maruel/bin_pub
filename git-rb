@@ -132,7 +132,7 @@ def main() -> int:
             return 1
         os.chdir(output)
         # Save the original branch/commit to restore later
-        original_ref, _ = run_git_command(["git", "rev-parse", "HEAD"], check=False)
+        original_ref, _ = run_git_command(["git", "rev-parse", "--abbrev-ref", "HEAD"], check=False)
         if os.path.isdir(".git/rebase-merge") or os.path.isdir(".git/rebase-apply"):
             print(
                 "Rebase in progress. Please complete the rebase before running git rb again.",
