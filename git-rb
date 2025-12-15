@@ -34,7 +34,7 @@ def get_branch_tree() -> typing.Dict[str, str]:
         if rc == 0 and upstream:
             tree[branch] = upstream
         else:
-            print(f"No upstream for {format_branch_name(branch)}")
+            print(f"- {format_branch_name(branch)}: no upstream")
     return tree
 
 
@@ -85,7 +85,7 @@ def rebase_branch(branch: str, parent: str, start_hash: str) -> bool:
         if start_rc == 0 and parent_hash == start_output:
             print(f"- {format_branch_name(branch)}: up-to-date")
             return True
-    print(f"- Rebasing: {format_branch_name(branch)}")
+    print(f"- {format_branch_name(branch)}: rebaseing")
     run_git_command(["git", "switch", branch])
     if run_git_command(["git", "rebase", parent], check=False)[1] == 0:
         return True
@@ -106,8 +106,16 @@ def remove_empty_branches(sorted_branches: typing.List[typing.Tuple[str, str]]) 
         if branch not in ("master", "main"):
             branch_tree = get_tree(branch)
             if bool(branch_tree) and branch_tree == get_tree(parent):
+                # Reparent any branches that depend on this branch
+                for other_branch, other_parent in sorted_branches:
+                    if other_parent == branch:
+                        run_git_command(["git", "branch", "-u", parent, other_branch])
+                        print(
+                            f"- {format_branch_name(other_branch)}: "
+                            f"Reparented to {format_branch_name(parent)}"
+                        )
                 run_git_command(["git", "branch", "-d", branch])
-                print(f"- {format_branch_name(branch)}: Deleted")
+                print(f"- {format_branch_name(branch)}: deleted")
 
 
 def main() -> int:
