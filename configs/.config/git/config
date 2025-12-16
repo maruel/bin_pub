@@ -157,7 +157,7 @@
 
 
 [include]
-	; Now implemented as git-squash. Will remove soon:
+	; Now implemented as git-squash at https://github.com/git-maruel. Will remove soon:
 	; path = squash.ini
 	path = fourwaysmerge.ini
 
