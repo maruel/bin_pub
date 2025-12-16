@@ -64,11 +64,17 @@ def main() -> int:
         if commits_count in ("0", "1"):
             return 0
         old_log, _ = run_git_command(
-            ["git", "log", "--pretty=format:%B", f"{ancestor}..HEAD"]
+            ["git", "log", "--pretty=format:%B%x00", f"{ancestor}..HEAD"]
         )
+        # Filter out commit messages that only contain "." or "," characters
+        new_log = "\n\n".join(
+            msg.rstrip()
+            for msg in old_log.split("\x00")
+            if msg and not all(c in ".,\n\r\t " for c in msg)
+        ) or "Squashed commits"
         # print(f"Squashing {commits_count} commits on branch '{branch}'...")
         run_git_command(["git", "reset", "--soft", ancestor])
-        run_git_command(["git", "commit", "-m", old_log])
+        run_git_command(["git", "commit", "-m", new_log])
         return 0
     except subprocess.CalledProcessError as e:
         # Find the frame that called run_git_command
