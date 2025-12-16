@@ -157,7 +157,8 @@
 
 
 [include]
-	path = squash.ini
+	; Now implemented as git-squash. Will remove soon:
+	; path = squash.ini
 	path = fourwaysmerge.ini
 
 ; Add user.name and user.email here.
