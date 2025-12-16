@@ -4,12 +4,3 @@
 [submodule "keychain"]
 	path = keychain
 	url = https://github.com/maruel/keychain.py.git
-[submodule "configs/.vim/bundle/vim-go"]
-	path = configs/.vim/bundle/vim-go
-	url = https://github.com/fatih/vim-go.git
-[submodule "ctrlp.vim"]
-	path = configs/.vim/bundle/ctrlp.vim
-	url = https://github.com/ctrlpvim/ctrlp.vim
-[submodule "configs/.vim/bundle/vim-fugitive"]
-	path = configs/.vim/bundle/vim-fugitive
-	url = https://github.com/tpope/vim-fugitive
