@@ -21,8 +21,9 @@
 	precomposeunicode = true
 	commitGraph = true
 	symlinks = true
+	pager = 'less -S -R -F -X'
   ; Requires https://github.com/dandavison/delta to be installed.
-	pager = delta
+	; pager = delta
 
 
 ; Requires https://github.com/dandavison/delta to be installed.
