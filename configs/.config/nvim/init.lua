@@ -186,6 +186,21 @@ vim.lsp.config('ts_ls', {
 	},
 })
 
+vim.filetype.add({
+	extension = {
+		kts = "kotlin",
+	},
+})
+vim.filetype.add({
+	extension = {
+		gohtml = 'gohtml',
+		gotmpl = 'gohtml',
+	},
+	pattern = {
+		['.*%.html%.tmpl'] = 'gohtml',
+		['.*%.html%.tpl'] = 'gohtml',
+	},
+})
 
 -- Delete the current file.
 local function confirm_and_delete_buffer()
@@ -278,15 +293,15 @@ vim.api.nvim_create_autocmd('BufWritePre', {
 		for _, client in ipairs(vim.lsp.get_clients({ bufnr = args.buf })) do
 			-- Check for: 'source.OrganizeImports' inside 'textDocument/codeAction'
 			if client:supports_method(vim.lsp.protocol.Methods.textDocument_codeAction)
-				and client.capabilities
-				and client.capabilities.textDocument
-				and client.capabilities.textDocument.codeAction
-				and client.capabilities.textDocument.codeAction.codeActionLiteralSupport
-				and client.capabilities.textDocument.codeAction.codeActionLiteralSupport.codeActionKind
-				and client.capabilities.textDocument.codeAction.codeActionLiteralSupport.codeActionKind.valueSet
-				and vim.tbl_contains(
-					client.capabilities.textDocument.codeAction.codeActionLiteralSupport.codeActionKind.valueSet,
-					vim.lsp.protocol.CodeActionKind.SourceOrganizeImports) then
+					and client.capabilities
+					and client.capabilities.textDocument
+					and client.capabilities.textDocument.codeAction
+					and client.capabilities.textDocument.codeAction.codeActionLiteralSupport
+					and client.capabilities.textDocument.codeAction.codeActionLiteralSupport.codeActionKind
+					and client.capabilities.textDocument.codeAction.codeActionLiteralSupport.codeActionKind.valueSet
+					and vim.tbl_contains(
+						client.capabilities.textDocument.codeAction.codeActionLiteralSupport.codeActionKind.valueSet,
+						vim.lsp.protocol.CodeActionKind.SourceOrganizeImports) then
 				goddam("BufWritePre: %s: sourceOrganize", client.name)
 				foundOrganize = true
 			end

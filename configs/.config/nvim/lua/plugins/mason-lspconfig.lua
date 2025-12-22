@@ -16,8 +16,9 @@ return {
 			-- 'biome', -- HTML
 			'lua_ls', -- Lua
 			-- 'marksman',  -- Markdown
-			'pyright', -- Python
+			-- 'pyright', -- Python
 			'remark_ls', -- Markdown
+			'ruff',   -- Python
 			-- 'sourcekit', -- Swift, Objective-C
 			'ts_ls',  -- TypeScript
 			'typos_lsp', -- Spelling
