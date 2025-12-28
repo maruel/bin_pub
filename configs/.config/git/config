@@ -66,6 +66,12 @@
 
 [branch]
 	sort = -committerdate
+	autosetupmerge = always
+	autosetuprebase = always
+	sort = -committerdate
+
+[pull]
+	rebase = true
 
 
 ; My aliases.
