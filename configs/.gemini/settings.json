@@ -9,7 +9,7 @@
     "previewFeatures": true
   },
   "privacy": {
-	  "usageStatisticsEnabled": false
+    "usageStatisticsEnabled": false
   },
   "security": {
     "auth": {
@@ -20,7 +20,7 @@
     }
   },
   "telemetry": {
-	  "enabled": false
+    "enabled": false
   },
   "tools": {
     "autoAccept": true
@@ -28,5 +28,8 @@
   "ui": {
     "hideBanner": true,
     "theme": "Default"
+  },
+  "experimental": {
+    "skills": true
   }
 }

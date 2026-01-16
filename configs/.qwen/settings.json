@@ -1,5 +1,7 @@
 {
-  "authoAccept": true,
+  "tools": {
+  "autoAccept": true
+  },
   "context": {
     "fileName": "AGENTS.md"
   },
