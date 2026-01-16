@@ -123,14 +123,27 @@ def update_config(files, diff_cmd):
     for basename, content in sorted(files.items()):
         dst = os.path.join(home_dir, basename)
         if isinstance(content, Symlink):
-            if not os.path.islink(dst):
-                # Create a symlink.
-                if not os.path.isdir(os.path.dirname(dst)):
-                  os.makedirs(os.path.dirname(dst))
-                try:
-                  os.symlink(content.src, dst)
-                except OSError:
-                  if sys.platform == 'win32':
+            dst_dir = os.path.dirname(dst)
+            if not os.path.isdir(dst_dir):
+                os.makedirs(dst_dir)
+            # Remove existing file/symlink if it doesn't point to the correct target.
+            if os.path.lexists(dst):
+                if os.path.islink(dst):
+                    if os.readlink(dst) == content.src:
+                        # Already correct symlink.
+                        continue
+                    else:
+                        # Wrong target, remove it.
+                        os.remove(dst)
+                else:
+                    # Existing file, remove it.
+                    os.remove(dst)
+            # Create the symlink.
+            try:
+                os.symlink(content.src, dst)
+                ok_files.append(basename)
+            except OSError:
+                if sys.platform == 'win32':
                     print('Visit https://blogs.windows.com/windowsdeveloper/2016/12/02/symlinks-windows-10/')
                     print('to enable Developer mode to enable symlink support')
                     sys.exit(1)
@@ -163,27 +176,31 @@ def update_config(files, diff_cmd):
 
 
 def load_files(config_dir, files):
-    """Loads all the files content into dictionary |files|.
-
-    Appends the content if an entry is already present.
-    """
-    blocklist = [r'.*README.md$', r'.*\.swp$']
-    skips = []
-    for basename in walk(config_dir, [r'.*'], blocklist):
-        src = os.path.join(config_dir, basename)
-        if any(basename.startswith(s) for s in skips):
-            # Inside one of the symlinked directory.
-            continue
-        if src.endswith(os.sep):
-            if os.path.exists(src + '.git'):
-                # Do a symlink instead and skip everything in this directory.
-                files[basename[:-1]] = Symlink(src[:-1])
-                skips.append(basename)
-        else:
-            if basename not in files:
-                files[basename] = read(src)
-            else:
-                files[basename] += read(src)
+     """Loads all the files content into dictionary |files|.
+ 
+     Appends the content if an entry is already present.
+     """
+     blocklist = [r'.*README.md$', r'.*\.swp$']
+     skips = []
+     for basename in walk(config_dir, [r'.*'], blocklist):
+         src = os.path.join(config_dir, basename)
+         if any(basename.startswith(s) for s in skips):
+             # Inside one of the symlinked directory.
+             continue
+         if os.path.islink(src):
+             # Handle symlinks in the source config.
+             target = os.readlink(src)
+             files[basename] = Symlink(target)
+         elif src.endswith(os.sep):
+             if os.path.exists(src + '.git'):
+                 # Do a symlink instead and skip everything in this directory.
+                 files[basename[:-1]] = Symlink(src[:-1])
+                 skips.append(basename)
+         else:
+             if basename not in files:
+                 files[basename] = read(src)
+             else:
+                 files[basename] += read(src)
 
 
 def process_os_specific_paths(files):
