@@ -80,6 +80,9 @@ by 5 rows |
 | `<C-x>`, `<C-o>` | [neovim buffer default](https://neovim.io/doc/user/lsp.html#_buffer-local-defaults) | LSP: Auto complete |
 | `u`              | [neovim undo default](https://neovim.io/doc/user/undo.html#u)                       | Undo |
 | `U`              | [init.lua](configs/.config/nvim/init.lua)                                           | Redo |
+| `<C-W> d`        | [neovim diagnostics default](https://neovim.io/doc/user/diagnostic.html#diagnostic-defaults) | Shows diagnostic at cursor |
+| `[d`             | [neovim diagnostics default](https://neovim.io/doc/user/diagnostic.html#diagnostic-defaults) | Next diagnostics |
+| `]d`             | [neovim diagnostics default](https://neovim.io/doc/user/diagnostic.html#diagnostic-defaults)                       | Previous diagnositcs |
 
 
 ### Default keymappings references
