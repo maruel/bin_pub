@@ -1,0 +1,13 @@
+# Copyright 2026 Marc-Antoine Ruel. All Rights Reserved. Use of this
+# source code is governed by a BSD-style license that can be found in the
+# LICENSE file.
+
+[Unit]
+Description=Warmup md and claude every morning at 5:30am
+
+[Timer]
+OnCalendar=*-*-* 05:30:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

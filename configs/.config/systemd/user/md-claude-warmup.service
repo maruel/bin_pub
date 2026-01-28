@@ -1,0 +1,11 @@
+# Copyright 2026 Marc-Antoine Ruel. All Rights Reserved. Use of this
+# source code is governed by a BSD-style license that can be found in the
+# LICENSE file.
+
+[Unit]
+Description=Warmup claude via md
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/bin/bin_pub
+ExecStart=%h/src/md/md run /home/user/.local/bin/claude --model haiku -p 'Say hello, nothing else'
