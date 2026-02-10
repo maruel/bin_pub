@@ -20,7 +20,9 @@ add_to_PATH() {
 # Source all files:
 shopt -s nullglob
 for f in $(LC_ALL=C ls $HOME/.config/bash.d/*.sh); do source "$f"; done
+set -a
 for f in $(LC_ALL=C ls $HOME/.config/bash.d/*.env); do source "$f"; done
+set +a
 shopt -u nullglob
 
 # Junk follows. This can only be added by stupid scripts that attempt to modify
