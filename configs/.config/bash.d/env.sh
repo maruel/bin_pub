@@ -7,6 +7,3 @@
 # HOSTNAME is generally defined as a pseudo environment variable. Define it for
 # real so it's usable in .tmux.conf.
 export HOSTNAME=$HOSTNAME
-
-export EDITOR=vim
-export HISTCONTROL=ignoredups

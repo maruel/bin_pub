@@ -18,7 +18,10 @@ add_to_PATH() {
 }
 
 # Source all files:
-for f in $HOME/.config/bash.d/*.sh; do source $f; done
+shopt -s nullglob
+for f in $(LC_ALL=C ls $HOME/.config/bash.d/*.sh); do source "$f"; done
+for f in $(LC_ALL=C ls $HOME/.config/bash.d/*.env); do source "$f"; done
+shopt -u nullglob
 
 # Junk follows. This can only be added by stupid scripts that attempt to modify
 # configuration files.

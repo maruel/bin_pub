@@ -6,7 +6,8 @@
   },
   "general": {
     "disableAutoUpdate": true,
-    "previewFeatures": true
+    "previewFeatures": true,
+    "enableAutoUpdate": false
   },
   "privacy": {
     "usageStatisticsEnabled": false

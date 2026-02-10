@@ -38,7 +38,6 @@ fi
 # Go.
 add_to_PATH "$HOME/src-oth/golang/bin"
 add_to_PATH "$HOME/go/bin"
-export GOTRACEBACK=all
 
 # Rust.
 # curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh

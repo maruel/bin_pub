@@ -4,8 +4,6 @@
 
 # Source: https://github.com/maruel/bin_pub
 
-export PYTHONDONTWRITEBYTECODE=x
-
 # pip install virtualenvwrapper
 # https://virtualenvwrapper.readthedocs.io/
 if [ -f $HOME/.local/bin/virtualenvwrapper.sh ]; then
