@@ -83,6 +83,12 @@ sudo apt autoclean
 sudo reboot
 ```
 
+Ubuntu:
+
+```
+sudo do-release-upgrade
+```
+
 In practice it's been hit-or-miss, especially over ssh.
 
 
@@ -207,3 +213,11 @@ snap install ghostty --classic
 ```
 
 Ref: https://ghostty.org/docs/install/binary#snap
+
+
+## Package management
+
+```
+dpkg --get-selections
+apt-mark showmanual
+```
