@@ -37,3 +37,11 @@ chsh -s $BREWDIR/bin/bash
 
 echo 'Install tmux'
 $BREWDIR/bin/brew install tmux
+
+# https://tailscale.com/docs/concepts/macos-variants
+echo 'Install tailscale'
+$BREWDIR/bin/brew install tailscale
+sudo $BREWDIR/bin/brew services start tailscale
+echo 'Run:'
+echo '- sudo tailscale up'
+echo '- sudo tailscale set --ssh'
