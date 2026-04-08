@@ -8,28 +8,32 @@
 #
 # .bash_aliases adds $HOME/bin/homebrew/bin to PATH.
 
-set -e
+set -eu
+
+#BREWDIR=$HOME/bin/homebrew
+BREWDIR=/opt/homebrew
 
 if [ ! -f ~/bin/homebrew/bin/brew ]; then
-  cd ~/bin
-  mkdir homebrew
-  curl -sL https://github.com/Homebrew/brew/archive/refs/tags/4.2.6.tar.gz | tar xz --strip 1 -C homebrew
+  #mkdir $BREWDIR
+  #cd $(dirname $BREWDIR)
+  #curl -sL https://github.com/Homebrew/brew/archive/refs/tags/4.2.6.tar.gz | tar xz --strip 1 -C homebrew
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
 echo 'Updating homebrew'
-~/bin/homebrew/bin/brew update
+$BREWDIR/bin/brew update
 
 echo 'Installing recent bash'
-~/bin/homebrew/bin/brew install bash
+$BREWDIR/bin/brew install bash
 
 echo 'Installing bash completion'
-~/bin/homebrew/bin/brew install bash-completion
+$BREWDIR/bin/brew install bash-completion
 
 echo 'Adding bash to allowed shells'
-echo $HOME/bin/homebrew/bin/bash | sudo tee -a /etc/shells
+echo $BREWDIR/bin/bash | sudo tee -a /etc/shells
 
 echo 'Changing bash to default shell'
-chsh -s $HOME/bin/homebrew/bin/bash
+chsh -s $BREWDIR/bin/bash
 
 echo 'Install tmux'
-~/bin/homebrew/bin/brew install tmux
+$BREWDIR/bin/brew install tmux
