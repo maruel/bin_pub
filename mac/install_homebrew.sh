@@ -38,6 +38,9 @@ chsh -s $BREWDIR/bin/bash
 echo 'Install tmux'
 $BREWDIR/bin/brew install tmux
 
+echo 'Install rsync'
+$BREWDIR/bin/brew install rsync
+
 # https://tailscale.com/docs/concepts/macos-variants
 echo 'Install tailscale (but doesn\'t enable)'
 $BREWDIR/bin/brew install tailscale
