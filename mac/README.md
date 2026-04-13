@@ -7,19 +7,31 @@ mkdir ~/bin
 git clone --recursive https://github.com/maruel/bin_pub ~/bin/bin_pub
 ~/bin/bin_pub/mac/install_homebrew.sh
 ~/bin/bin_pub/mac/fix_bash.sh
+~/bin/bin_pub/mac/get_nodejs.sh
+~/bin/bin_pub/mac/get_nvim.sh
 ~/bin/bin_pub/setup_scripts/update_config.py
 ~/bin/bin_pub/setup_scripts/install_golang.py
 ```
 
-## Accelerating UI
-
-Sadly there's no way to accelerate the workspace animation. We can still
-accelerate some stuff with:
+## Settings in GUI
 
 
-```
-~/bin/bin_pub/setup_scripts/fix_animation_speed.sh
-```
+### Reduce indexing
+
+- Spotlight
+- Search and privacy
+- Cmd+Shift+. to show hidden directories
+- Add .cache, .config, src, etc.
+
+
+### Fixing keyboard
+
+- Open System Preferences / Keyboard.
+  - Keyboard tab
+    - Check Use F keys as standard keys.
+    - Click Modifiers, Map CapsLock to ESC.
+  - Shortcuts tab
+    - Mission Control, Disable F11 key.
 
 
 ## Recent Bash via non-root homebrew
@@ -51,28 +63,9 @@ Run:
 
 ## SSH'ing while logged out
 
-I can be useful to use the machine via ssh/mosh while logged out so the maximum
-of RAM is available, e.g. to run deep neural networks.
-
-There's a few challenges when using the machine remotely without being logged
-in:
-- Tailscale is not running, see issue
-  https://github.com/tailscale/tailscale/issues/987
-    - Workaround: use a jump host.
-- ssh-agent is not running
-    - Workaround: run `ssh-agent` manually and copy paste the
-  environment variables.
-
-
-## Fixing keyboard
-
-
-- Open System Preferences / Keyboard.
-  - Keyboard tab
-    - Check Use F keys as standard keys.
-    - Click Modifiers, Map CapsLock to ESC.
-  - Shortcuts tab
-    - Mission Control, Disable F11 key.
+- Name machine with short name.
+- Install tailscaled; setup with usermode networking and ssh and simple hostname
+- Install tailscale GUI app; setup with cute hotename
 
 
 ## Registering Automation
