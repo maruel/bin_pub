@@ -19,3 +19,5 @@ tar -C nodejs --strip-components=1 -xJf nodejs/nodejs.tar.xz
 rm nodejs/nodejs.tar.xz
 
 npm install -g tsx vscode-langservers-extracted
+
+npm install -g pnpm
