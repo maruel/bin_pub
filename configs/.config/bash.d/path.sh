@@ -24,15 +24,32 @@ add_to_PATH "$HOME/src-oth/lua-language-server/bin"
 
 if [ "$UNAME" = "Darwin" ]; then
 	# Homebrew, the best package manager ever. /s
-	add_to_PATH "$HOME/bin/homebrew/bin"
-	if [ -e "$HOME/bin/homebrew/bin/bash" ]; then
-		if ! grep -q -s "^$HOME/bin/homebrew/bin/bash$" /etc/shells; then
-			echo "Don't forget to sudo vi /etc/shells to add $HOME/bin/homebrew/bin/bash!"
-		fi
-		export SHELL="$HOME/bin/homebrew/bin/bash"
+	# Remove /opt/homebrew/bin if injected by path_helper via /etc/paths.d, then
+	# re-add at front.
+	if [ -d "$HOME/bin/homebrew" ]; then
+		BREW_BIN="$HOME/bin/homebrew/bin"
+	elif [ -d "/opt/homebrew" ]; then
+		BREW_BIN="/opt/homebrew/bin"
 	fi
-	# Add python3 and the rest to PATH.
-	add_to_PATH "$HOME/bin/homebrew/opt/python@3/libexec/bin"
+	if [ -n "$BREW_BIN" ]; then
+		PATH="${PATH//:$BREW_BIN:/:}"
+		PATH="${PATH/#$BREW_BIN:/}"
+		PATH="${PATH/%:$BREW_BIN/}"
+		add_to_PATH "$BREW_BIN"
+		unset BREW_BIN
+	fi
+	if which brew >/dev/null 2>&1; then
+		BREW_PREFIX="$(brew --prefix)"
+		if [ -e "$BREW_PREFIX/bin/bash" ]; then
+			if ! grep -q -s "^$BREW_PREFIX/bin/bash$" /etc/shells; then
+				echo "Don't forget to sudo vi /etc/shells to add $BREW_PREFIX/bin/bash!"
+			fi
+			export SHELL="$BREW_PREFIX/bin/bash"
+		fi
+		# Add python3 and the rest to PATH.
+		add_to_PATH "$BREW_PREFIX/opt/python@3/libexec/bin"
+		unset BREW_PREFIX
+	fi
 fi
 
 # Go.
