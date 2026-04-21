@@ -14,7 +14,10 @@ echo "Downloading $NODEJS_VERSION"
 rm -rf nodejs
 mkdir -p nodejs
 
-curl -sSL -o nodejs/nodejs.tar.xz https://nodejs.org/dist/latest/$NODEJS_VERSION
+# TODO: Fetch LTS.
+URL=https://nodejs.org/dist/latest/$NODEJS_VERSION
+#URL=https://nodejs.org/dist/latest-v24.x/node-v24.15.0-darwin-arm64.tar.xz
+curl -sSL -o nodejs/nodejs.tar.xz $URL
 tar -C nodejs --strip-components=1 -xJf nodejs/nodejs.tar.xz
 rm nodejs/nodejs.tar.xz
 
