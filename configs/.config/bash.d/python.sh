@@ -8,7 +8,7 @@
 # https://virtualenvwrapper.readthedocs.io/
 if [ -f $HOME/.local/bin/virtualenvwrapper.sh ]; then
   export WORKON_HOME=$HOME/.cache/virtualenvwrapper
-  source $HOME/.local/bin/virtualenvwrapper.sh
+  #source $HOME/.local/bin/virtualenvwrapper.sh
   # Usage:
   #   mkvirtualenv <name>
 # Fix eventually.

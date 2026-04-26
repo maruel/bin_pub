@@ -56,6 +56,8 @@
 
 
 ; May not be great ideas to set as default. I like to live dangerously.
+[fetch]
+	prune = true
 [push]
 	default = current
 [gui]

@@ -11,3 +11,4 @@
 /.vscode
 cover.cov
 kls_database.db
+**/.claude/settings.local.json

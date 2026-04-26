@@ -1,6 +1,6 @@
 {
   "tools": {
-  "autoAccept": true
+    "autoAccept": true
   },
   "context": {
     "fileName": "AGENTS.md"
@@ -19,5 +19,5 @@
   "ui": {
     "hideBanner": true
   },
-  "$version": 2
+  "$version": 3
 }
