@@ -45,8 +45,6 @@ git clone --recursive https://github.com/maruel/bin_pub ~/bin/bin_pub
         - Trackpoint
             - Touch Capslock: Esc
 
-Emoji??
-
 Useful shortcuts:
 
 - `⌃ ⌘ ⇧ 4` : Screenshot to clipboard
@@ -55,7 +53,8 @@ Useful shortcuts:
 - `^ F2`: Focus Menu
 - `^ F3`: Focus Dock
 - `⌘ ⌥ D`: Toggle Dock
-- `^ Enter`: Context menuØ  
+- `^ Enter`: Context menuØ
+- `^ ⌘ Space`: Emoji
 
 - `⌘ ⌥ 8`: Toggle zoom
 - `⌘ ⌥ =` / `⌘ ⌥ -`: Zoom in/out
