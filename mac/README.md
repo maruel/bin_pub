@@ -26,12 +26,48 @@ git clone --recursive https://github.com/maruel/bin_pub ~/bin/bin_pub
 
 ### Fixing keyboard
 
-- Open System Preferences / Keyboard.
+- Open System Preferences / Keyboard (Clavier).
   - Keyboard tab
     - Check Use F keys as standard keys.
     - Click Modifiers, Map CapsLock to ESC.
-  - Shortcuts tab
-    - Mission Control, Disable F11 key.
+  - Shortcuts tab (Raccourcis clavier...)
+    - Mission Control
+        - Affichier le bureau: Désactiver (F11)
+    - Fenêtres
+        - Général
+            - Remplissage: `^ ⌥ Enter` (Ctrl-Alt-Enter)
+        - Moitiés
+            - Gauche: `⌥ ^`
+            - Droite: `⌥ ¸`
+    - Accessibilité
+        - Voice Over: Désactiver (`⌘ F5`)
+    - Combinaison de touches
+        - Trackpoint
+            - Touch Capslock: Esc
+
+Emoji??
+
+Useful shortcuts:
+
+- `⌃ ⌘ ⇧ 4` : Screenshot to clipboard
+- `⌘ ⇧ 5`: Screenshot and recording options
+
+- `^ F2`: Focus Menu
+- `^ F3`: Focus Dock
+- `⌘ ⌥ D`: Toggle Dock
+- `^ Enter`: Context menuØ  
+
+- `⌘ ⌥ 8`: Toggle zoom
+- `⌘ ⌥ =` / `⌘ ⌥ -`: Zoom in/out
+
+- `⌘ Space`: Spotlight Search
+- `⌘ ⌥ Space`: Finder Search
+
+```
+plutil -p ~/Library/Preferences/com.apple.symbolichotkeys.plist
+# as JSON:
+plutil -convert json -o - ~/Library/Preferences/com.apple.symbolichotkeys.plist
+```
 
 
 ## Recent Bash via non-root homebrew
