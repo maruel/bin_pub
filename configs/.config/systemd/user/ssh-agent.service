@@ -10,6 +10,7 @@
 
 [Unit]
 Description=SSH key agent
+Documentation=https://github.com/maruel/bin_pub
 
 [Service]
 Type=simple
