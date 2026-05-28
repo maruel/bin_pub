@@ -5,8 +5,14 @@
 # Source: https://github.com/maruel/bin_pub
 
 if [ "$UNAME" = "Darwin" ]; then
-  #fpath=(~/.zsh $fpath)
-  source /Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash
+  # XCode
+	if [ -f /Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash ]; then
+    source /Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash
+	fi
+	# brew install bash_completion
+	if [ -f $(brew --prefix)/etc/bash_completion ]; then
+		source $(brew --prefix)/etc/bash_completion
+	fi
 elif [ "$OS" = "Windows_NT" ]; then
   if [ -f /etc/bash_completion.d/git ]; then
     # Location for ubuntu and cygwin, but only necessary for cygwin.
