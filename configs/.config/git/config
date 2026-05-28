@@ -76,6 +76,21 @@
 	rebase = true
 
 
+[rebase]
+	autoStash = true
+
+
+[gpg]
+	format = ssh
+
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+
 ; My aliases.
 ; The most useful ones are: st, ci, co, br, sed, squash.
 [alias]
