@@ -76,7 +76,7 @@ you need brew. Let's install it for the *current user* instead of as root. This
 requires XCode and command line tools. Once both are installed, run:
 
 ```
-~/bin/bin_pub/setup_scripts/install_brew.sh
+~/bin/bin_pub/mac/install_brew.sh
 ```
 
 
@@ -92,7 +92,7 @@ no .bashrc or .profile is provided by default.
 Run:
 
 ```
-~/bin/bin_pub/setup_scripts/fix_bash.sh
+~/bin/bin_pub/mac/fix_bash.sh
 ```
 
 

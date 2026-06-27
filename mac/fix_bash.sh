@@ -5,5 +5,6 @@
 
 set -eu
 
-echo "source ~/.bash_aliases" >> ~/.bashrc
-echo "source ~/.bash_aliases" >> ~/.profile
+echo 'source $HOME/.bash_aliases' >> ~/.bash_profile
+# Ugh
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.bash_profile
