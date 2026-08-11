@@ -1,3 +1,4 @@
+**/.claude/settings.local.json
 *.egg-info
 *.orig
 *.pyc
@@ -6,10 +7,11 @@
 *~
 .DS_Store
 .coverage
+/.claude/worktrees/
 /.env
-/.letta
-/.vscode
+/.letta/
+/.pi-subagents/
+/.vscode/
+__pycache__/
 cover.cov
 kls_database.db
-**/.claude/settings.local.json
-.pi-subagents
