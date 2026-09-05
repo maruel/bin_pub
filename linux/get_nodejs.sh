@@ -9,6 +9,7 @@ cd ..
 
 BASE_URL=https://nodejs.org/dist/latest/
 BASE_URL=https://nodejs.org/dist/latest-v24.x/
+BASE_URL=https://nodejs.org/dist/latest-v26.x/
 NODEJS_VERSION="$(curl -sS $BASE_URL | grep -oP 'node-[^"]+-linux-x64\.tar\.xz' | head -n 1)"
 echo "Downloading $NODEJS_VERSION"
 
