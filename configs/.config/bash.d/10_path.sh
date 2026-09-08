@@ -2,6 +2,8 @@
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
 
+# shellcheck shell=bash
+
 # Source: https://github.com/maruel/bin_pub
 
 # The private copy will fetch the public one as bin/bin_pub
@@ -16,8 +18,15 @@ if which nvim >/dev/null; then
 	alias vim=nvim
 fi
 
-# Installed through bin_pub/linux/get_nodejs.sh or bin_pub/mac/get_nodejs.sh
-add_to_PATH "$HOME/bin/bin_pub/nodejs/bin"
+# Installed through bin_pub/linux/get_nodejs.sh or bin_pub/mac/get_nodejs.sh.
+export NVM_DIR="$HOME/.local/share/nvm"
+# shellcheck disable=SC1091
+[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+# shellcheck disable=SC1091
+[ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
+
+export PNPM_HOME="$HOME/.local/share/pnpm"
+add_to_PATH "$PNPM_HOME/bin"
 
 # For LUA LSP.
 add_to_PATH "$HOME/src-oth/lua-language-server/bin"

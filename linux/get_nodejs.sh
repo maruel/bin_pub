@@ -1,26 +1,30 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Copyright 2025 Marc-Antoine Ruel. All Rights Reserved. Use of this
 # source code is governed by a BSD-style license that can be found in the
 # LICENSE file.
 
-set -eu
-cd "$(dirname $0)"
-cd ..
+set -euo pipefail
 
-#BASE_URL=https://nodejs.org/dist/latest/
-BASE_URL=https://nodejs.org/dist/latest-v24.x/
-#BASE_URL=https://nodejs.org/dist/latest-v26.x/
-NODEJS_VERSION="$(curl -sS $BASE_URL | grep -oP 'node-[^"]+-linux-x64\.tar\.xz' | head -n 1)"
-echo "Downloading $NODEJS_VERSION"
+: "${NVM_DIR:?NVM_DIR must be set before running this script}"
+: "${PNPM_HOME:?PNPM_HOME must be set before running this script}"
 
-# Always start over from scratch.
-rm -rf nodejs
-mkdir -p nodejs
+if [[ ! -d "$NVM_DIR/.git" ]]; then
+  git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
+else
+  git -C "$NVM_DIR" fetch --force --tags origin
+fi
 
-curl -sSL -o nodejs/nodejs.tar.xz $BASE_URL/$NODEJS_VERSION
-tar -C nodejs --strip-components=1 -xJf nodejs/nodejs.tar.xz
-rm nodejs/nodejs.tar.xz
+latest_tag="$(git -C "$NVM_DIR" tag --list 'v[0-9]*' --sort=-version:refname | sed -n '1p')"
+if [[ -z "$latest_tag" ]]; then
+  printf 'nvm repository at %s has no release tags.\n' "$NVM_DIR" >&2
+  exit 1
+fi
+git -C "$NVM_DIR" checkout --detach "$latest_tag"
 
-npm install -g tsx vscode-langservers-extracted
+# shellcheck disable=SC1091
+. "$NVM_DIR/nvm.sh"
+nvm install 24
+nvm alias default 24
 
-npm install -g pnpm
+curl --fail --show-error --location https://get.pnpm.io/install.sh | \
+  ENV=/dev/null SHELL=/bin/bash sh -
