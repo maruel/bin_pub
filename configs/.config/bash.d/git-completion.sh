@@ -10,6 +10,7 @@ if [ "$UNAME" = "Darwin" ]; then
     source /Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash
 	fi
 	# brew install bash_completion
+	# TODO: Breaks PROMPT_COMMAND.
 	if [ -f $(brew --prefix)/etc/bash_completion ]; then
 		source $(brew --prefix)/etc/bash_completion
 	fi
