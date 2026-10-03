@@ -23,8 +23,16 @@ git -C "$NVM_DIR" checkout --detach "$latest_tag"
 
 # shellcheck disable=SC1091
 . "$NVM_DIR/nvm.sh"
-nvm install 24
-nvm alias default 24
+nvm install 26
+nvm alias default 26
 
-curl --fail --show-error --location https://get.pnpm.io/install.sh | \
-  ENV=/dev/null SHELL=/bin/bash sh -
+work_dir="$(mktemp -d)"
+readonly work_dir
+trap 'rm -rf -- "$work_dir"' EXIT
+
+curl --fail --show-error --location https://get.pnpm.io/install.sh \
+  --output "$work_dir/install.sh"
+# Shell configuration is managed by configs/.config/bash.d/10_path.sh.
+# Confine upstream setup's startup-file edits to the temporary directory.
+HOME="$work_dir" ENV="$work_dir/.bashrc" PNPM_HOME="$PNPM_HOME" \
+  SHELL=/bin/bash sh "$work_dir/install.sh"
