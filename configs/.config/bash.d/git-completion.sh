@@ -10,9 +10,10 @@ if [ "$UNAME" = "Darwin" ]; then
     source /Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash
 	fi
 	# brew install bash_completion
-	# TODO: Breaks PROMPT_COMMAND.
-	if [ -f $(brew --prefix)/etc/bash_completion ]; then
-		source $(brew --prefix)/etc/bash_completion
+	if [ -f "$(brew --prefix)/etc/bash_completion" ]; then
+		source "$(brew --prefix)/etc/bash_completion"
+		# bash-completion 1.3 unsets UNAME, which later configuration needs.
+		export UNAME=Darwin
 	fi
 elif [ "$OS" = "Windows_NT" ]; then
   if [ -f /etc/bash_completion.d/git ]; then
