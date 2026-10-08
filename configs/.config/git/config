@@ -159,6 +159,7 @@
 	gerritmaster = push origin HEAD:refs/for/master
   ; Create a CL and trigger the label Commit-Queue.
 	gerritcq = push origin HEAD:refs/for/main%l=Commit-Queue+1
+	diffnt = "!f() { git diff \"$@\" -- . \":(exclude)*_test.*\" \":(exclude)test_*.*\" \":(exclude)*.test.*\" \":(exclude)*.spec.*\" \":(exclude)*test/**\" \":(exclude)*tests/**\" \":(exclude)*__tests__/**\" \":(exclude)*testdata/**\" \":(exclude)*e2e/**\"; }; f"
 
 
 [submodule]
