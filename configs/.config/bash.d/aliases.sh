@@ -52,3 +52,6 @@ alias vimdiff='nvim -d'
 
 # Mainly to trigger tmux once a command is done.
 alias bell='echo -en "\a"'
+
+# Resident memory is always the issue.
+alias top='top -o RES'
