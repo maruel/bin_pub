@@ -199,7 +199,6 @@ def main():
       '--type', choices=('system', 'bootstrap', 'compiled', 'skip'),
       default='compiled' if not is_root else 'system',
       help='Install in /usr/local/go, in ~/go1.4, ~/src-oth/golang or skip')
-  parser.add_argument('--bootstrap', action='store_true')
   parser.add_argument(
       '--skip', action='store_true',
       help='Skip updating Golang; only install packages')
@@ -243,12 +242,8 @@ def main():
     if goroot:
       go = os.path.join(goroot, 'bin', 'go')
     pkgs = [
-      'golang.org/x/tools/cmd/godoc@latest',
       'golang.org/x/tools/cmd/goimports@latest',
-      #'golang.org/x/tools/cmd/stringer@latest',
-      #'github.com/axw/gocov/gocov',
       'github.com/client9/misspell/cmd/misspell@latest',
-      #'github.com/boyter/scc@latest',
       'github.com/maruel/panicparse/v2/cmd/pp@latest',
       'github.com/monochromegane/the_platinum_searcher/cmd/pt@latest',
       'github.com/yolo-pkgs/gore@latest',

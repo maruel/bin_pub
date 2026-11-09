@@ -4,7 +4,11 @@
 # LICENSE file.
 
 # Install useful packages I can't live without.
-# Assumes minimal Ubuntu desktop/server 20.04.
+# Assumes minimal Ubuntu desktop/server 26.04.
+#
+# apt list --installed
+# apt-mark showmanual
+# dpkg-query -f '${binary:Package}\n' -W
 
 set -eu
 
@@ -23,15 +27,14 @@ set -eu
 #   virt-manager
 #   vlc - now as snap
 sudo apt install \
+	build-essential \
   git \
   ifstat \
   python3 \
   smartmontools \
   sysstat \
   tmux \
-  unattended-upgrades \
-  vim \
-  wireless-tools
+  unattended-upgrades
 
 # Desktop:
 #   avahi-daemon
@@ -42,7 +45,7 @@ sudo apt purge \
   evince \
   whoopsie
 
-# Ubuntu Server 20.04:
+# Ubuntu Server 26.04:
 #   snapd
 #   ubuntu-advantage-tools
 sudo apt purge \
@@ -52,7 +55,7 @@ sudo apt purge \
   cloud-initramfs-dyn-netconf \
   landscape-common \
   open-vm-tools \
-  sosreport \
+  sosreport
 
 # On Ubuntu Server:
 # sudo timedatectl set-timezone America/Toronto

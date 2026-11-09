@@ -5,6 +5,11 @@
 
 set -eu
 
+if !(which cc >/dev/null); then
+  echo "Install compiler"
+  exit 1
+fi
+
 # This installs local and does sane things so it's good enough.
 # TEMP_FILE=$(mktemp /tmp/downloaded_script.XXXXX
 TEMP_FILE=$(mktemp /tmp/install_cargo.XXXXXX.sh)
