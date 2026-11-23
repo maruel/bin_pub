@@ -27,9 +27,11 @@ set -eu
 #   virt-manager
 #   vlc - now as snap
 sudo apt install \
+	avahi-daemon \
 	build-essential \
   git \
   ifstat \
+	libnss-mdns \
   python3 \
   smartmontools \
   sysstat \
