@@ -55,3 +55,7 @@ alias bell='echo -en "\a"'
 
 # Resident memory is always the issue.
 alias top='top -o RES'
+
+# agy will use keyring when available. When it does, it deletes the local token file. This is a problem when
+# using containers.
+alias agy='SSH_CONNECTION="127.0.0.1 0 127.0.0.1 0" agy'
