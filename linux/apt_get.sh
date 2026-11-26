@@ -28,6 +28,7 @@ set -eu
 #   vlc - now as snap
 sudo apt install \
 	avahi-daemon \
+	bubblewrap \
 	build-essential \
   git \
   ifstat \
