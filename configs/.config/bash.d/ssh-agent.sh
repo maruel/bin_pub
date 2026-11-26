@@ -1,4 +1,4 @@
-# Select the desktop SSH agent when no valid inherited agent is available.
+# Select a local SSH agent when no valid inherited agent is available.
 # Source: https://github.com/maruel/bin_pub
 
 if [[ -z ${SSH_AUTH_SOCK:-} || ! -S $SSH_AUTH_SOCK ]]; then
@@ -15,13 +15,16 @@ if [[ -z ${SSH_AUTH_SOCK:-} || ! -S $SSH_AUTH_SOCK ]]; then
     done
     unset POSSIBLE_SOCKET POSSIBLE_SOCKETS
   elif [[ ${UNAME:-} == Linux ]]; then
-    desktop_agent_socket="${XDG_RUNTIME_DIR:-/run/user/$UID}/keyring/ssh"
-    if [[ -S $desktop_agent_socket ]]; then
-      export SSH_AUTH_SOCK="$desktop_agent_socket"
+    agent_runtime_dir="${XDG_RUNTIME_DIR:-/run/user/$UID}"
+    if [[ -S $agent_runtime_dir/openssh_agent ]]; then
+      export SSH_AUTH_SOCK="$agent_runtime_dir/openssh_agent"
+      unset SSH_AGENT_PID
+    elif [[ -S $agent_runtime_dir/keyring/ssh ]]; then
+      export SSH_AUTH_SOCK="$agent_runtime_dir/keyring/ssh"
       unset SSH_AGENT_PID
     else
       unset SSH_AUTH_SOCK SSH_AGENT_PID
     fi
-    unset desktop_agent_socket
+    unset agent_runtime_dir
   fi
 fi
